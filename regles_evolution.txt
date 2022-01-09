@@ -1,0 +1,19 @@
+regles d'evolution de la population
+
+conditions pour une naissance :
+    dieu cree des humains aleatoirement si nbhumains < 4
+    pere et mere maries
+    age des parents > 25
+    age des parents < 40
+    sexe de l'enfant random
+    demander nom de l'enfant
+
+conditions pour deces
+    age > 60 + random(20)
+    random accident
+
+conditions pour un mariage : 
+    un homme celibataire ou veuf
+    une femme celibataire ou veuf
+    difference d'age < 5
+    age des futures maries > 20

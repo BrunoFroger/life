@@ -31,7 +31,7 @@ void Humain::setGenreTexte(){
     }
 }
 
-Humain::Humain(int genre, char *nom, int age){
+Humain::Humain(int genre, char *nom, char *prenom, int age){
     //printf("debut creation humain %s\n", nom);
     this->id=indexHumain;
     this->genre = genre;
@@ -39,6 +39,7 @@ Humain::Humain(int genre, char *nom, int age){
     this->age = age;
     this->nbEnfants=0;
     strcpy(this->nom, nom);
+    strcpy(this->prenom, prenom);
     this->status=CELIBATAIRE;
     this->mere=NULL;
     this->pere=NULL;
@@ -73,24 +74,28 @@ Humain::Humain(char *datas){
                     strcpy(this->nom,tmp);
                     printf("nom = %s\n", this->nom);
                     break;
-                case 2: // genre
+                case 2: // prenom
+                    strcpy(this->prenom,tmp);
+                    printf("prenom = %s\n", this->prenom);
+                    break;
+                case 3: // genre
                     this->genre=atoi(tmp);
                     setGenreTexte();
                     printf("genre = %s\n", this->genreTexte);
                     break;
-                case 3: // age
+                case 4: // age
                     this->age=atoi(tmp);
                     printf("age = %d\n", this->age);
                     break;
-                case 4: // nbEnfants
+                case 5: // nbEnfants
                     this->nbEnfants=0;
                     printf("nbEnfants = %d\n", this->nbEnfants);
                     break;
-                case 5: // status
+                case 6: // status
                     this->status=atoi(tmp);
                     printf("status = %d\n", this->status);
                     break;
-                case 6: // conjoint
+                case 7: // conjoint
                     printf("conjoint = %s\n", tmp);
                     if (strcmp(tmp,"") != 0){
                         //printf("initialisation du conjoint\n");
@@ -103,7 +108,7 @@ Humain::Humain(char *datas){
                         }
                     }
                     break;
-                case 7: // pere
+                case 8: // pere
                     printf("pere = %s\n", tmp);
                     if (strcmp(tmp,"") != 0){
                         //printf("initialisation du pere\n");
@@ -116,7 +121,7 @@ Humain::Humain(char *datas){
                         }
                     }
                     break;
-                case 8: // mere
+                case 9: // mere
                     printf("mere = %s\n", tmp);
                     if (strcmp(tmp,"") != 0){
                         //printf("initialisation de la mere\n");
@@ -151,10 +156,11 @@ Humain::~Humain(){
 void Humain::displayInfos(void){
     printf("\n-------------------------\n");
     printf(" infos Humain\n");
-    printf(" genre = %s\n", this->genreTexte);
-    printf(" nom   = %s\n", this->nom);
-    printf(" age   = %d\n", this->age);
-    printf(" status = %d\n", this->status);
+    printf(" genre   = %s\n", this->genreTexte);
+    printf(" nom     = %s\n", this->nom);
+    printf(" prenom  = %s\n", this->nom);
+    printf(" age     = %d\n", this->age);
+    printf(" status  = %d\n", this->status);
     printf(" enfants = %d\n", nbEnfants);
     if (this->status == MARIE){
         printf(" conjoint = %s\n", this->conjoint->nom);
@@ -191,7 +197,7 @@ void Humain::descendance(){
 void Humain::descendance(int level){
     if (level == 0){
         printf("-----------------------------\n");
-        printf(" debut descendance de %s ", this->nom);    
+        printf(" debut descendance de %s %s", this->nom, this->prenom);    
         if (this->conjoint != NULL){
         printf(" avec %s\n", this->conjoint->nom);
         } else {

@@ -35,7 +35,7 @@
             void sauve(FILE *fic);
             void displayInfos(void);
             void mariage(Humain *conjoint);
-            Humain *naissance(int genre, char *nom);
+            Humain *naissance(int genre, char *nom, char *prenom);
             void descendance();
             void deces(void);
             int getId();

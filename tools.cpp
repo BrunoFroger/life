@@ -11,44 +11,50 @@
 #include "humain.hpp"
 #include "variables.hpp"
 
-enfantDieu listePrenoms[8];
-bool listePrenomsOK=false;
+char listePrenomsHomme[][20] = {
+    "Adam", "Joseph", "Pierre", "Paul", "Louis", "Vincent", "Louis",
+    "Andre", "Michel", "Jean", "Jacques", "Bernard", "Marcel",
+    "Daniel", "Roger", "Alain", "Henri", "Georges", "Nicolas"   
+};
+char listePrenomsFemme[][20] = {
+    "Eve", "Marie", "Lucie", "Janette", "Elise", "Julie", "Louise",
+    "Jeanne", "Nathalie", "Sylvie", "Anne", "Denise", "Nicole",
+    "Helene", "Christine", "Madeleine", "Suzanne", "Monique", "Brigitte",
+    "Sandrine", "Stephanie", "Celine", "Aurelie", "Julie", "Laura", "Lea"
+};
+char listeNomFamille[][20] = {
+    "Dupont", "Durand", "Chevalier", "Morin", "Legrand", "Roche", "Riviere", "Carre",
+    "Collet", "Poirier", "Aubry", "Fontaine", "Caron", "Colin", "Leclerc", "Duval",
+    "Leconte", "Mercier", "Breton", "Leger", "Cordier", "Masson", "Picard", "Lacroix", 
+    "Lucas", "Garnier", "Riviere", "Blanchard", "Blanc", "Duval", "Dupuis", "Moulin"
+};
 
-void initListePrenoms(){
-    printf("init listes prenoms pour dieu \n");
-    strcpy(listePrenoms[0].nom,"adam");
-    listePrenoms[0].genre=HOMME;
-    strcpy(listePrenoms[1].nom,"eve");
-    listePrenoms[1].genre=FEMME;
-    strcpy(listePrenoms[2].nom,"joseph");
-    listePrenoms[2].genre=HOMME;
-    strcpy(listePrenoms[3].nom,"marie");
-    listePrenoms[3].genre=FEMME;
-    strcpy(listePrenoms[4].nom,"pierre");
-    listePrenoms[4].genre=HOMME;
-    strcpy(listePrenoms[5].nom,"lucie");
-    listePrenoms[5].genre=FEMME;
-    strcpy(listePrenoms[6].nom,"paul");
-    listePrenoms[6].genre=HOMME;
-    strcpy(listePrenoms[7].nom,"elise");
-    listePrenoms[7].genre=FEMME;
-}
 int getRandom(int range){
     return rand()%range;
 }
 
 enfantDieu child;
 enfantDieu getRandomEnfant(void){
-    if (! listePrenomsOK){
-        initListePrenoms();
-        listePrenomsOK=true;
-    }
 
-    int valeur = rand() % 8;
-    printf("get nom enfant aleatoire %d\n", valeur);
-    strcpy(child.nom,listePrenoms[valeur].nom);
-    child.genre=listePrenoms[valeur].genre;
-    printf("enfant retourne : %s,%d\n", child.nom, child.genre);
+    int nbPrenomMasculin = sizeof(listePrenomsHomme) / 20;
+    printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
+    int nbPrenomFeminin = sizeof(listePrenomsFemme) / 20;
+    printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
+    int nbNomFamille = sizeof(listeNomFamille) / 20;
+    printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
+
+    int genre = rand() % 1 + 1;
+    strcpy(child.nom, listeNomFamille[rand() % nbNomFamille]);
+
+    switch(genre){
+        case HOMME:
+            strcpy(child.prenom, listePrenomsHomme[rand() % nbPrenomMasculin]);
+            break;
+        case FEMME:
+            strcpy(child.prenom, listePrenomsFemme[rand() % nbPrenomFeminin]);
+            break;
+    }
+    printf("enfant retourne : %s %s (%d)\n", child.nom, child.prenom, child.genre);
 
     return child;
 }

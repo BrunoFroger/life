@@ -6,5 +6,5 @@
 
 #include "variables.hpp"
 
-ptrHumain listeHumains[250];
+ptrHumain listeHumains[MAX_HUMAINS];
 int indexHumain=0;

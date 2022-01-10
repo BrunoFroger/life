@@ -16,5 +16,7 @@
     extern int getRandom(int range);
     extern enfantDieu getRandomEnfant(void);
     extern void afficheListeHumains(void);
+    extern char *getPrenomMasculin(void);
+    extern char *getPrenomFeminin(void);
 
 #endif

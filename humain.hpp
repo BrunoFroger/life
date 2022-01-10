@@ -14,7 +14,7 @@
     #define FEMME 2
     #define INCONNU 3
 
-    #define MAX_ENFANTS 10
+    #define MAX_ENFANTS 15
 
     // status 
     #define CELIBATAIRE 0
@@ -28,8 +28,7 @@
 
         public :
             Humain();
-            Humain(int genre);
-            Humain(int genre, char *nom, int age);
+            Humain(int genre, char *nom, char *prenom, int age);
             Humain(char *datas);
             ~Humain();
             void sauve(FILE *fic);
@@ -42,6 +41,8 @@
             int getNbEnfants();
             char getStatus();
             char *getNom();
+            char *getNomComplet();
+            char *getPrenom();
             char *getConjoint();
             char *getPere();
             char*getMere();

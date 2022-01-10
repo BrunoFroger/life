@@ -33,25 +33,51 @@ int getRandom(int range){
     return rand()%range;
 }
 
+char *getPrenomMasculin(void){
+    int nbPrenomMasculin = sizeof(listePrenomsHomme) / 20;
+    //printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
+    return listePrenomsHomme[rand() % nbPrenomMasculin];
+}
+
+char *getPrenomFeminin(void){
+    int nbPrenomFeminin = sizeof(listePrenomsFemme) / 20;
+    //printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
+    return listePrenomsFemme[rand() % nbPrenomFeminin];
+}
+
+char *getNomFamille(void){
+    int nbNomFamille = sizeof(listeNomFamille) / 20;
+    //printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
+    return listeNomFamille[rand() % nbNomFamille];
+}
+
 enfantDieu child;
 enfantDieu getRandomEnfant(void){
 
-    int nbPrenomMasculin = sizeof(listePrenomsHomme) / 20;
-    printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
-    int nbPrenomFeminin = sizeof(listePrenomsFemme) / 20;
-    printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
-    int nbNomFamille = sizeof(listeNomFamille) / 20;
-    printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
+    //int nbPrenomMasculin = sizeof(listePrenomsHomme) / 20;
+    //printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
+    //int nbPrenomFeminin = sizeof(listePrenomsFemme) / 20;
+    //printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
+    //int nbNomFamille = sizeof(listeNomFamille) / 20;
+    //printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
 
-    int genre = rand() % 1 + 1;
-    strcpy(child.nom, listeNomFamille[rand() % nbNomFamille]);
 
-    switch(genre){
+
+    child.genre = rand() % 20;
+    printf("child.genre : %d\n", child.genre);
+    child.genre /= 10;
+    printf("child.genre : %d\n", child.genre);
+    child.genre += 1;
+    printf("child.genre : %d\n", child.genre);
+
+    strcpy(child.nom, getNomFamille());
+    
+    switch(child.genre){
         case HOMME:
-            strcpy(child.prenom, listePrenomsHomme[rand() % nbPrenomMasculin]);
+            strcpy(child.prenom, getPrenomMasculin());
             break;
         case FEMME:
-            strcpy(child.prenom, listePrenomsFemme[rand() % nbPrenomFeminin]);
+            strcpy(child.prenom, getPrenomFeminin());
             break;
     }
     printf("enfant retourne : %s %s (%d)\n", child.nom, child.prenom, child.genre);
@@ -62,15 +88,15 @@ enfantDieu getRandomEnfant(void){
 void afficheListeHumains(void){
     Humain *ptr;
     printf("nombres d'humains crees : %d\n", indexHumain);
-    printf("+-----------------------+-------+-------+------+----------------------+----------------------+----------------------+------------+\n");
-    printf("|                   nom | status| genre | age  |             conjoint |                 pere |                 mere | nb enfants |\n");
-    printf("+-----------------------+-------+-------+------+----------------------+----------------------+----------------------+------------+\n");
+    printf("+-----------------------+-----------------------+-------+-------+------+--------------------------------+----------------------+----------------------+------------+\n");
+    printf("|                   nom |                prenom | status| genre | age  |                       conjoint |                 pere |                 mere | nb enfants |\n");
+    printf("+-----------------------+-----------------------+-------+-------+------+--------------------------------+----------------------+----------------------+------------+\n");
     for (int i = 0 ; i < indexHumain ; i++){
         ptr = listeHumains[i];
         char genre = ptr->getGenreTexte()[0];
         char status = ptr->getStatus();
-        printf("| %20s  |   %c   |   %c   | %3d  | %20s | %20s | %20s |    %2d      |",
-        ptr->getNom(), status, genre, ptr->getAge(), ptr->getConjoint(), ptr->getPere(), 
+        printf("| %20s  | %20s  |   %c   |   %c   | %3d  | %30s | %20s | %20s |    %2d      |",
+        ptr->getNom(),ptr->getPrenom(), status, genre, ptr->getAge(), ptr->getConjoint(), ptr->getPere(), 
         ptr->getMere(), ptr->getNbEnfants() );
         if (ptr->getNbEnfants() != 0){
             for (int ii = 0 ; ii < ptr->getNbEnfants() ; ii++){
@@ -79,6 +105,6 @@ void afficheListeHumains(void){
         }
         printf("\n");
     }
-    printf("+-----------------------+-------+-------+------+----------------------+----------------------+----------------------+------------+\n");
+    printf("+-----------------------+-----------------------+-------+-------+------+--------------------------------+----------------------+----------------------+------------+\n");
     printf("\n");
 }

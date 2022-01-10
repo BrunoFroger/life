@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     printf("Debut du programme %s\n", argv[0]);
     // creation d'un humain
     printf("creation de dieu\n");
-    Humain *dieu = new Humain(HOMME, "dieu", 0);
+    Humain *dieu = new Humain(HOMME, "dieu", "", 0);
     
     /*
     Humain *adam = dieu->naissance(HOMME, "adam");
@@ -152,12 +152,20 @@ int main(int argc, char **argv)
                 printf("nom d'un des parent : ");
                 scanf("%s", parent);
                 trouve = false;
+                char *nomDuPere;
                 for (int i = 0 ; i < indexHumain ; i ++ ){
                     ptr = listeHumains[i];
                     if (ptr != NULL){
                         if (strcmp(ptr->getNom(), parent) == 0) {
                             trouve = true;
                             printf("le parent %s existe\n", ptr->getNom());
+                            if (ptr->getGenreTexte()[0] == 'H'){
+                                nomDuPere = ptr->getNom();
+                            } else {
+                                if (ptr->getConjoint() != NULL){
+                                    nomDuPere = ptr->getConjoint();
+                                }
+                            }
                             break;
                         }
                     }
@@ -166,7 +174,7 @@ int main(int argc, char **argv)
                     printf("%s ne corresponds pas a un nom de personne connue\n", parent);
                 } else {
                     printf("on ajoute un enfant a %s\n", ptr->getNom());
-                    printf("nom de l'enfant : ");
+                    printf("prenom de l'enfant : ");
                     scanf("%s", enfant);
                     // todo verifier que le nom n'existe pas
                     getchar();
@@ -175,12 +183,12 @@ int main(int argc, char **argv)
                     switch (genre){
                         case 'H' :
                         case 'h' : 
-                            ptr->naissance(HOMME, enfant);
+                            ptr->naissance(HOMME, nomDuPere, enfant);
                             printf("naissance de %s OK\n", enfant);
                             break;
                         case 'F' : 
                         case 'f' :
-                            ptr->naissance(FEMME, enfant);
+                            ptr->naissance(FEMME, nomDuPere, enfant);
                             printf("naissance de %s OK\n", enfant);
                             break;
                         default :

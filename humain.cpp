@@ -181,7 +181,7 @@ void Humain::mariage(Humain *conjoint){
     this->status=MARIE;
     this->conjoint->conjoint=this;
     this->conjoint->status=MARIE;
-    printf("declaration mariage de %s avec %s\n", this->nom, conjoint->nom);
+    printf("declaration mariage de %s avec %s\n", this->getNomComplet(), conjoint->getNomComplet());
 }
 
 void Humain::descendance(){

@@ -43,10 +43,10 @@
             char *getNom();
             char *getNomComplet();
             char *getPrenom();
-            char *getConjoint();
-            char *getPere();
-            char *getMere();
-            char *getEnfant(int index);
+            Humain *getConjoint();
+            Humain *getPere();
+            Humain *getMere();
+            Humain *getEnfant(int index);
             int getAge();
             char *getGenreTexte();
             bool addEnfant(Humain *enfant);

@@ -69,7 +69,8 @@ int main(int argc, char **argv)
     char genre;
     bool trouve;
     char nomFichier[50];
-    bool listeAuto=false;
+    bool listeAuto=true;
+    bool statAuto=true;
     FILE *file;
     while (!fin){
         printf("--------------------------------\n");
@@ -81,6 +82,7 @@ int main(int argc, char **argv)
         printf("  5 : liste des humains crees\n");
         printf("  6 : statistiques\n");
         printf("  a : affiche liste auto %d\n", listeAuto);
+        printf("  b : affiche stat auto %d\n", statAuto);
         printf("  c : charge population depuis le disque\n");
         printf("  s : sauvegarde des donnees sur disque\n");
         printf("  v : faire vieillir la population d'un an\n");
@@ -163,7 +165,7 @@ int main(int argc, char **argv)
                                 nomDuPere = ptr->getNom();
                             } else {
                                 if (ptr->getConjoint() != NULL){
-                                    nomDuPere = ptr->getConjoint();
+                                    nomDuPere = ptr->getConjoint()->getNom();
                                 }
                             }
                             break;
@@ -203,6 +205,9 @@ int main(int argc, char **argv)
             case '6' : // statistiques
                 statistiques();
                 break;
+            case 'b' : // bascule affiche liste automatiquement
+                statAuto = !statAuto;
+                break;
             case 'a' : // bascule affiche liste automatiquement
                 listeAuto = !listeAuto;
                 break;
@@ -237,6 +242,7 @@ int main(int argc, char **argv)
                     ptr->vieillir();
                 }
                 if (listeAuto) afficheListeHumains();
+                if (statAuto) statistiques();
                 break;
             case 'q': // quitter
                 fin=true;

@@ -9,6 +9,7 @@
 
 #include "humain.hpp"
 #include "variables.hpp"
+#include "statistiques.hpp"
 #include "tools.hpp"
 
 void Humain::setGenreTexte(){
@@ -250,35 +251,47 @@ char *Humain::getPrenom(void){
     return this->prenom;
 }
 
-char *Humain::getConjoint(void){
+Humain *Humain::getConjoint(void){
+    return this->conjoint;
+    /*
     if (this->conjoint != NULL){
         sprintf(result,"%s %s", this->conjoint->prenom, this->conjoint->nom);
         return result;
     }
     return "";
+    */
 }
 
-char *Humain::getPere(void){
+Humain *Humain::getPere(void){
+    return this->pere;
+    /*
     if (this->pere != NULL){
         sprintf(result,"%s %s", this->pere->prenom, this->pere->nom);
         return result;
     }
     return "";
+    */
 }
 
-char *Humain::getMere(void){
+Humain *Humain::getMere(void){
+    return this->mere;
+    /*
     if (this->mere != NULL){
         sprintf(result,"%s %s", this->mere->prenom, this->mere->nom);
         return result;
     }
     return "";
+    */
 }
 
-char *Humain::getEnfant(int index){
+Humain *Humain::getEnfant(int index){
+    return enfants[index];
+    /*
     if (this->enfants[index] != NULL){
         return this->enfants[index]->prenom;
     }
     return "";
+    */
 }
 
 char *Humain::getGenreTexte(void){
@@ -303,8 +316,8 @@ char Humain::getStatus(void){
 }
 
 bool Humain::addEnfant(Humain *enfant){
-    printf("on ajoute l'enfant %s a %s\n", enfant->nom, this-> nom);
     if (this->nbEnfants < MAX_ENFANTS){
+        //printf("on ajoute l'enfant %s a %s\n", enfant->nom, this-> nom);
         this->enfants[this->nbEnfants]=enfant;
         this->nbEnfants++;
         //printf("%s a maintenant %d enfants\n", this->nom, this->nbEnfants);
@@ -314,7 +327,7 @@ bool Humain::addEnfant(Humain *enfant){
 }
 
 Humain *Humain::naissance(int genre, char *nom, char *prenom){
-    printf(" %s %s donne naissance à %s\n", this->prenom, this->prenom, nom);
+    //printf(" %s %s donne naissance à %s\n", this->prenom, this->prenom, nom);
     if (this->nbEnfants >= MAX_ENFANTS){
         printf("ERREUR : nb enfants > %d\n", MAX_ENFANTS);
     } else {
@@ -323,7 +336,9 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
         try{
             Humain *ptr;
             ptr = ::new Humain(genre, nom, prenom, 0);
-            this->addEnfant(ptr);
+            if (strcmp(this->nom,"dieu") !=0){
+                this->addEnfant(ptr);
+            }
             if (this->conjoint != NULL){
                 this->conjoint->addEnfant(ptr);
             }
@@ -347,7 +362,7 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
             //printf(" declaration de naissance de %s => OK\n", nom);
             return ptr;
         } catch(...){
-            printf("impossible de creer un enfant\n");
+            printf("ERREUR => impossible de creer un enfant\n");
         }
     }
     printf(" fin naissance de %s %s => KO\n", this->nom, this->prenom);
@@ -355,11 +370,13 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
 }
 
 void Humain::deces(void){
-    printf("mort de %s\n", this->nom);
+    //printf("mort de %s\n", this->nom);
     this->status=MORT;
     if (this->conjoint != nullptr){
-        printf("le conjoint %s devient veuf\n", this->conjoint->nom);
-        this->conjoint->status = VEUF;
+        //printf("le conjoint %s devient veuf\n", this->conjoint->nom);
+        if (this->conjoint->status != MORT){
+            this->conjoint->status = VEUF;
+        }
     }
 }
 
@@ -405,44 +422,54 @@ void Humain::vieillir(void){
             // test mort de vieillesse 60 + random(40)
             ageRandom = 60 + getRandom(40);
             //printf("age de deces pour %s : %d\n",this->nom, ageRandom);
-            if (this-> age >= ageRandom){
-                printf("%s mort de vieillesse\n", this->nom);
+            if (this->age >= ageRandom){
+                printf("*************************************\n");
+                printf("%s mort de vieillesse\n", this->getNomComplet());
+                printf("*************************************\n");
                 this->deces();
+                return;
+            } else {
+                if (this->age > 100){
+                    printf("*********************************************************************\n");
+                    printf(" age > 100 : %d (ageRandom = %d)\n", this->age, ageRandom);
+                    printf("*********************************************************************\n");
+                }
             }
 
             // test mort par accident 1/100 si age > agerandom
             ageRandom = getRandom(100);
-            probabilite = getRandom(1000);
-            if ((probabilite <= 50) && (this->age > ageRandom)){
-                printf("%s mort par accident\n", this->nom);
+            probabilite = getRandom(PROBA_ACCIDENT * PROBA_ACCIDENT);
+            if ((probabilite <= PROBA_ACCIDENT) && (this->age > ageRandom)){
+                printf("*************************************\n");
+                printf("%s mort par accident\n", this->getNomComplet());
+                printf("*************************************\n");
                 this-> deces();
+                return;
             }
 
             // test candidats au mariage
             // recherche d'un homme celibataire ou veuf
-            for (int i = 1 ; i < indexHumain ; i++){
-                ptr = listeHumains[i];
-                if ((ptr->getGenreTexte()[0] == 'H') && (ptr->getAge() >= 20)){
-                    if ((ptr->getStatus() == 'C') || (ptr->getStatus() == 'V')){
-                        // candidat potentiel au mariage
-                        //printf("%s est candidat au mariage\n", ptr->nom);
-                        // recherche partenaire
-                        for (int j = 0 ; j < indexHumain ; j++){
-                            ptr1 = listeHumains[j];
-                            if ((ptr1->getGenreTexte()[0] == 'F') && (ptr1->getAge() >= 20)){
-                                if ((ptr1->getStatus() == 'C') || (ptr1->getStatus() == 'V')){
-                                    // candidate potentielle au mariage
-                                    //printf("%s est candidate au mariage\n", ptr1->nom);
-                                    int differenceAge = abs(ptr->getAge() - ptr1->getAge());
-                                    if (abs(ptr->getAge() - ptr1->getAge()) > 5){
-                                        //printf("mariage impossible a cause de la difference d'age\n");
-                                    } else {
-                                        if ((rand() % 3) == 0){
-                                            // 1 chance sur 3 qu'elle accepte
-                                            ptr1->mariage(ptr);
-                                        }else {
-                                            //printf("mariage refuse\n");
-                                        }
+            if ((this->getGenreTexte()[0] == 'H') && (this->getAge() >= AGE_DEBUT_MARIAGE)){
+                if ((this->getStatus() == 'C') || (this->getStatus() == 'V')){
+                    // candidat potentiel au mariage
+                    //printf("%s est candidat au mariage\n", this->nom);
+                    // recherche partenaire
+                    for (int j = 0 ; j < indexHumain ; j++){
+                        ptr1 = listeHumains[j];
+                        if ((ptr1->getGenreTexte()[0] == 'F') && (ptr1->getAge() >= AGE_DEBUT_MARIAGE)){
+                            if ((ptr1->getStatus() == 'C') || (ptr1->getStatus() == 'V')){
+                                // candidate potentielle au mariage
+                                //printf("%s est candidate au mariage\n", ptr1->nom);
+                                int differenceAge = abs(this->getAge() - ptr1->getAge());
+                                if (abs(this->getAge() - ptr1->getAge()) > DIFF_AGE_MARIAGE){
+                                    //printf("mariage impossible a cause de la difference d'age\n");
+                                } else {
+                                    if ((rand() % PROBA_MARIAGE) == 0){
+                                        // 1 chance sur n qu'elle accepte
+                                        ptr1->mariage(this);
+                                        return;
+                                    }else {
+                                        //printf("mariage refuse\n");
                                     }
                                 }
                             }
@@ -452,37 +479,36 @@ void Humain::vieillir(void){
             }
 
             // test generation d'une naissance
-            ptr = NULL;
             ptr1 = NULL;
-            for (int i = 0 ; i < indexHumain ; i++){
-                ptr = listeHumains[i];
-                if (ptr->getGenreTexte()[0] == 'H'){
-                    if (ptr->conjoint != NULL){
-                        ptr1 = ptr->conjoint;
-                        printf("teste compatibilite naissance entre %s %s et %s %s\n", ptr->getPrenom(), ptr->getNom(), ptr1->getPrenom(), ptr1->getNom());
-                        if ((ptr->getAge() > 25) && (ptr1->getAge() > 25)){
-                            printf("Les deux parents ont + 25 ans\n");
-                            if ((ptr->getAge() < 40) && (ptr1->getAge() < 40)){
-                                printf("Les deux parents ont - 40 ans\n");
-                                printf("%s et %s sont les futurs parents\n", ptr->getNomComplet(), ptr1->getNomComplet());
-                                char newPrenom[25];
-                                int genreEnfant = rand()%1 + 1;
-                                switch (genreEnfant){
-                                    case HOMME:
-                                        printf("%s et %s ont un fils\n", ptr->getNomComplet(), ptr1->getNomComplet());
-                                        strcpy(newPrenom,getPrenomMasculin());
-                                        break;
-                                    case FEMME:
-                                        printf("%s et %s ont une fille\n", ptr->getNomComplet(), ptr1->getNomComplet());
-                                        strcpy(newPrenom,getPrenomFeminin());
-                                        break;
-                                    default:
-                                        printf("ERREUR : genre de l'enfant inconuu (%d)\n", genreEnfant);
-                                        break;
-                                }
-                                //printf("prenom de l'enfant : ");
-                                //scanf("%s", saisie);
-                                ptr->naissance(genreEnfant, ptr->nom, newPrenom);
+            if (this->getGenreTexte()[0] == 'H'){
+                if (this->conjoint != NULL){
+                    ptr1 = this->conjoint;
+                    //printf("teste compatibilite naissance entre %s et %s\n", this->getNomComplet(), ptr1->getNomComplet());
+                    if ((this->getAge() > AGE_DEBUT_NAISSANCE) && (ptr1->getAge() > AGE_DEBUT_NAISSANCE)){
+                        //printf("Les deux parents ont + 25 ans\n");
+                        if ((this->getAge() < AGE_FIN_NAISSANCE) && (ptr1->getAge() < AGE_FIN_NAISSANCE)){
+                            //printf("Les deux parents ont - 40 ans\n");
+                            //printf("%s et %s sont les futurs parents\n", this->getNomComplet(), ptr1->getNomComplet());
+                            char newPrenom[25];
+                            int genreEnfant = getRandomGenre();
+                            switch (genreEnfant){
+                                case HOMME:
+                                    //printf("%s et %s ont un fils\n", this->getNomComplet(), ptr1->getNomComplet());
+                                    strcpy(newPrenom,getPrenomMasculin());
+                                    break;
+                                case FEMME:
+                                    //printf("%s et %s ont une fille\n", this->getNomComplet(), ptr1->getNomComplet());
+                                    strcpy(newPrenom,getPrenomFeminin());
+                                    break;
+                                default:
+                                    printf("ERREUR : genre de l'enfant inconuu (%d)\n", genreEnfant);
+                                    break;
+                            }
+                            //printf("prenom de l'enfant : ");
+                            //scanf("%s", saisie);
+                            if ((rand() % 5) == 0){ // 1 chance sur 5 d'avoir un enfant cette annee
+                                this->naissance(genreEnfant, this->nom, newPrenom);
+                                return;
                             }
                         }
                     }
@@ -490,8 +516,8 @@ void Humain::vieillir(void){
             }
         }
     } else {
-        // dieu genere des naissance s'il n'y a moins de 4 Humains
-        if(indexHumain < 15){
+        // dieu genere des naissance s'il n'y plus assez d'humais
+        if(getNbVivants() < 15){
             enfantDieu child = getRandomEnfant();
             printf("enfant genere automatiquement par dieu (%s %s,%d)\n", child.nom, child.prenom, child.genre);
             this->naissance(child.genre, child.nom, child.prenom);

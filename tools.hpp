@@ -18,5 +18,6 @@
     extern void afficheListeHumains(void);
     extern char *getPrenomMasculin(void);
     extern char *getPrenomFeminin(void);
+    extern int getRandomGenre();
 
 #endif

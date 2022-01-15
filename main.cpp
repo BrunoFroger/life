@@ -10,9 +10,23 @@
 #include "variables.hpp"
 #include "statistiques.hpp"
 #include "tools.hpp"
+#include "entreprise.hpp"
 
 Humain *ptr = NULL;
 Humain *ptr1 = NULL;
+bool fin = false;
+char nom[50];
+char parent[50], enfant[50];
+char pere[50], mere[50];
+char genre;
+bool trouve;
+char nomFichier[50];
+bool listeAuto=true;
+bool statAuto=true;
+bool menuOnOff=false;
+int nb_valeurs = 10;
+int valeur_basse = 0;
+int valeur_haute = 100;
 
 void chargeFichier(FILE *file){
     printf("lancement de la boucle de lecture du fichier\n");
@@ -30,12 +44,41 @@ void chargeFichier(FILE *file){
     fclose(file);
 }
 
+void afficheMenu(void){
+    printf("--------------------------------\n");
+    printf("   boucle d'evolution\n");
+    printf("  1 : affichage arbre genealogique global\n");
+    printf("  2 : affichage infos d'une personne\n");
+    printf("  3 : mariage\n");
+    printf("  4 : naissance\n");
+    printf("  5 : liste des humains crees\n");
+    printf("  6 : statistiques\n");
+    printf("  a : affiche liste auto %d\n", listeAuto);
+    printf("  b : affiche stat auto %d\n", statAuto);
+    printf("  c : charge population depuis le disque\n");
+    printf("  d : affiche seulement les vivants %d\n", vivantsSeulement);
+    printf("  e : liste des comptes bancaires\n");
+    printf("  f : liste des entreprises\n");
+    printf("  m : meu On/Off %d\n", menuOnOff);
+    printf("  s : sauvegarde des donnees sur disque\n");
+    printf("  v : faire vieillir la population d'un an\n");
+    printf("  q : quitte le programme\n");
+    printf("  z : test generateur de nombre aleatoire\n");
+    printf("  ? : affiche ce menu\n");
+    printf("  > ");
+}
+
 int main(int argc, char **argv)
 {
     printf("Debut du programme %s\n", argv[0]);
     // creation d'un humain
     printf("creation de dieu\n");
     Humain *dieu = new Humain(HOMME, "dieu", "", 0);
+    printf("creation de l'entreprise de production alimentaire\n");
+    Entreprise *usineProdAliments = new Entreprise("supermarche", PROD_NOURITURE, dieu);
+    usineProdAliments->addProduit("nourriture", 10, 10);
+    usineProdAliments->addProduit("vetements", 20, 10);
+
     
     /*
     Humain *adam = dieu->naissance(HOMME, "adam");
@@ -62,32 +105,11 @@ int main(int argc, char **argv)
     }
 
     // boucle d'evolution
-    bool fin = false;
-    char nom[50];
-    char parent[50], enfant[50];
-    char pere[50], mere[50];
-    char genre;
-    bool trouve;
-    char nomFichier[50];
-    bool listeAuto=true;
-    bool statAuto=true;
     FILE *file;
     while (!fin){
-        printf("--------------------------------\n");
-        printf("   boucle d'evolution\n");
-        printf("  1 : affichage arbre genealogique global\n");
-        printf("  2 : affichage infos d'une personne\n");
-        printf("  3 : mariage\n");
-        printf("  4 : naissance\n");
-        printf("  5 : liste des humains crees\n");
-        printf("  6 : statistiques\n");
-        printf("  a : affiche liste auto %d\n", listeAuto);
-        printf("  b : affiche stat auto %d\n", statAuto);
-        printf("  c : charge population depuis le disque\n");
-        printf("  s : sauvegarde des donnees sur disque\n");
-        printf("  v : faire vieillir la population d'un an\n");
-        printf("  q : quitte le programme\n");
-        printf("  > ");
+        if (menuOnOff){
+            afficheMenu();
+        }
         int car = getchar();
         switch(car){
             case '1': // descendance personne
@@ -205,11 +227,11 @@ int main(int argc, char **argv)
             case '6' : // statistiques
                 statistiques();
                 break;
-            case 'b' : // bascule affiche liste automatiquement
-                statAuto = !statAuto;
-                break;
             case 'a' : // bascule affiche liste automatiquement
                 listeAuto = !listeAuto;
+                break;
+            case 'b' : // bascule affiche liste automatiquement
+                statAuto = !statAuto;
                 break;
             case 'c': // chargement d'un fichier de données
                 printf("nom du fichier de charger : ");
@@ -220,6 +242,19 @@ int main(int argc, char **argv)
                 } else {
                     printf("Impossible d'ouvrir %s\n", nomFichier);
                 }
+                break;
+            case 'd' : // bascule affiche vivants seulement
+                vivantsSeulement = !vivantsSeulement;
+                printf("affichage des vivants seulement : %d\n", vivantsSeulement);
+                break;
+            case 'e' : // bascule affiche liste des comptes bancaires
+                afficheListeComptesBancaires();
+                break;
+            case 'f' : // bascule affiche liste des comptes bancaires
+                afficheListeEntreprises();
+                break;
+            case 'm' : // bascule affiche meno on off
+                menuOnOff = !menuOnOff;
                 break;
             case 's': // sauvegarde d'un fichier de données
                 printf("nom du fichier de sauvegarde : ");
@@ -247,8 +282,22 @@ int main(int argc, char **argv)
             case 'q': // quitter
                 fin=true;
                 break;
+            case 'z': // test generateur de nombre aleatoire
+            printf("valeur basse : "); scanf("%d", &valeur_basse);
+            printf("valeur haute : "); scanf("%d", &valeur_haute);
+                printf("test generateur de nombre aleatoire sur %d valeurs entre %d et %d\n", nb_valeurs, valeur_basse, valeur_haute);
+                for (int i = 0 ; i < nb_valeurs ; i++){
+                    printf("%d\t", getRandom(valeur_haute - valeur_basse) + valeur_basse);
+                }
+                printf("\n");
+                break;
+            case '?': // affichage du menu
+                afficheMenu();
+                break;
+            case '\n':
+                break;
             default:
-                printf("commande inconnue\n");
+            printf("%c est pas une commande connue (? pour liste des commandes disponibles\n", car);
                 break;
         }
         if (car != 10) car = getchar(); // suppression du retour chariot

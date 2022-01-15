@@ -8,6 +8,7 @@
 #define __HUMAIN__
 
     #include <string>
+    #include "entreprise.hpp"
 
     // genre humain
     #define HOMME 1
@@ -23,6 +24,8 @@
     #define VEUF        3
     #define MORT        4
 
+    class Entreprise;
+    class CompteBancaire;
 
     class Humain{
 
@@ -51,6 +54,8 @@
             char *getGenreTexte();
             bool addEnfant(Humain *enfant);
             void vieillir(void);
+            int getSoldeBancaire(void);
+            char *getEmployeur(void);
 
         private :
             int id;
@@ -67,6 +72,8 @@
             Humain *enfants[MAX_ENFANTS];
             void descendance(int level);
             void setGenreTexte();
+            Entreprise *employeur;
+            CompteBancaire *compteBancaire;
     };
 
 #endif

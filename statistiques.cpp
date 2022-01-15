@@ -77,7 +77,7 @@ void statistiques(void){
     printf("+---------------------------------------------------+\n");
     printf("|                statistiques                       |\n");
     printf("+-------------------+---------------+---------------+\n");
-    printf("+        Item       +    nb total   +   nb vivants  +\n");
+    printf("|        Item       +    nb total   +   nb vivants  |\n");
     printf("+-------------------+---------------+---------------+\n");
     printf("| population totale |  %5d        |  %5d        |\n", indexHumain - 1, nbVivants);
     printf("| nb hommes         |  %5d        |  %5d        |\n", nbHommes, nbHommesVivants);
@@ -87,6 +87,8 @@ void statistiques(void){
     printf("| nb divorces       |  %5d        |               |\n", nbDivorces);
     printf("| nb veufs          |  %5d        |               |\n", nbveufs);
     printf("| nb morts          |  %5d        |               |\n", nbMorts);
+    printf("| nb entreprises    |  %5d        |               |\n", nbEntreprises);
+    printf("| nb cpt bancaires  |  %5d        |               |\n", nbComptesBancaires);
     printf("+-------------------+---------------+---------------+\n");
     printf("|        repartition par age                        |\n");
     printf("+------------+------------+------------+------------+\n");

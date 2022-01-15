@@ -19,5 +19,7 @@
     extern char *getPrenomMasculin(void);
     extern char *getPrenomFeminin(void);
     extern int getRandomGenre();
+    extern void afficheListeComptesBancaires(void);
+    extern void afficheListeEntreprises(void);
 
 #endif

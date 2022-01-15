@@ -11,6 +11,7 @@
 #include "variables.hpp"
 #include "statistiques.hpp"
 #include "tools.hpp"
+#include "compteBancaire.hpp"
 
 void Humain::setGenreTexte(){
     switch(this->genre){
@@ -45,6 +46,9 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     listeHumains[indexHumain++]=this;
     //displayInfos();
     //printf("fin creation humain %s\n", nom);
+    this->employeur=NULL;
+    this->compteBancaire = new CompteBancaire(this->getNomComplet());
+    this->compteBancaire->credite(100);
 }
 
 Humain::Humain(char *datas){
@@ -237,14 +241,31 @@ int Humain::getAge(void){
     return this->age;
 }
 
+char *Humain::getEmployeur(void){
+    if (this->employeur != NULL){
+        return this->employeur->getNom();
+    }
+    return "";
+}
+
 char *Humain::getNom(void){
     return this->nom;
 }
 
 char result[50];
 char *Humain::getNomComplet(void){
+    if (strcmp(this->prenom, "") == 0){
+        return this->nom;
+    }
+    if (strcmp(this->nom, "") == 0){
+        return this->prenom;
+    }
     sprintf(result,"%s %s", this->prenom, this->nom);
     return result;
+}
+
+int Humain::getSoldeBancaire(void){
+    return this->compteBancaire->getSolde();;
 }
 
 char *Humain::getPrenom(void){
@@ -336,9 +357,9 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
         try{
             Humain *ptr;
             ptr = ::new Humain(genre, nom, prenom, 0);
-            if (strcmp(this->nom,"dieu") !=0){
+            //if (strcmp(this->nom,"dieu") !=0){
                 this->addEnfant(ptr);
-            }
+            //}
             if (this->conjoint != NULL){
                 this->conjoint->addEnfant(ptr);
             }

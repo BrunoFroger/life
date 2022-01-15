@@ -7,14 +7,16 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <string.h>
+#include <ctime>
 #include "tools.hpp"
 #include "humain.hpp"
 #include "variables.hpp"
+#include "compteBancaire.hpp"
 
 char listePrenomsHomme[][20] = {
     "Adam", "Joseph", "Pierre", "Paul", "Louis", "Vincent", "Louis",
-    "Andre", "Michel", "Jean", "Jacques", "Bernard", "Marcel",
-    "Daniel", "Roger", "Alain", "Henri", "Georges", "Nicolas"   
+    "Andre", "Michel", "Jean", "Jacques", "Bernard", "Marcel", "bernard",
+    "Daniel", "Roger", "Alain", "Henri", "Georges", "Nicolas", "jules"
 };
 char listePrenomsFemme[][20] = {
     "Eve", "Marie", "Lucie", "Janette", "Elise", "Julie", "Louise",
@@ -30,7 +32,13 @@ char listeNomFamille[][20] = {
 };
 
 int getRandom(int range){
-    return rand()%range;
+    //printf("genere nombre aleatoire entre 0 et %d\n", range);
+    srand(clock());
+    int tmp = rand() % ((range) * 10);
+    tmp /= 10;
+    return tmp;
+    //range += 1;
+    //return (rand() * 10) % range;
 }
 
 char *getPrenomMasculin(void){
@@ -88,13 +96,21 @@ enfantDieu getRandomEnfant(void){
 void afficheListeHumains(void){
     Humain *ptr;
     printf("nombres d'humains crees : %d\n", indexHumain);
-    printf("+-----------------------+-------+-------+------+--------------------------------+----------------------+----------------------+------------+\n");
-    printf("|                   nom | status| genre | age  |                       conjoint |                 pere |                 mere | nb enfants |\n");
-    printf("+-----------------------+-------+-------+------+--------------------------------+----------------------+----------------------+------------+\n");
+    printf("+-----------------------+-------+-------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
+    printf("|                   nom | status| genre | age  | solde banque |                      employeur |                       conjoint |                 pere |                 mere | nb enfants |\n");
+    printf("+-----------------------+-------+-------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
     for (int i = 0 ; i < indexHumain ; i++){
         ptr = listeHumains[i];
+        if (vivantsSeulement && (ptr->getStatus() == 'X')) {
+            //printf("on imprime pas les morts \n");
+            continue;
+        }
         char genre = ptr->getGenreTexte()[0];
         char status = ptr->getStatus();
+        char employeur[50]="";
+        if (ptr->getEmployeur() != NULL){
+            strcpy(employeur, ptr->getEmployeur());
+        }
         char conjoint[50]="";
         if (ptr->getConjoint() != NULL){
             strcpy(conjoint, ptr->getConjoint()->getNomComplet());
@@ -111,6 +127,8 @@ void afficheListeHumains(void){
         printf("   %c   |", status);
         printf("   %c   |", genre);
         printf(" %3d  |", ptr->getAge());
+        printf("    %8d  |", ptr->getSoldeBancaire());
+        printf(" %30s |", employeur);
         printf(" %30s |", conjoint);
         printf(" %20s |", pere);
         printf(" %20s |", mere);
@@ -122,6 +140,36 @@ void afficheListeHumains(void){
         }
         printf("\n");
     }
-    printf("+-----------------------+-------+-------+------+--------------------------------+----------------------+----------------------+------------+\n");
+    printf("+-----------------------+-------+-------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
     printf("\n");
+}
+
+void afficheListeComptesBancaires(void){
+    printf("+-------------------------------------------+\n");
+    printf("|      Comptes bancaires                    |\n");
+    printf("+------------------------+---------+--------+\n");
+    printf("|             nom Client | num cpt |  solde |\n");
+    printf("+------------------------+---------+--------+\n");
+    for (int i = 0 ; i < nbComptesBancaires ; i++){
+        if (listeComptesBancaires[i]->getNumCompte() != -1){
+            CompteBancaire *item = listeComptesBancaires[i];
+            printf("|   %20s |  %06d | %6d |\n", item->getNomClient(), item->getNumCompte(), item->getSolde());
+        }
+    }
+    printf("+------------------------+--------+--------+\n");
+}
+
+void afficheListeEntreprises(void){
+    printf("+----------------------------------------------------+\n");
+    printf("|      Entreprises                                   |\n");
+    printf("+------------------------+-------------+-------------+\n");
+    printf("|                   nom  |    typeProd |  nb salarie |\n");
+    printf("+------------------------+-------------+-------------+\n");
+    for (int i = 0 ; i < nbEntreprises ; i++){
+        Entreprise *item = listeEntreprises[i];
+        char typeProd[20];
+        strcpy(typeProd, item->getTypeProd());
+        printf("|   %20s |  %10s |      %6d |\n", item->getNom(), typeProd, item->getNbSalaries());
+    }
+    printf("+------------------------+-------------+-------------+\n");
 }

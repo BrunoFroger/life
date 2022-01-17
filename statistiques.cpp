@@ -14,10 +14,20 @@ int listeEnfants[NB_MAX_ENFANTS];
 int nbVivants=0;
 
 
+//-------------------------------------------
+//
+//          getNbVivants
+//
+//-------------------------------------------
 int getNbVivants(void){
     return nbVivants;
 }
 
+//-------------------------------------------
+//
+//          statistiques
+//
+//-------------------------------------------
 void statistiques(void){
 
     int nbHommes=0;

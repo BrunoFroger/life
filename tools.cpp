@@ -31,6 +31,11 @@ char listeNomFamille[][20] = {
     "Lucas", "Garnier", "Riviere", "Blanchard", "Blanc", "Duval", "Dupuis", "Moulin"
 };
 
+//-------------------------------------------
+//
+//          getRandom
+//
+//-------------------------------------------
 int getRandom(int range){
     //printf("genere nombre aleatoire entre 0 et %d\n", range);
     srand(clock());
@@ -41,24 +46,44 @@ int getRandom(int range){
     //return (rand() * 10) % range;
 }
 
+//-------------------------------------------
+//
+//          getPrenomMasculin
+//
+//-------------------------------------------
 char *getPrenomMasculin(void){
     int nbPrenomMasculin = sizeof(listePrenomsHomme) / 20;
     //printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
     return listePrenomsHomme[rand() % nbPrenomMasculin];
 }
 
+//-------------------------------------------
+//
+//          getPrenomFeminin
+//
+//-------------------------------------------
 char *getPrenomFeminin(void){
     int nbPrenomFeminin = sizeof(listePrenomsFemme) / 20;
     //printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
     return listePrenomsFemme[rand() % nbPrenomFeminin];
 }
 
+//-------------------------------------------
+//
+//          getNomFamille
+//
+//-------------------------------------------
 char *getNomFamille(void){
     int nbNomFamille = sizeof(listeNomFamille) / 20;
     //printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
     return listeNomFamille[rand() % nbNomFamille];
 }
 
+//-------------------------------------------
+//
+//          getRandomGenre
+//
+//-------------------------------------------
 int getRandomGenre(void){
     int tmp = rand() % 20;
     tmp /= 10;
@@ -66,6 +91,11 @@ int getRandomGenre(void){
     return tmp;
 }
 
+//-------------------------------------------
+//
+//          getRandomEnfant
+//
+//-------------------------------------------
 enfantDieu child;
 enfantDieu getRandomEnfant(void){
 
@@ -93,6 +123,11 @@ enfantDieu getRandomEnfant(void){
     return child;
 }
 
+//-------------------------------------------
+//
+//          afficheListeHumains
+//
+//-------------------------------------------
 void afficheListeHumains(void){
     Humain *ptr;
     printf("nombres d'humains crees : %d\n", indexHumain);
@@ -144,6 +179,11 @@ void afficheListeHumains(void){
     printf("\n");
 }
 
+//-------------------------------------------
+//
+//          afficheListeComptesBancaires
+//
+//-------------------------------------------
 void afficheListeComptesBancaires(void){
     printf("+-------------------------------------------+\n");
     printf("|      Comptes bancaires                    |\n");
@@ -159,6 +199,11 @@ void afficheListeComptesBancaires(void){
     printf("+------------------------+--------+--------+\n");
 }
 
+//-------------------------------------------
+//
+//          afficheListeEntreprises
+//
+//-------------------------------------------
 void afficheListeEntreprises(void){
     printf("+----------------------------------------------------+\n");
     printf("|      Entreprises                                   |\n");

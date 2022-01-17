@@ -21,13 +21,18 @@ char pere[50], mere[50];
 char genre;
 bool trouve;
 char nomFichier[50];
-bool listeAuto=true;
-bool statAuto=true;
+bool listeAuto=false;
+bool statAuto=false;
 bool menuOnOff=false;
 int nb_valeurs = 10;
 int valeur_basse = 0;
 int valeur_haute = 100;
 
+//-------------------------------------------
+//
+//          chargeFichier
+//
+//-------------------------------------------
 void chargeFichier(FILE *file){
     printf("lancement de la boucle de lecture du fichier\n");
     char ligne[500];
@@ -44,6 +49,11 @@ void chargeFichier(FILE *file){
     fclose(file);
 }
 
+//-------------------------------------------
+//
+//          afficheMenu
+//
+//-------------------------------------------
 void afficheMenu(void){
     printf("--------------------------------\n");
     printf("   boucle d'evolution\n");
@@ -67,7 +77,13 @@ void afficheMenu(void){
     printf("  ? : affiche ce menu\n");
     printf("  > ");
 }
-
+//-------------------------------------------
+//-------------------------------------------
+//
+//          main
+//
+//-------------------------------------------
+//-------------------------------------------
 int main(int argc, char **argv)
 {
     printf("Debut du programme %s\n", argv[0]);
@@ -75,10 +91,9 @@ int main(int argc, char **argv)
     printf("creation de dieu\n");
     Humain *dieu = new Humain(HOMME, "dieu", "", 0);
     printf("creation de l'entreprise de production alimentaire\n");
-    Entreprise *usineProdAliments = new Entreprise("supermarche", PROD_NOURITURE, dieu);
-    usineProdAliments->addProduit("nourriture", 10, 10);
-    usineProdAliments->addProduit("vetements", 20, 10);
-
+    Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu);
+    supermarche->addProduit("nourriture", 10, 10, 5, 2);
+    supermarche->addProduit("vetements", 20, 10, 3, 5);
     
     /*
     Humain *adam = dieu->naissance(HOMME, "adam");
@@ -275,6 +290,10 @@ int main(int argc, char **argv)
                 for (int i = 0 ; i < indexHumain ; i++){
                     ptr = listeHumains[i];
                     ptr->vieillir();
+                }
+                for (int i = 0 ; i < nbEntreprises ; i++){
+                    Entreprise *ptrEnt = listeEntreprises[i];
+                    ptrEnt->production();
                 }
                 if (listeAuto) afficheListeHumains();
                 if (statAuto) statistiques();

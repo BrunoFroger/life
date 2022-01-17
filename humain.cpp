@@ -13,6 +13,11 @@
 #include "tools.hpp"
 #include "compteBancaire.hpp"
 
+//-------------------------------------------
+//
+//          Humain::setGenreTexte
+//
+//-------------------------------------------
 void Humain::setGenreTexte(){
     switch(this->genre){
         case HOMME: 
@@ -27,6 +32,11 @@ void Humain::setGenreTexte(){
     }
 }
 
+//-------------------------------------------
+//
+//          Humain::Humain
+//
+//-------------------------------------------
 Humain::Humain(int genre, char *nom, char *prenom, int age){
     //printf("debut creation humain %s\n", nom);
     this->id=indexHumain;
@@ -51,6 +61,11 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     this->compteBancaire->credite(100);
 }
 
+//-------------------------------------------
+//
+//          Humain::Humain
+//
+//-------------------------------------------
 Humain::Humain(char *datas){
     printf("creation d'un humain a partir d'une ligne <%s>\n", datas);
     int index = 0;
@@ -148,10 +163,31 @@ Humain::Humain(char *datas){
     listeHumains[indexHumain++]=this;
 }
 
+//-------------------------------------------
+//
+//          Humain::~Humain
+//
+//-------------------------------------------
 Humain::~Humain(){
     // rien a faire pour le moment
 }
 
+//-------------------------------------------
+//
+//          Humain::estSalarie
+//
+//-------------------------------------------
+bool Humain::estSalarie(void){
+    if (this->employeur != NULL)
+        return true;
+    return false;
+}
+
+//-------------------------------------------
+//
+//          Humain::displayInfos
+//
+//-------------------------------------------
 void Humain::displayInfos(void){
     printf("\n-------------------------\n");
     printf(" infos Humain\n");
@@ -181,6 +217,11 @@ void Humain::displayInfos(void){
     printf("-------------------------\n\n");
 }
 
+//-------------------------------------------
+//
+//          Humain::mariage
+//
+//-------------------------------------------
 void Humain::mariage(Humain *conjoint){
     this->conjoint = conjoint;
     this->status=MARIE;
@@ -189,10 +230,20 @@ void Humain::mariage(Humain *conjoint){
     printf("declaration mariage de %s avec %s\n", this->getNomComplet(), conjoint->getNomComplet());
 }
 
+//-------------------------------------------
+//
+//          Humain::descendance
+//
+//-------------------------------------------
 void Humain::descendance(){
     descendance(0);
 }
 
+//-------------------------------------------
+//
+//          Humain::descendance
+//
+//-------------------------------------------
 void Humain::descendance(int level){
     if (level == 0){
         printf("-----------------------------\n");
@@ -229,18 +280,38 @@ void Humain::descendance(int level){
     }
 }
 
+//-------------------------------------------
+//
+//          Humain::getId
+//
+//-------------------------------------------
 int Humain::getId(void){
     return this->id;
 }
 
+//-------------------------------------------
+//
+//          Humain::getNbEnfants
+//
+//-------------------------------------------
 int Humain::getNbEnfants(void){
     return this->nbEnfants;
 }
 
+//-------------------------------------------
+//
+//          Humain::getAge
+//
+//-------------------------------------------
 int Humain::getAge(void){
     return this->age;
 }
 
+//-------------------------------------------
+//
+//          Humain::getEmployeur
+//
+//-------------------------------------------
 char *Humain::getEmployeur(void){
     if (this->employeur != NULL){
         return this->employeur->getNom();
@@ -248,10 +319,20 @@ char *Humain::getEmployeur(void){
     return "";
 }
 
+//-------------------------------------------
+//
+//          Humain::getNom
+//
+//-------------------------------------------
 char *Humain::getNom(void){
     return this->nom;
 }
 
+//-------------------------------------------
+//
+//          Humain::getNomComplet
+//
+//-------------------------------------------
 char result[50];
 char *Humain::getNomComplet(void){
     if (strcmp(this->prenom, "") == 0){
@@ -264,61 +345,74 @@ char *Humain::getNomComplet(void){
     return result;
 }
 
+//-------------------------------------------
+//
+//          Humain::getSoldeBancaire
+//
+//-------------------------------------------
 int Humain::getSoldeBancaire(void){
     return this->compteBancaire->getSolde();;
 }
 
+//-------------------------------------------
+//
+//          Humain::getPrenom
+//
+//-------------------------------------------
 char *Humain::getPrenom(void){
     return this->prenom;
 }
 
+//-------------------------------------------
+//
+//          Humain::getConjoint
+//
+//-------------------------------------------
 Humain *Humain::getConjoint(void){
     return this->conjoint;
-    /*
-    if (this->conjoint != NULL){
-        sprintf(result,"%s %s", this->conjoint->prenom, this->conjoint->nom);
-        return result;
-    }
-    return "";
-    */
 }
 
+//-------------------------------------------
+//
+//          Humain::getPere
+//
+//-------------------------------------------
 Humain *Humain::getPere(void){
     return this->pere;
-    /*
-    if (this->pere != NULL){
-        sprintf(result,"%s %s", this->pere->prenom, this->pere->nom);
-        return result;
-    }
-    return "";
-    */
 }
 
+//-------------------------------------------
+//
+//          Humain::getMere
+//
+//-------------------------------------------
 Humain *Humain::getMere(void){
     return this->mere;
-    /*
-    if (this->mere != NULL){
-        sprintf(result,"%s %s", this->mere->prenom, this->mere->nom);
-        return result;
-    }
-    return "";
-    */
 }
 
+//-------------------------------------------
+//
+//          Humain::getEnfant
+//
+//-------------------------------------------
 Humain *Humain::getEnfant(int index){
     return enfants[index];
-    /*
-    if (this->enfants[index] != NULL){
-        return this->enfants[index]->prenom;
-    }
-    return "";
-    */
 }
 
+//-------------------------------------------
+//
+//          Humain::getGenreTexte
+//
+//-------------------------------------------
 char *Humain::getGenreTexte(void){
     return genreTexte;
 }
 
+//-------------------------------------------
+//
+//          Humain::getStatus
+//
+//-------------------------------------------
 char Humain::getStatus(void){
     switch (this->status){
         case CELIBATAIRE:
@@ -336,6 +430,11 @@ char Humain::getStatus(void){
     }
 }
 
+//-------------------------------------------
+//
+//          Humain::addEnfant
+//
+//-------------------------------------------
 bool Humain::addEnfant(Humain *enfant){
     if (this->nbEnfants < MAX_ENFANTS){
         //printf("on ajoute l'enfant %s a %s\n", enfant->nom, this-> nom);
@@ -347,6 +446,11 @@ bool Humain::addEnfant(Humain *enfant){
     return false;
 }
 
+//-------------------------------------------
+//
+//          Humain::naissance
+//
+//-------------------------------------------
 Humain *Humain::naissance(int genre, char *nom, char *prenom){
     //printf(" %s %s donne naissance à %s\n", this->prenom, this->prenom, nom);
     if (this->nbEnfants >= MAX_ENFANTS){
@@ -390,6 +494,11 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
     return NULL;
 }
 
+//-------------------------------------------
+//
+//          Humain::deces
+//
+//-------------------------------------------
 void Humain::deces(void){
     //printf("mort de %s\n", this->nom);
     this->status=MORT;
@@ -401,6 +510,11 @@ void Humain::deces(void){
     }
 }
 
+//-------------------------------------------
+//
+//          Humain::sauve
+//
+//-------------------------------------------
 void Humain::sauve(FILE *fic){
     printf("Sauvegarde de %s\n", this->nom);
     char ligne[500];
@@ -431,6 +545,11 @@ void Humain::sauve(FILE *fic){
     fflush(fic);
 }
 
+//-------------------------------------------
+//
+//          Humain::vieillir
+//
+//-------------------------------------------
 void Humain::vieillir(void){
     Humain *ptr, *ptr1;
     if (strcmp(this->nom, "dieu") != 0){ // dieu ne vieilli pas => immortel

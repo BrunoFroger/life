@@ -56,6 +56,7 @@
             void vieillir(void);
             int getSoldeBancaire(void);
             char *getEmployeur(void);
+            bool estSalarie(void);
 
         private :
             int id;

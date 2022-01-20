@@ -118,7 +118,7 @@ enfantDieu getRandomEnfant(void){
             strcpy(child.prenom, getPrenomFeminin());
             break;
     }
-    printf("enfant retourne : %s %s (%d)\n", child.nom, child.prenom, child.genre);
+    //printf("enfant retourne : %s %s (%d)\n", child.nom, child.prenom, child.genre);
 
     return child;
 }
@@ -225,8 +225,8 @@ void afficheListeEntreprises(void){
 //
 //-------------------------------------------
 void afficheListeProduits(void){
-    printf("+-------------------------------------------------------------------+\n");
-    printf("|      produits                                                     |\n");
+    printf("+-----------------------------------------------------------------------------+\n");
+    printf("|      produits                                                               |\n");
     printf("+-----------------------+-----------------------+---------+---------+---------+\n");
     printf("|           entreprise  |       nom du produit  |    prix |  stock  | stk min |\n");
     printf("+-----------------------+-----------------------+---------+---------+---------+\n");

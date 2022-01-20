@@ -28,20 +28,21 @@ void evolution(void){
         ptrIndividu->vieillir();
         // consommation de nourriture pour vivre
         //printf("evolution ==> commande de nourriture \n");
-        char prodNourriture[20] = "nourriture";
-        Entreprise *ptrEntreprise = getProducteur(prodNourriture);
-        if (ptrEntreprise != NULL){
-            printf("evolution ==> %s commande le produit %s\n", ptrIndividu->getNomComplet(), prodNourriture);
-            if (ptrEntreprise->commande(ptrIndividu, prodNourriture, 1)){
-                int prix = ptrEntreprise->getPrix(prodNourriture);
-                if (ptrIndividu->debite(prix)){
-                    ptrEntreprise->credite(prix);
+        if (!ptrIndividu->commandeEnCours){
+            char prodNourriture[20] = "nourriture";
+            Entreprise *ptrEntreprise = getProducteur(prodNourriture);
+            if (ptrEntreprise != NULL){
+                printf("evolution ==> tentative commande de %s par %s\n", ptrIndividu->getNomComplet(), prodNourriture);
+                if (ptrEntreprise->commande(ptrIndividu, prodNourriture, 1)){
+                    printf("evolution ==> %s commande le produit %s\n", ptrIndividu->getNomComplet(), prodNourriture);
+                } else {
+                    printf("evolution ==> ERREUR : commande de %s impossible pour %s\n", prodNourriture, ptrIndividu->getNomComplet());
                 }
             } else {
-                printf("evolution ==> ERREUR : commande de %s impossible\n", prodNourriture);
+                printf("evolution ==> ERREUR : aucune entreprise ne produit (%s)\n", prodNourriture);
             }
         } else {
-            printf("evolution ==> ERREUR : aucune entreprise ne produit (%s)\n", prodNourriture);
+            printf("evolution ==>  une commande est deja en cours pour %s\n", ptrIndividu->getNomComplet());
         }
     }
 
@@ -50,7 +51,6 @@ void evolution(void){
         ptrEnt = listeEntreprises[i];
         ptrEnt->gereCommandes();
     }
-
 
     // gestion des besoins de personnel
 

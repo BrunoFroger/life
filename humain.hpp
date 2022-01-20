@@ -59,6 +59,7 @@
             bool estSalarie(void);
             bool credite(int montant);
             bool debite(int montant);
+            bool commandeEnCours;
 
         private :
             int id;

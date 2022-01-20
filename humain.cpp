@@ -59,6 +59,7 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     this->employeur=NULL;
     this->compteBancaire = new CompteBancaire(this->getNomComplet());
     this->compteBancaire->credite(100);
+    this->commandeEnCours=false;
 }
 
 //-------------------------------------------

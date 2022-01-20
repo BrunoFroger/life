@@ -8,6 +8,7 @@
 #include "variables.hpp"
 #include "entreprise.hpp"
 #include "compteBancaire.hpp"
+#include "tools.hpp"
 
 //-------------------------------------------
 //
@@ -169,14 +170,14 @@ void Entreprise::embauche(Humain *personne, int status){
 //-------------------------------------------
 void Entreprise::addProduit(char *nom, int prix, int stock, int stockMini, int coutProd){
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        if (strcmp(this->listeProduits[i].nom,"") == 0){
-            structProduit *item = &this->listeProduits[i];
+        structProduit *item = &this->listeProduits[i];
+        if (strcmp(item->nom,"") == 0){
             strcpy(item->nom, nom);
             item->prix = prix;
             item->stock = stock;
             item->stockMini = stockMini;
             item->coutFabrication = coutProd;
-            printf("Entreprise::addProduit => ajout du produit %s au prix de %d, avec un stock de %d\n", item->nom, item->prix, item->stock);
+            printf("Entreprise::addProduit => (produit n° %d) ajout du produit %s au prix de %d, avec un stock de %d\n", i, item->nom, item->prix, item->stock);
             //this->catalogue();
             return;
         }
@@ -203,24 +204,28 @@ int Entreprise::getPrix(char *produit){
 //
 //-------------------------------------------
 bool Entreprise::commande(Humain *client, char *produit, int qte){
+    printf("Entreprise::commande => debut \n");
     if (strcmp(client->getNom(),"dieu") != 0){
         printf("Entreprise::commande => tentative de commmande de %s dans entreprise %s par %s\n",
             produit, this->nom, client->getNomComplet());
         for (int i = 0 ; i < MAX_COMMANDES ; i++){
             structCommande *commande=&listeCommandes[i];
             if (commande->client == NULL){
-                printf("Entreprise::commande => traitement de la commande %s pour %s\n", produit, client->getNomComplet());
+                printf("Entreprise::commande => enregistrement de la commande %s pour %s\n", produit, client->getNomComplet());
                 commande->client = client;
                 strcpy(commande->nomProduit, produit);
                 commande->quantite = qte;
-                printf("Entreprise::commande => ..... a verifier .....\n");
+                afficheListeCommandes();
+                printf("Entreprise::commande => fin \n");
                 return true;
             }
         }
         printf("Entreprise::commande => ERREUR : commande de %s impossible pour %s\n", produit, client->getNomComplet());
+        printf("Entreprise::commande => fin \n");
         return false;
     } else {
-        printf("Dieu ne fait pas de commande\n");
+        //printf("Dieu ne fait pas de commande\n");
+        printf("Entreprise::commande => fin \n");
         return false;
     }
 }
@@ -239,7 +244,6 @@ int Entreprise::nbDisponibles(char *produit){
     return -1;
 }
 
-
 //-------------------------------------------
 //
 //          Entreprise::getProductionPossible
@@ -254,8 +258,6 @@ int Entreprise::getProductionPossible(void){
     }
     return productionPossible;
 }
-
-
 
 //-------------------------------------------
 //
@@ -390,6 +392,7 @@ bool Entreprise::debite(int montant){
 //
 //-------------------------------------------
 void Entreprise::gereCommandes(void){
+    printf("Entreprise::gereCommandes => debut \n");
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *ptrCommande = &listeCommandes[i];
         for (int i = 0 ; i < MAX_COMMANDES ; i++){
@@ -402,23 +405,30 @@ void Entreprise::gereCommandes(void){
                         // on a trouve le produit
                         structProduit *ptrProduit = &listeProduits[ii];
                         if (ptrProduit->stock > ptrCommande->quantite){
-                            printf("Entreprise::gereCommandes => Livraison possible diu produit\n");
+                            printf("Entreprise::gereCommandes => Livraison possible du produit %s a %s\n", 
+                                ptrCommande->nomProduit, ptrCommande->client->getNomComplet());
                             ptrCommande->client->debite(ptrProduit->prix);
+                            ptrCommande->client->commandeEnCours = false;
                             this->credite(ptrProduit->prix);
                             ptrProduit->stock -= ptrCommande->quantite;
                             ptrCommande->client=NULL;
                             ptrCommande->quantite=0;
                             strcpy(ptrCommande->nomProduit, "");
-                            printf("Entreprise::gereCommandes =>  .... Done .....\n");
+                            printf("Entreprise::gereCommandes => Livraison efectuee \n");
                         } else {
-                            printf("Entreprise::gereCommandes => pas assez de stock pour cette commande on lance la production de ce produit\n");
+                            printf("Entreprise::gereCommandes => pas assez de stock pour cette commande on lance la production de ce produit %s commande par %s\n",
+                                ptrCommande->nomProduit, ptrCommande->client->getNomComplet());
+                            
                             printf("Entreprise::gereCommandes =>  .... TODO .....\n");
                         }
+                        // pas la peine de continuer avec les autres produits
+                        break;
                     }
                 }
             }
         }
     }
+    printf("Entreprise::gereCommandes => fin \n");
 }
 
 //-------------------------------------------

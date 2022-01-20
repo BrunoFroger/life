@@ -94,6 +94,7 @@ int main(int argc, char **argv)
     Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu);
     supermarche->addProduit("nourriture", 2, 10, 5, 1);
     supermarche->addProduit("vetements", 10, 10, 3, 5);
+    supermarche->addProduit("boisson", 1, 10, 3, 2);
     
     /*
     Humain *adam = dieu->naissance(HOMME, "adam");

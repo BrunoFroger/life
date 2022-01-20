@@ -654,13 +654,45 @@ void Humain::vieillir(void){
                     }
                 }
             }
+
+            // gestion des achats potentiels
         }
     } else {
-        // dieu genere des naissance s'il n'y plus assez d'humais
+        // dieu genere des naissance s'il n'y pas assez d'humains
         if(getNbVivants() < 15){
             enfantDieu child = getRandomEnfant();
             printf("enfant genere automatiquement par dieu (%s %s,%d)\n", child.nom, child.prenom, child.genre);
             this->naissance(child.genre, child.nom, child.prenom);
+            //printf("fin enfant genere automatiquement par dieu \n");
         }
     }
+}
+
+//-------------------------------------------
+//
+//          Humain::credite
+//
+//-------------------------------------------
+bool Humain::credite(int montant){
+    if (montant < 0){
+        printf("ERREUR : debit impossible\n");
+        return false;
+    }
+    this->compteBancaire->credite(montant);
+    return true;
+}
+
+//-------------------------------------------
+//
+//          Humain::debite
+//
+//-------------------------------------------
+bool Humain::debite(int montant){
+    int solde = this->compteBancaire->getSolde();
+    if (solde < montant){
+        printf("ERREUR : impossible de debiter la somme de %d, solde insuffisant (%d)\n", montant, solde);
+        return false;
+    }
+    this->compteBancaire->debite(montant);
+    return true;
 }

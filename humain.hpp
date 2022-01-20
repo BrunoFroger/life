@@ -57,6 +57,8 @@
             int getSoldeBancaire(void);
             char *getEmployeur(void);
             bool estSalarie(void);
+            bool credite(int montant);
+            bool debite(int montant);
 
         private :
             int id;

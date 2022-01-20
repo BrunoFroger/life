@@ -196,7 +196,7 @@ void afficheListeComptesBancaires(void){
             printf("|   %20s |  %06d | %6d |\n", item->getNomClient(), item->getNumCompte(), item->getSolde());
         }
     }
-    printf("+------------------------+--------+--------+\n");
+    printf("+------------------------+---------+--------+\n");
 }
 
 //-------------------------------------------
@@ -217,4 +217,73 @@ void afficheListeEntreprises(void){
         printf("|   %20s |  %10s |      %6d |\n", item->getNom(), typeProd, item->getNbSalaries());
     }
     printf("+------------------------+-------------+-------------+\n");
+}
+
+//-------------------------------------------
+//
+//          afficheListeProduits
+//
+//-------------------------------------------
+void afficheListeProduits(void){
+    printf("+-------------------------------------------------------------------+\n");
+    printf("|      produits                                                     |\n");
+    printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+    printf("|           entreprise  |       nom du produit  |    prix |  stock  | stk min |\n");
+    printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+    for (int i = 0 ; i < nbEntreprises ; i++){
+        Entreprise *ptrEnt = listeEntreprises[i];
+        structProduit *ptrProduit;
+        int j=0;
+        ptrProduit = ptrEnt->getProduit(j++);
+        while (ptrProduit != NULL){
+            printf("|  %20s |  %20s |  %6d |  %6d |  %6d |\n", ptrEnt->getNom(), 
+                ptrProduit->nom, ptrProduit->prix, ptrProduit->stock, ptrProduit->stockMini);
+            ptrProduit = ptrEnt->getProduit(j++);
+        }
+    }
+    printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+}
+
+//-------------------------------------------
+//
+//          afficheListeCommandes
+//
+//-------------------------------------------
+void afficheListeCommandes(void){
+    printf("+---------------------------------------------------------------------------------+\n");
+    printf("|      commandes                                                                  |\n");
+    printf("+-----------------------+-----------------------+-----------------------+---------+\n");
+    printf("|           entreprise  |               client  |       nom du produit  |    qte  |\n");
+    printf("+-----------------------+-----------------------+-----------------------+---------+\n");
+    for (int i = 0 ; i < nbEntreprises ; i++){
+        Entreprise *ptrEnt = listeEntreprises[i];
+        structCommande *ptrCommande;
+        int j=0;
+        ptrCommande = ptrEnt->getCommande(j++);
+        while (ptrCommande != NULL){
+            printf("|  %20s |  %20s |  %20s |  %6d |\n", ptrEnt->getNom(), 
+                ptrCommande->client->getNomComplet(), ptrCommande->nomProduit, ptrCommande->quantite);
+            ptrCommande = ptrEnt->getCommande(j++);
+        }
+    }
+    printf("+-----------------------+-----------------------+-----------------------+---------+\n");
+}
+
+//-------------------------------------------
+//
+//          getProducteur
+//
+//-------------------------------------------
+Entreprise *getProducteur(char *produit){
+    //printf("getProducteur => debut\n");
+    Entreprise *ptrEntreprise;
+    for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
+        ptrEntreprise = listeEntreprises[i];
+        //printf("getProducteur => test entreprise %s\n", ptrEntreprise->getNom());
+        structProduit *ptrProduit;
+        if (ptrEntreprise->isInCatalogue(produit)){
+            return ptrEntreprise;
+        }
+    }
+    return NULL;
 }

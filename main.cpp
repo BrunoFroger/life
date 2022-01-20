@@ -11,6 +11,7 @@
 #include "statistiques.hpp"
 #include "tools.hpp"
 #include "entreprise.hpp"
+#include "evolution.hpp"
 
 Humain *ptr = NULL;
 Humain *ptr1 = NULL;
@@ -21,9 +22,6 @@ char pere[50], mere[50];
 char genre;
 bool trouve;
 char nomFichier[50];
-bool listeAuto=false;
-bool statAuto=false;
-bool menuOnOff=false;
 int nb_valeurs = 10;
 int valeur_basse = 0;
 int valeur_haute = 100;
@@ -69,6 +67,8 @@ void afficheMenu(void){
     printf("  d : affiche seulement les vivants %d\n", vivantsSeulement);
     printf("  e : liste des comptes bancaires\n");
     printf("  f : liste des entreprises\n");
+    printf("  g : liste des produits\n");
+    printf("  h : liste des commandes\n");
     printf("  m : meu On/Off %d\n", menuOnOff);
     printf("  s : sauvegarde des donnees sur disque\n");
     printf("  v : faire vieillir la population d'un an\n");
@@ -92,8 +92,8 @@ int main(int argc, char **argv)
     Humain *dieu = new Humain(HOMME, "dieu", "", 0);
     printf("creation de l'entreprise de production alimentaire\n");
     Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu);
-    supermarche->addProduit("nourriture", 10, 10, 5, 2);
-    supermarche->addProduit("vetements", 20, 10, 3, 5);
+    supermarche->addProduit("nourriture", 2, 10, 5, 1);
+    supermarche->addProduit("vetements", 10, 10, 3, 5);
     
     /*
     Humain *adam = dieu->naissance(HOMME, "adam");
@@ -268,6 +268,12 @@ int main(int argc, char **argv)
             case 'f' : // bascule affiche liste des comptes bancaires
                 afficheListeEntreprises();
                 break;
+            case 'g' : // bascule affiche liste des produits disponibles
+                afficheListeProduits();
+                break;
+            case 'h' : // bascule affiche liste des produits disponibles
+                afficheListeCommandes();
+                break;
             case 'm' : // bascule affiche meno on off
                 menuOnOff = !menuOnOff;
                 break;
@@ -286,17 +292,8 @@ int main(int argc, char **argv)
                     printf("Impossible d'ouvrir %s\n", nomFichier);
                 }
                 break;
-            case 'v': // lancement d'une evolution d'une année pour chaque humain
-                for (int i = 0 ; i < indexHumain ; i++){
-                    ptr = listeHumains[i];
-                    ptr->vieillir();
-                }
-                for (int i = 0 ; i < nbEntreprises ; i++){
-                    Entreprise *ptrEnt = listeEntreprises[i];
-                    ptrEnt->production();
-                }
-                if (listeAuto) afficheListeHumains();
-                if (statAuto) statistiques();
+            case 'v': // lancement d'une evolution d'une année pour chaque humain/entreprise
+                evolution();
                 break;
             case 'q': // quitter
                 fin=true;

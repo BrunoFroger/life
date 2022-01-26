@@ -24,6 +24,7 @@
     extern void afficheListeEntreprises(void);
     extern void afficheListeProduits(void);
     extern void afficheListeCommandes(void);
-    extern Entreprise *getProducteur(char *produit)
-;
+    extern Entreprise *getProducteur(char *produit);
+    extern char *getstringBoolean(bool val);
+    
 #endif

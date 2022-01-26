@@ -38,8 +38,8 @@ void chargeFichier(FILE *file){
         ligne[0] = '\0';
         fgets(ligne, 500, file);
         printf("-----------------\n");
-        printf("analyse de la ligne %s\n", ligne);
         if (strlen(ligne) > 0){
+            printf("analyse de la ligne %s\n", ligne);
             ptr = new Humain(ligne);
             printf("%s ajouté en pos %d\n", ptr->getNom(), indexHumain);
         }
@@ -68,15 +68,23 @@ void afficheMenu(void){
     printf("  e : liste des comptes bancaires\n");
     printf("  f : liste des entreprises\n");
     printf("  g : liste des produits\n");
-    printf("  h : liste des commandes\n");
-    printf("  m : meu On/Off %d\n", menuOnOff);
+    printf("  h : liste des commandes en cours\n");
+    printf("  m : menu On/Off %d\n", menuOnOff);
     printf("  s : sauvegarde des donnees sur disque\n");
     printf("  v : faire vieillir la population d'un an\n");
     printf("  q : quitte le programme\n");
     printf("  z : test generateur de nombre aleatoire\n");
+    printf("  A : stats : affiche infos Humains %s\n", getstringBoolean(display_stat_humain));
+    printf("  B : stats : affiche infos variables %s\n", getstringBoolean(display_stat_variables));
+    printf("  C : stats : affiche infos comptes bancaires %s\n", getstringBoolean(display_stat_cptBanque));
+    printf("  D : stats : affiche infos entreprises %s\n", getstringBoolean(display_stat_entreprises));
+    printf("  E : stats : affiche infos produits des entreprises %s\n", getstringBoolean(display_stat_produits));
+    printf("  G : stats : affiche infos salaries des entreprises %s\n", getstringBoolean(display_stat_salaries));
+    printf("  F : stats : affiche infos commandes en cours %s\n", getstringBoolean(display_stat_commandes));
     printf("  ? : affiche ce menu\n");
     printf("  > ");
 }
+
 //-------------------------------------------
 //-------------------------------------------
 //
@@ -97,15 +105,15 @@ int main(int argc, char **argv)
     supermarche->addProduit("boisson", 1, 10, 3, 2);
     
     /*
-    Humain *adam = dieu->naissance(HOMME, "adam");
-    Humain *pierre = adam->naissance(HOMME, "pierre");
-    Humain *eve = dieu->naissance(FEMME, "eve");
-    Humain *paul = eve->naissance(HOMME, "paul");
+    Humain *adam = dieu->naissance(HOMME, "martin", "adam");
+    Humain *pierre = adam->naissance(HOMME, "martin", "pierre");
+    Humain *eve = dieu->naissance(FEMME, "dupond", "eve");
+    Humain *paul = eve->naissance(HOMME, "dupond", "paul");
     adam->mariage(eve);
-    Humain *marie = adam->naissance(FEMME, "marie");
-    Humain *joseph = adam->naissance(HOMME, "joseph");
-    Humain *jesus = marie->naissance(HOMME, "jesus");
-    dieu->descendance();
+    Humain *marie = adam->naissance(FEMME, "martin", "marie");
+    Humain *joseph = adam->naissance(HOMME, "martin", "joseph");
+    Humain *jesus = marie->naissance(HOMME, "martin", "jesus");
+    //dieu->descendance();
     */
     
 
@@ -123,9 +131,6 @@ int main(int argc, char **argv)
     // boucle d'evolution
     FILE *file;
     while (!fin){
-        if (menuOnOff){
-            afficheMenu();
-        }
         int car = getchar();
         switch(car){
             case '1': // descendance personne
@@ -308,10 +313,34 @@ int main(int argc, char **argv)
                 }
                 printf("\n");
                 break;
+            case 'A' : // bascule stat affihe humains
+                display_stat_humain = !display_stat_humain;
+                break;
+            case 'B' : // bascule stat affihe variables
+                display_stat_variables = !display_stat_variables;
+                break;
+            case 'C' : // bascule stat affihe comptes bancaires
+                display_stat_cptBanque = !display_stat_cptBanque;
+                break;
+            case 'D' : // bascule stat affihe liste entreprises
+                display_stat_entreprises = !display_stat_entreprises;
+                break;
+            case 'E' : // bascule stat affihe liste des produits par entreprises
+                display_stat_produits = !display_stat_produits;
+                break;
+            case 'F' : // bascule stat affihe liste salaries par entreprises
+                display_stat_salaries = !display_stat_salaries;
+                break;
+            case 'G' : // bascule stat affihe liste commandes en cours
+                display_stat_commandes = !display_stat_commandes;
+                break;
             case '?': // affichage du menu
                 afficheMenu();
                 break;
             case '\n':
+                if (listeAuto) afficheListeHumains();
+                if (statAuto) statistiques();
+                if (menuOnOff) afficheMenu();
                 break;
             default:
             printf("%c est pas une commande connue (? pour liste des commandes disponibles\n", car);

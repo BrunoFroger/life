@@ -21,14 +21,23 @@
     #define PROD_VOITURE    3
 
     #define MAX_SALARIE     50
+    #define AGE_DEBUT_ACTIVITE    20
+    #define AGE_RETRAITE    65
 
     #define EMPLOYE     1
+    #define EMPLSUPP    4
     #define CADRE       2
     #define PATRON      3
 
     #define SALAIRE_DEBUT_EMPLOYE   100
-    #define SALAIRE_DEBUT_CADRE     150
-    #define SALAIRE_DEBUT_PATRON    300
+    #define SALAIRE_DEBUT_EMPLSUPP  150
+    #define SALAIRE_DEBUT_CADRE     200
+    #define SALAIRE_DEBUT_PATRON    400
+
+    #define PRODUCTIVITE_EMPLOYE    10
+    #define PRODUCTIVITE_EMPLSUPP   15
+    #define PRODUCTIVITE_CADRE      3
+    #define PRODUCTIVITE_PATRON     1
 
     class Humain;
 
@@ -70,12 +79,15 @@
             char *getTypeProd(void);
             int getNbSalaries(void);
             void gereCommandes(void);
-            void recrutement(int typeRecrutement);
+            void gereRecrutement(int typeRecrutement);
             bool isInCatalogue(char *produit);
             structProduit *getProduit(int index);
             structCommande *getCommande(int index);
             bool credite(int montant);
             bool debite(int montant);
+            int getQuantiteAProduire(structProduit *produit);
+            structSalarie *getSalarie(int index);
+            
 
         private:
             char nom[50];

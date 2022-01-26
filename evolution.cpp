@@ -60,6 +60,4 @@ void evolution(void){
         ptrEnt->production();
     }
 
-    if (listeAuto) afficheListeHumains();
-    if (statAuto) statistiques();
 }

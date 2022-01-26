@@ -1,5 +1,10 @@
 TODO
 
-- deces d'un Humain
+- bug dans restauration de donnees 
+    - pointeurs vers pere, mere, conjoint impossible a mettre a jouir duy fait que les humains ne sont pas encore créés.
 
-- gerer le doublons de nom
+
+- gerer la fabricaiton quand il y a trop de commandes en cours stock < stock mini
+- recruter quand capacite de production trop faible
+- licencier si plus assez d'argent dans une entreprise pour payer les salaires
+- gerer la retraite

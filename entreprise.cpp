@@ -136,15 +136,19 @@ void Entreprise::embauche(Humain *personne, int status){
             switch(status){
                 case EMPLOYE:
                     ptrSalarie->remuneration = SALAIRE_DEBUT_EMPLOYE;
-                    ptrSalarie->productivite = 10;
+                    ptrSalarie->productivite = PRODUCTIVITE_EMPLOYE;
+                    break;
+                case EMPLSUPP:
+                    ptrSalarie->remuneration = SALAIRE_DEBUT_EMPLSUPP;
+                    ptrSalarie->productivite = PRODUCTIVITE_EMPLSUPP;
                     break;
                 case CADRE:
                     ptrSalarie->remuneration = SALAIRE_DEBUT_CADRE;
-                    ptrSalarie->productivite = 3;
+                    ptrSalarie->productivite = PRODUCTIVITE_CADRE;
                     break;
                 case PATRON:
                     ptrSalarie->remuneration = SALAIRE_DEBUT_PATRON;
-                    ptrSalarie->productivite = 1;
+                    ptrSalarie->productivite = PRODUCTIVITE_PATRON;
                     break;
                 default:
                     printf("Entreprise::embauche => embauche : Status %d incorrect pour %s\n", status, personne->getNomComplet());
@@ -261,6 +265,23 @@ int Entreprise::getProductionPossible(void){
 
 //-------------------------------------------
 //
+//          Entreprise::getQuantiteAProduire
+//
+//-------------------------------------------
+int Entreprise::getQuantiteAProduire(structProduit *produit){
+    int quantiteAProduire = produit->stockMini - produit->stock;
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        structCommande *ptrCommande = &listeCommandes[i];
+        if (strcmp(produit->nom, ptrCommande->nomProduit) == 0){
+            quantiteAProduire += ptrCommande->quantite;
+        }
+    }
+    //printf("Entreprise::getQuantiteAProduire => la quantite a produire est de %d\n", quantiteAProduire);
+    return quantiteAProduire;
+}
+
+//-------------------------------------------
+//
 //          Entreprise::production
 //
 //-------------------------------------------
@@ -279,7 +300,21 @@ void Entreprise::production(void){
         if (strlen(produit.nom) != 0){
             if (produit.stock <= produit.stockMini){
                 printf("Entreprise::production => Il faut fabriquer du produit %s\n", produit.nom);
-                printf("Entreprise::production => ..... TODO .....\n");
+                // determination quantité a produire
+                int quantiteAProduire = getQuantiteAProduire(&produit);
+                if (quantiteAProduire > productionPossible){
+                    printf("Entreprise::production => %d %s en commande avec %d possible a produire\n", 
+                        quantiteAProduire, produit.nom, productionPossible);
+                    printf("Entreprise::production => Il faut recruter %d unite de production\n", quantiteAProduire - productionPossible);
+                    printf("Entreprise::production => ..... TODO .....\n");
+                }
+                printf("Entreprise::production => lancement de la production avec %d ressources disponible", productionPossible);
+                for (int ii = 0 ; ii < MAX_SALARIE ; ii++){
+                    structSalarie *salarie = &listeSalarie[ii];
+                    if (salarie->salarie != NULL){
+                        printf("Entreprise::production => ");
+                    }
+                }
             }
         }
     }
@@ -339,6 +374,19 @@ void Entreprise::listeSalaries(void){
 structProduit *Entreprise::getProduit(int index){
     if (strcmp(listeProduits[index].nom,"") != 0){
         return &listeProduits[index];
+    } else {
+        return NULL;
+    }
+}
+
+//-------------------------------------------
+//
+//          Entreprise::getSalarie
+//
+//-------------------------------------------
+structSalarie *Entreprise::getSalarie(int index){
+    if (strcmp(listeSalarie[index].salarie->getNomComplet(),"") != 0){
+        return &listeSalarie[index];
     } else {
         return NULL;
     }
@@ -436,7 +484,7 @@ void Entreprise::gereCommandes(void){
 //          Entreprise::recrutement
 //
 //-------------------------------------------
-void Entreprise::recrutement(int typeRecrutement){
+void Entreprise::gereRecrutement(int typeRecrutement){
     printf("Analyse si besoin de recruter des salariés\n");
     for (int i = 0 ; i< MAX_PRODUITS ; i++){
         structProduit *ptrProduit = &listeProduits[i];
@@ -451,14 +499,15 @@ void Entreprise::recrutement(int typeRecrutement){
                         if (ptrHumain != NULL){
                             // on verifie si cette personne est employable
                             if ( (ptrHumain->getStatus() != MORT) &&
-                                (ptrHumain->getAge() > 20) &&
-                                (ptrHumain->getAge() < 65 ) &&
+                                (ptrHumain->getAge() > AGE_DEBUT_ACTIVITE) &&
+                                (ptrHumain->getAge() < AGE_RETRAITE ) &&
                                 (ptrHumain->getEmployeur() != NULL) ){
                                 // cette personne est disponible pour etre embauchée
+                                if ()
                                 embauche(ptrHumain, typeRecrutement);
                                 if (nbEmployes > nbCadres * 20) {
                                     // trop de salaries, il faut recruter un cadre
-                                    recrutement(CADRE);
+                                    gereRecrutement(CADRE);
                                 } 
                             }
                         }

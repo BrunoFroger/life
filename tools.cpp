@@ -31,6 +31,16 @@ char listeNomFamille[][20] = {
     "Lucas", "Garnier", "Riviere", "Blanchard", "Blanc", "Duval", "Dupuis", "Moulin"
 };
 
+
+//-------------------------------------------
+//
+//          getstringBoolean
+//
+//-------------------------------------------
+char *getstringBoolean(bool val){
+    if (val) return "true";
+    return "false";
+}
 //-------------------------------------------
 //
 //          getRandom

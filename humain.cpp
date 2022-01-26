@@ -81,68 +81,70 @@ Humain::Humain(char *datas){
         } else {
             printf("<%s>",tmp);
             switch(cpt++){
-                case 0: // id
+                case 0: // string humain
+                    break;
+                case 1: // id
                     this->id=atoi(tmp);
                     printf("id = %d\n", this->id);
                     break;
-                case 1: // nom
+                case 2: // nom
                     strcpy(this->nom,tmp);
                     printf("nom = %s\n", this->nom);
                     break;
-                case 2: // prenom
+                case 3: // prenom
                     strcpy(this->prenom,tmp);
                     printf("prenom = %s\n", this->prenom);
                     break;
-                case 3: // genre
+                case 4: // genre
                     this->genre=atoi(tmp);
                     setGenreTexte();
                     printf("genre = %s\n", this->genreTexte);
                     break;
-                case 4: // age
+                case 5: // age
                     this->age=atoi(tmp);
                     printf("age = %d\n", this->age);
                     break;
-                case 5: // nbEnfants
+                case 6: // nbEnfants
                     this->nbEnfants=0;
                     printf("nbEnfants = %d\n", this->nbEnfants);
                     break;
-                case 6: // status
+                case 7: // status
                     this->status=atoi(tmp);
                     printf("status = %d\n", this->status);
                     break;
-                case 7: // conjoint
+                case 8: // conjoint
                     printf("conjoint = %s\n", tmp);
                     if (strcmp(tmp,"") != 0){
                         //printf("initialisation du conjoint\n");
                         for (int i = 0 ; i < indexHumain ; i++){
                             ptr = listeHumains[i];
-                            if (strcmp(ptr->nom, tmp) == 0){
+                            if (ptr->getId() == atoi(tmp)){
                                 this->conjoint = ptr;
                                 this->conjoint->conjoint = this;
                             }
                         }
                     }
                     break;
-                case 8: // pere
+                case 9: // pere
                     printf("pere = %s\n", tmp);
                     if (strcmp(tmp,"") != 0){
                         //printf("initialisation du pere\n");
                         for (int i = 0 ; i < indexHumain ; i++){
                             ptr = listeHumains[i];
-                            if (strcmp(ptr->nom, tmp) == 0){
+                            if (ptr->getId() == atoi(tmp)){
                                 this->pere = ptr;
                                 ptr->addEnfant(this);
                             }
                         }
                     }
                     break;
-                case 9: // mere
+                case 10: // mere
                     printf("mere = %s\n", tmp);
                     if (strcmp(tmp,"") != 0){
                         //printf("initialisation de la mere\n");
                         for (int i = 0 ; i < indexHumain ; i++){
                             ptr = listeHumains[i];
-                            if (strcmp(ptr->nom, tmp) == 0){
+                            if (ptr->getId() == atoi(tmp)){
                                 this->mere = ptr;
                                 ptr->addEnfant(this);
                             }
@@ -517,26 +519,26 @@ void Humain::deces(void){
 //
 //-------------------------------------------
 void Humain::sauve(FILE *fic){
-    printf("Sauvegarde de %s\n", this->nom);
+    printf("Sauvegarde de %s\n", this->getNomComplet());
     char ligne[500];
     char tmp[500];
-    char thisPere[50], thisMere[50], thisConjoint[50];
+    int thisPere, thisMere, thisConjoint;
     for (int i = 0 ; i < indexHumain ; i++){
         // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
-        sprintf(tmp, "%d;%s;%d;%d;%d;%d", this->id, this->nom, this->genre, this->age, this->nbEnfants, this->status);
+        sprintf(tmp, "humain;%d;%s;%s;%d;%d;%d;%d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status);
         //printf("tmp = %s\n", tmp);
-        if (this->pere == NULL) strcpy(thisPere, "");
-        else strcpy(thisPere, this->pere->nom);
-        if (this->mere == NULL) strcpy(thisMere, "");
-        else strcpy(thisMere, this->mere->nom);
-        if (this->conjoint == NULL) strcpy(thisConjoint, "");
-        else strcpy(thisConjoint, this->conjoint->nom);
-        sprintf(ligne, "%s;%s;%s;%s;", tmp, thisConjoint, thisPere, thisMere);
+        if (this->pere == NULL) thisPere = -1;
+        else thisPere = this->pere->getId();
+        if (this->mere == NULL) thisMere = -1;
+        else thisMere = this->mere->getId();
+        if (this->conjoint == NULL) thisConjoint = -1;
+        else thisConjoint = this->conjoint->getId();
+        sprintf(ligne, "%s;%d;%d;%d;", tmp, thisConjoint, thisPere, thisMere);
         //printf("ligne = %s\n", ligne);
         //printf("sauvegarde de %d enfants\n", nbEnfants);
         for (int j = 0 ; j < nbEnfants ; j++){
             //printf("sauvegarde de l'enfant %d\n", j);
-            sprintf(tmp,"%s;", this->enfants[j]->nom);
+            sprintf(tmp,"%d;", this->enfants[j]->getId());
             strcat(ligne, tmp);
         }
         strcat(ligne, "\n");

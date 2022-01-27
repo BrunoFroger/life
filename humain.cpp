@@ -53,7 +53,8 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     for (int i = 0 ; i < MAX_ENFANTS ; i++){
         this->enfants[i]=NULL;
     }
-    listeHumains[indexHumain++]=this;
+    listeHumains[indexHumain++] = this;
+    listeHumains[indexHumain] = NULL;
     //displayInfos();
     //printf("fin creation humain %s\n", nom);
     this->employeur=NULL;
@@ -68,12 +69,52 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
 //
 //-------------------------------------------
 Humain::Humain(char *datas){
-    printf("creation d'un humain a partir d'une ligne <%s>\n", datas);
+    printf("Humain::Humain => initialisation partielle d'un humain a partir d'une ligne <%s>\n", datas);
+    int index = 0;
+    int cpt = 0;
+    char tmp[50];
+    Humain *ptr;
+    int id, genre, age, status;
+    char prenom[50], nom [50], reste[100];
+    tmp[0] = '\0';
+    sscanf(datas, "humain %d %s %s %d %d", &id, prenom, nom, &genre, &age);
+    printf("Humain::Humain => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d\n", id, prenom, nom, genre, age);
+    if (this->id != id){
+        printf("Humain::Humain => ERREUR : l'id de la ligne <%s> ne correspond pas a celui de cet humain (%d)\n", datas, this->id);
+    }
+    strcpy(this->prenom, prenom);
+    strcpy(this->nom, nom);
+    this->genre = genre;
+    this->age = age;
+    return;
+}
+
+//-------------------------------------------
+//
+//          Humain::restore
+//
+//-------------------------------------------
+void Humain::restore(char *datas){
+    //printf("Humain::restore => restauration des donnees d'un humain a partir d'une ligne <%s>\n", datas);
     int index = 0;
     int cpt = 0;
     char tmp[50];
     Humain *ptr;
     tmp[0] = '\0';
+    char datas_prenom[50], datas_nom[50];
+    int datas_id, datas_genre, datas_age, datas_status, datas_idPere, datas_idMere, datas_idConjoint, datas_nbEnfants;
+
+    sscanf(datas, "humain %d %s %s %d %d %d %d %d %d %d", 
+            &datas_id, datas_prenom, datas_nom, &datas_genre, &datas_age, &datas_nbEnfants, 
+            &datas_status, &datas_idConjoint, &datas_idPere, &datas_idMere);
+    printf("Humain::restore => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, idConjoint=%d, idPere=%d, idMere=%d, nbEnfants=%d\n", 
+            datas_id, datas_prenom, datas_nom, datas_genre, datas_age, datas_status, datas_idConjoint, datas_idPere, datas_idMere, datas_nbEnfants);
+    this->nbEnfants = datas_nbEnfants;
+    this->status = datas_status;
+    printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
+            this->id, this->prenom, this->nom, this->genre, this->age, this->status, this->nbEnfants);
+    printf("Humain::restore =>  fin\n");
+    return;
     for (int i = 0 ; i < strlen(datas) ; i++){
         if (datas[i] != ';'){
             tmp[index++] = datas[i];
@@ -196,10 +237,10 @@ void Humain::displayInfos(void){
     printf(" infos Humain\n");
     printf(" genre   = %s\n", this->genreTexte);
     printf(" nom     = %s\n", this->nom);
-    printf(" prenom  = %s\n", this->nom);
+    printf(" prenom  = %s\n", this->prenom);
     printf(" age     = %d\n", this->age);
     printf(" status  = %d\n", this->status);
-    printf(" enfants = %d\n", nbEnfants);
+    printf(" enfants = %d\n", this->nbEnfants);
     if (this->status == MARIE){
         printf(" conjoint = %s\n", this->conjoint->nom);
     }
@@ -211,8 +252,8 @@ void Humain::displayInfos(void){
     }
     if (this->nbEnfants != 0){
         printf(" enfants \n");
-        for (int i = 0 ; i < nbEnfants ; i++){
-            if (this->enfants != nullptr){
+        for (int i = 0 ; i < this->nbEnfants ; i++){
+            if (this->enfants[i] != NULL){
                 printf("     %d : %s\n", i, this->enfants[i]->nom);
             }
         }
@@ -519,13 +560,13 @@ void Humain::deces(void){
 //
 //-------------------------------------------
 void Humain::sauve(FILE *fic){
-    printf("Sauvegarde de %s\n", this->getNomComplet());
+    printf("Humain::sauve => Sauvegarde de %s\n", this->getNomComplet());
     char ligne[500];
     char tmp[500];
     int thisPere, thisMere, thisConjoint;
     for (int i = 0 ; i < indexHumain ; i++){
         // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
-        sprintf(tmp, "humain;%d;%s;%s;%d;%d;%d;%d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status);
+        sprintf(tmp, "humain %d %s %s %d %d %d %d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status);
         //printf("tmp = %s\n", tmp);
         if (this->pere == NULL) thisPere = -1;
         else thisPere = this->pere->getId();
@@ -533,17 +574,17 @@ void Humain::sauve(FILE *fic){
         else thisMere = this->mere->getId();
         if (this->conjoint == NULL) thisConjoint = -1;
         else thisConjoint = this->conjoint->getId();
-        sprintf(ligne, "%s;%d;%d;%d;", tmp, thisConjoint, thisPere, thisMere);
+        sprintf(ligne, "%s %d %d %d ", tmp, thisConjoint, thisPere, thisMere);
         //printf("ligne = %s\n", ligne);
         //printf("sauvegarde de %d enfants\n", nbEnfants);
         for (int j = 0 ; j < nbEnfants ; j++){
             //printf("sauvegarde de l'enfant %d\n", j);
-            sprintf(tmp,"%d;", this->enfants[j]->getId());
+            sprintf(tmp,"%d ", this->enfants[j]->getId());
             strcat(ligne, tmp);
         }
         strcat(ligne, "\n");
     }
-    printf("Ligne a sauvegarder : %s\n", ligne);
+    printf("Humain::sauve => Ligne a sauvegarder : %s\n", ligne);
     fputs(ligne, fic);
     fflush(fic);
 }

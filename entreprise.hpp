@@ -87,6 +87,7 @@
             bool debite(int montant);
             int getQuantiteAProduire(structProduit *produit);
             structSalarie *getSalarie(int index);
+            void verseSalaires(void);
             
 
         private:

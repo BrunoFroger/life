@@ -32,18 +32,46 @@ int valeur_haute = 100;
 //
 //-------------------------------------------
 void chargeFichier(FILE *file){
-    printf("lancement de la boucle de lecture du fichier\n");
+    //printf("main:chargeFichier => lancement de la boucle de lecture du fichier\n");
     char ligne[500];
+    int id, genre, age;
+    char nom[50], prenom[50];
+    int index = 0;
     while (!feof(file)){
         ligne[0] = '\0';
         fgets(ligne, 500, file);
-        printf("-----------------\n");
+        //printf("-----------------\n");
         if (strlen(ligne) > 0){
-            printf("analyse de la ligne %s\n", ligne);
-            ptr = new Humain(ligne);
-            printf("%s ajouté en pos %d\n", ptr->getNom(), indexHumain);
+            //printf("main:chargeFichier => analyse de la ligne %s\n", ligne);
+            sscanf(ligne, "humain %d %s %s %d %d", &id, prenom, nom, &genre, &age);
+            if (id != indexHumain){
+                printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, id, index);
+            } else {
+                ptr = new Humain(genre, nom, prenom, age);
+                printf("%s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+            }
         }
     }
+    fseek(file, 0, 0);
+    while (!feof(file)){
+        ligne[0] = '\0';
+        fgets(ligne, 500, file);
+        //printf("-----------------\n");
+        if (strlen(ligne) > 0){
+            sscanf(ligne, "humain;%d", &id);
+            int j = 0;
+            ptr = listeHumains[j];
+            while (ptr->getId() != id) {
+                ptr = listeHumains[++j];
+                if (j > indexHumain){
+                    printf("ERREUR : la ligne <%s> ne reference pas un humain initialisé\n", ligne);
+                    return;
+                }
+            }
+            ptr->restore(ligne);
+        }
+    }
+
     fclose(file);
 }
 

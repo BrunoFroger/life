@@ -34,6 +34,7 @@
             Humain(int genre, char *nom, char *prenom, int age);
             Humain(char *datas);
             ~Humain();
+            void restore(char *datas);
             void sauve(FILE *fic);
             void displayInfos(void);
             void mariage(Humain *conjoint);

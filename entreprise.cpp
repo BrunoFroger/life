@@ -503,7 +503,7 @@ void Entreprise::gereRecrutement(int typeRecrutement){
                                 (ptrHumain->getAge() < AGE_RETRAITE ) &&
                                 (ptrHumain->getEmployeur() != NULL) ){
                                 // cette personne est disponible pour etre embauchée
-                                if ()
+                                //if ()
                                 embauche(ptrHumain, typeRecrutement);
                                 if (nbEmployes > nbCadres * 20) {
                                     // trop de salaries, il faut recruter un cadre

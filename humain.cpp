@@ -38,7 +38,7 @@ void Humain::setGenreTexte(){
 //
 //-------------------------------------------
 Humain::Humain(int genre, char *nom, char *prenom, int age){
-    //printf("debut creation humain %s\n", nom);
+    printf("debut creation humain %s %s en position %d\n", prenom, nom, indexHumain);
     this->id=indexHumain;
     this->genre = genre;
     setGenreTexte();
@@ -111,10 +111,14 @@ void Humain::restore(char *datas){
             datas_id, datas_prenom, datas_nom, datas_genre, datas_age, datas_status, datas_idConjoint, datas_idPere, datas_idMere, datas_nbEnfants);
     this->nbEnfants = datas_nbEnfants;
     this->status = datas_status;
+    this->id = datas_id;
     printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
             this->id, this->prenom, this->nom, this->genre, this->age, this->status, this->nbEnfants);
+    printf("Humain::restore =>  TODO : init pere, mere, conjoint, enfants\n");
     printf("Humain::restore =>  fin\n");
     return;
+
+
     for (int i = 0 ; i < strlen(datas) ; i++){
         if (datas[i] != ';'){
             tmp[index++] = datas[i];

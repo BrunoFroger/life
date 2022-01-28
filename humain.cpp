@@ -38,7 +38,7 @@ void Humain::setGenreTexte(){
 //
 //-------------------------------------------
 Humain::Humain(int genre, char *nom, char *prenom, int age){
-    printf("debut creation humain %s %s en position %d\n", prenom, nom, indexHumain);
+    //printf("debut creation humain %s %s en position %d\n", prenom, nom, indexHumain);
     this->id=indexHumain;
     this->genre = genre;
     setGenreTexte();
@@ -69,7 +69,7 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
 //
 //-------------------------------------------
 Humain::Humain(char *datas){
-    printf("Humain::Humain => initialisation partielle d'un humain a partir d'une ligne <%s>\n", datas);
+    //printf("Humain::Humain => initialisation partielle d'un humain a partir d'une ligne <%s>\n", datas);
     int index = 0;
     int cpt = 0;
     char tmp[50];
@@ -78,7 +78,7 @@ Humain::Humain(char *datas){
     char prenom[50], nom [50], reste[100];
     tmp[0] = '\0';
     sscanf(datas, "humain %d %s %s %d %d", &id, prenom, nom, &genre, &age);
-    printf("Humain::Humain => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d\n", id, prenom, nom, genre, age);
+    //printf("Humain::Humain => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d\n", id, prenom, nom, genre, age);
     if (this->id != id){
         printf("Humain::Humain => ERREUR : l'id de la ligne <%s> ne correspond pas a celui de cet humain (%d)\n", datas, this->id);
     }
@@ -107,108 +107,40 @@ void Humain::restore(char *datas){
     sscanf(datas, "humain %d %s %s %d %d %d %d %d %d %d", 
             &datas_id, datas_prenom, datas_nom, &datas_genre, &datas_age, &datas_nbEnfants, 
             &datas_status, &datas_idConjoint, &datas_idPere, &datas_idMere);
-    printf("Humain::restore => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, idConjoint=%d, idPere=%d, idMere=%d, nbEnfants=%d\n", 
-            datas_id, datas_prenom, datas_nom, datas_genre, datas_age, datas_status, datas_idConjoint, datas_idPere, datas_idMere, datas_nbEnfants);
+    //printf("Humain::restore => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, idConjoint=%d, idPere=%d, idMere=%d, nbEnfants=%d\n", 
+    //        datas_id, datas_prenom, datas_nom, datas_genre, datas_age, datas_status, datas_idConjoint, datas_idPere, datas_idMere, datas_nbEnfants);
     this->nbEnfants = datas_nbEnfants;
     this->status = datas_status;
     this->id = datas_id;
-    printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
-            this->id, this->prenom, this->nom, this->genre, this->age, this->status, this->nbEnfants);
-    printf("Humain::restore =>  TODO : init pere, mere, conjoint, enfants\n");
-    printf("Humain::restore =>  fin\n");
-    return;
-
-
-    for (int i = 0 ; i < strlen(datas) ; i++){
-        if (datas[i] != ';'){
-            tmp[index++] = datas[i];
-            tmp[index] = '\0';
-        } else {
-            printf("<%s>",tmp);
-            switch(cpt++){
-                case 0: // string humain
+    //printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
+    //        this->id, this->prenom, this->nom, this->genre, this->age, this->status, this->nbEnfants);
+    for (int i = 0 ; i < indexHumain ; i++){
+        ptr = listeHumains[i];
+        if (ptr->id == datas_idConjoint) {
+            ptr->conjoint = this;
+            this->conjoint = ptr;
+        }
+        if (ptr->id == datas_idMere) {
+            this->mere = ptr;
+            for (int j = 0 ; j < MAX_ENFANTS ; j++){
+                if (ptr->enfants[j] == NULL){
+                    ptr->enfants[j] = this;
                     break;
-                case 1: // id
-                    this->id=atoi(tmp);
-                    printf("id = %d\n", this->id);
-                    break;
-                case 2: // nom
-                    strcpy(this->nom,tmp);
-                    printf("nom = %s\n", this->nom);
-                    break;
-                case 3: // prenom
-                    strcpy(this->prenom,tmp);
-                    printf("prenom = %s\n", this->prenom);
-                    break;
-                case 4: // genre
-                    this->genre=atoi(tmp);
-                    setGenreTexte();
-                    printf("genre = %s\n", this->genreTexte);
-                    break;
-                case 5: // age
-                    this->age=atoi(tmp);
-                    printf("age = %d\n", this->age);
-                    break;
-                case 6: // nbEnfants
-                    this->nbEnfants=0;
-                    printf("nbEnfants = %d\n", this->nbEnfants);
-                    break;
-                case 7: // status
-                    this->status=atoi(tmp);
-                    printf("status = %d\n", this->status);
-                    break;
-                case 8: // conjoint
-                    printf("conjoint = %s\n", tmp);
-                    if (strcmp(tmp,"") != 0){
-                        //printf("initialisation du conjoint\n");
-                        for (int i = 0 ; i < indexHumain ; i++){
-                            ptr = listeHumains[i];
-                            if (ptr->getId() == atoi(tmp)){
-                                this->conjoint = ptr;
-                                this->conjoint->conjoint = this;
-                            }
-                        }
-                    }
-                    break;
-                case 9: // pere
-                    printf("pere = %s\n", tmp);
-                    if (strcmp(tmp,"") != 0){
-                        //printf("initialisation du pere\n");
-                        for (int i = 0 ; i < indexHumain ; i++){
-                            ptr = listeHumains[i];
-                            if (ptr->getId() == atoi(tmp)){
-                                this->pere = ptr;
-                                ptr->addEnfant(this);
-                            }
-                        }
-                    }
-                    break;
-                case 10: // mere
-                    printf("mere = %s\n", tmp);
-                    if (strcmp(tmp,"") != 0){
-                        //printf("initialisation de la mere\n");
-                        for (int i = 0 ; i < indexHumain ; i++){
-                            ptr = listeHumains[i];
-                            if (ptr->getId() == atoi(tmp)){
-                                this->mere = ptr;
-                                ptr->addEnfant(this);
-                            }
-                        }
-                    }
-                    break;
-                default: // enfants
-                    printf("enfant = %s\n", tmp);
-                    if (strcmp(tmp,"") != 0){
-                        //printf("initialisation d'un enfant\n");
-                    }
-                    break;
+                }
             }
-            index = 0;
-            tmp[index] = '\0';
+        }
+        if (ptr->id == datas_idPere) {
+            this->pere = ptr;
+            for (int j = 0 ; j < MAX_ENFANTS ; j++){
+                if (ptr->enfants[j] == NULL){
+                    ptr->enfants[j] = this;
+                    break;
+                }
+            }
         }
     }
-    printf("\n");
-    listeHumains[indexHumain++]=this;
+    //printf("Humain::restore =>  fin\n");
+
 }
 
 //-------------------------------------------

@@ -37,34 +37,36 @@ void chargeFichier(FILE *file){
     int ligne_id, ligne_genre, ligne_age;
     char ligne_nom[50], ligne_prenom[50];
     int index = 0;
-    printf("------- boucle init ----------\n");
+    //printf("------- boucle init ----------\n");
     while (!feof(file)){
         ligne[0] = '\0';
         fgets(ligne, 500, file);
-        printf("-----------------\n");
+        //printf("main:chargeFichier => ----------------\n");
         if (strlen(ligne) > 0){
             //printf("main:chargeFichier => analyse de la ligne %s\n", ligne);
             sscanf(ligne, "humain %d %s %s %d %d", &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
             if (ligne_id != indexHumain){
-                printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
+                //printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
             } else {
                 ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
-                printf("%s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+                //printf("main:chargeFichier => %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
             }
         }
     }
     fseek(file, 0, 0);
-    printf("-------  boucle restore ----------\n");
+    //printf("main:chargeFichier => -------  boucle restore ----------\n");
     while (!feof(file)){
         ligne[0] = '\0';
         int indexRestore = -1;
         fgets(ligne, 500, file);
-        printf("-----------------\n");
+        //printf("main:chargeFichier => -----------------\n");
+        //printf("main:chargeFichier => analyse ligne %s\n", ligne);
         if (strlen(ligne) > 0){
-            sscanf(ligne, "humain;%d", &ligne_id);
+            sscanf(ligne, "humain %d", &ligne_id);
             int j = 0;
             ptr = listeHumains[j];
             while (ptr->getId() != ligne_id) {
+                //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptr->getId(), ligne_id);
                 ptr = listeHumains[++j];
                 indexRestore = j;
                 if (j > indexHumain){
@@ -72,7 +74,7 @@ void chargeFichier(FILE *file){
                     return;
                 }
             }
-            printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
+            //printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
             ptr->restore(ligne);
         }
     }

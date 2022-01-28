@@ -5,6 +5,7 @@
 //-----------------------------------
 
 #include <stdio.h>
+#include <string>
 
 
 #ifndef __ENTREPRISE__
@@ -88,9 +89,11 @@
             int getQuantiteAProduire(structProduit *produit);
             structSalarie *getSalarie(int index);
             void verseSalaires(void);
+            void sauve(FILE *fic);
             
 
         private:
+            int id;
             char nom[50];
             Humain *patron;
             int typeProduction;
@@ -98,7 +101,6 @@
             int nbEmployes;
             int nbCadres;
             int effectifMax;
-            int prixProduit;
             structProduit listeProduits[MAX_PRODUITS];
             structSalarie listeSalarie[MAX_SALARIE];
             void generePaye(void);

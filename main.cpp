@@ -323,10 +323,16 @@ int main(int argc, char **argv)
                 scanf("%s", nomFichier);
                 file = fopen(nomFichier, "w");
                 if (file != NULL){
-                    printf("lancement de la boucle de sauvegarde\n");
+                    printf("lancement de la boucle de sauvegarde des %d humains\n", indexHumain);
                     for (int i = 1 ; i < indexHumain ; i ++ ){
                         ptr = listeHumains[i];
                         ptr->sauve(file);
+                    }
+                    printf("lancement de la boucle de sauvegarde des %d entreprises\n", nbEntreprises);
+                    Entreprise *ptrEnt;
+                    for (int i = 0 ; i < nbEntreprises ; i ++ ){
+                        ptrEnt = listeEntreprises[i];
+                        ptrEnt->sauve(file);
                     }
                     fclose(file);
                 } else {

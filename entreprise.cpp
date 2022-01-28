@@ -19,6 +19,7 @@ Entreprise::Entreprise(char *nom, int typeProd, Humain *patron){
     strcpy(this->nom,nom);
     this->typeProduction = typeProd;
     this->patron = patron;
+    this->id = nbEntreprises;
     this->nbEmployes = 0;
     this->nbSalaries = 0;
     this->nbCadres = 0;
@@ -534,4 +535,52 @@ bool Entreprise::isInCatalogue(char *produit){
         }
     }
     return false;
+}
+
+
+//-------------------------------------------
+//
+//          Entreprise::sauve
+//
+//-------------------------------------------
+void Entreprise::sauve(FILE *fic){
+    printf("Entreprise::sauve => Sauvegarde de l'entreprise %s\n", this->nom);
+    char ligne[500];
+    char tmp[500];
+    int id_patron = this->patron->getId();
+    strcpy(ligne, "");
+    sprintf(tmp, "entreprise %d %s %d %d %d", this->id, this->nom, id_patron, 
+            this->typeProduction, this->effectifMax);
+    strcat(ligne, tmp);
+    strcat(ligne, "\n");
+    fputs(ligne, fic);
+    printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
+
+    // boucle sur les produits
+    for (int i = 0 ; i < MAX_PRODUITS ; i++){
+        structProduit *item = &this->listeProduits[i];
+        if (strcmp(item->nom,"") != 0){
+            // produit idEntreprise nomProduit prix stock stockMini coutFabrication
+            printf("Entreprise::sauve => Sauvegarde du produit %s\n", item->nom);
+            sprintf(ligne, "produit %d %s %d %d %d %d", this->id, item->nom, 
+                item->prix, item->stock, item->stockMini, item->coutFabrication);
+            fputs(ligne, fic);
+            printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
+        }
+    }
+
+    // boucle sur les salaries
+    for (int i = 0 ; i < MAX_SALARIE ; i++){
+        structSalarie *item = &this->listeSalarie[i];
+        if (item->salarie != NULL){
+            // salarie idEntreprise idSalarie idCptBanque status salaire derniereAugmentation productivite
+            printf("Entreprise::sauve => Sauvegarde du salarie %s\n", item->salarie->getNomComplet());
+            sprintf(ligne, "salarie %d %d %d %d %d %d %d ", this->id, item->salarie->getId(), 
+                    item->compteBancaire->getNumCompte(), item->status, item->remuneration, 
+                    item->derniereAugmentation, item->productivite);
+            fputs(ligne, fic);
+            printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
+        }
+    }
+    fflush(fic);
 }

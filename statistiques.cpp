@@ -109,7 +109,6 @@ void displayDatas(void){
         sprintf(string2[numLigne2++], "| aff liste auto   | %7s |   %c |",  getstringBoolean(listeAuto), 'a');
         sprintf(string2[numLigne2++], "+------------------+---------+-----+");
     }
-
     int i = 0;
     while (true){
         if (i < numLigne1) printf("%-80s    ",string1[i]);
@@ -156,11 +155,13 @@ void displayDatas(void){
         }
         sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+");
     }
-
     i=0;
     while (true){
         if (i < numLigne1) printf("%-80s    ",string1[i]);
-        if (i < numLigne2) printf("%s", string2[i]);
+        if (i < numLigne2) {
+            if (i >= numLigne1) printf("%-80s    "," ");
+            printf("%s", string2[i]);
+        }
         if (( i >= numLigne1) && (i > numLigne2) ) break;
         i++;
         printf("\n");
@@ -170,16 +171,16 @@ void displayDatas(void){
     numLigne1=0;
     numLigne2=0;
     if (display_stat_entreprises){
-        printf("+----------------------------------------------------+\n");
-        printf("|      Entreprises                                   |\n");
-        printf("+------------------------+-------------+-------------+\n");
-        printf("|                   nom  |    typeProd |  nb salarie |\n");
-        printf("+------------------------+-------------+-------------+\n");
+        sprintf(string1[numLigne1++], "+----------------------------------------------------+");
+        sprintf(string1[numLigne1++], "|      Entreprises                                   |");
+        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+");
+        sprintf(string1[numLigne1++], "|                   nom  |    typeProd |  nb salarie |");
+        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+");
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *item = listeEntreprises[i];
             char typeProd[20];
             strcpy(typeProd, item->getTypeProd());
-            printf("|   %20s |  %10s |      %6d |\n", item->getNom(), typeProd, item->getNbSalaries());
+            sprintf(string1[numLigne1++], "|   %20s |  %10s |      %6d |", item->getNom(), typeProd, item->getNbSalaries());
             if (display_stat_salaries){
                 for (int j = 0 ; j < item->getNbSalaries() ; j++){
                     structSalarie *employe = item->getSalarie(j);
@@ -187,9 +188,39 @@ void displayDatas(void){
                 }
             }
         }
-        printf("+------------------------+-------------+-------------+\n");
+        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+");
     }
-
+    // affichage des produits
+    if (display_stat_produits){
+        sprintf(string2[numLigne2++], "+-----------------------------------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|      produits                                                               |");
+        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+---------+---------+---------+");
+        sprintf(string2[numLigne2++], "|           entreprise  |       nom du produit  |    prix |  stock  | stk min |");
+        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+---------+---------+---------+");
+        for (int i = 0 ; i < nbEntreprises ; i++){
+            Entreprise *ptrEnt = listeEntreprises[i];
+            structProduit *ptrProduit;
+            int j=0;
+            ptrProduit = ptrEnt->getProduit(j++);
+            while (ptrProduit != NULL){
+                sprintf(string2[numLigne2++], "|  %20s |  %20s |  %6d |  %6d |  %6d |", ptrEnt->getNom(), 
+                    ptrProduit->nom, ptrProduit->prix, ptrProduit->stock, ptrProduit->stockMini);
+                ptrProduit = ptrEnt->getProduit(j++);
+            }
+        }
+        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+---------+---------+---------+");
+    }
+    i=0;
+    while (true){
+        if (i < numLigne1) printf("%-80s    ",string1[i]);
+        if (i < numLigne2) {
+            if (i >= numLigne1) printf("%-80s    "," ");
+            printf("%s", string2[i]);
+        }
+        if (( i >= numLigne1) && (i > numLigne2) ) break;
+        i++;
+        printf("\n");
+    }
 }
 
 //-------------------------------------------

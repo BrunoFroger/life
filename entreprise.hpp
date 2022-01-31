@@ -67,7 +67,7 @@
     class Entreprise{
 
         public:
-            Entreprise(char *nom, int typeProd, Humain *patron);
+            Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax);
             bool commande(Humain *client, char *produit, int qte);
             int nbDisponibles(char *produit);
             int getPrix(char *produit);
@@ -91,6 +91,7 @@
             void sauve(FILE *fic);
             void listeSalaries(void);
             char * getStatusString(int status);
+            int getEffectifMax(void);
             
 
         private:

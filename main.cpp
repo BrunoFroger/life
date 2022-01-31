@@ -135,7 +135,7 @@ int main(int argc, char **argv)
     printf("creation de dieu\n");
     Humain *dieu = new Humain(HOMME, "dieu", "", 0);
     printf("creation de l'entreprise de production alimentaire\n");
-    Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu);
+    Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu, 100);
     supermarche->addProduit("nourriture", 2, 10, 5, 1);
     supermarche->addProduit("vetements", 10, 10, 3, 5);
     supermarche->addProduit("boisson", 1, 10, 3, 2);

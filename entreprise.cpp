@@ -15,7 +15,7 @@
 //          Entreprise::Entreprise
 //
 //-------------------------------------------
-Entreprise::Entreprise(char *nom, int typeProd, Humain *patron){
+Entreprise::Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax){
     strcpy(this->nom,nom);
     this->typeProduction = typeProd;
     this->patron = patron;
@@ -49,6 +49,7 @@ Entreprise::Entreprise(char *nom, int typeProd, Humain *patron){
     this->compteBancaire = new CompteBancaire(this->nom);
     this->compteBancaire->credite(10000);
     listeEntreprises[nbEntreprises] = this;
+    this->effectifMax = effectifMax;
     nbEntreprises++;
 }
 
@@ -592,4 +593,14 @@ void Entreprise::sauve(FILE *fic){
         }
     }
     fflush(fic);
+}
+
+
+//-------------------------------------------
+//
+//          Entreprise::getEffectifMax
+//
+//-------------------------------------------
+int Entreprise::getEffectifMax(void){
+    return this->effectifMax;
 }

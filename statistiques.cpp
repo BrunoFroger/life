@@ -171,16 +171,17 @@ void displayDatas(void){
     numLigne1=0;
     numLigne2=0;
     if (display_stat_entreprises){
-        sprintf(string1[numLigne1++], "+----------------------------------------------------+");
-        sprintf(string1[numLigne1++], "|      Entreprises                                   |");
-        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+");
-        sprintf(string1[numLigne1++], "|                   nom  |    typeProd |  nb salarie |");
-        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+");
+        sprintf(string1[numLigne1++], "+------------------------------------------------------------------+");
+        sprintf(string1[numLigne1++], "|      Entreprises                                                 |");
+        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
+        sprintf(string1[numLigne1++], "|                   nom  |    typeProd |  nb salarie | effectif max|");
+        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *item = listeEntreprises[i];
             char typeProd[20];
             strcpy(typeProd, item->getTypeProd());
-            sprintf(string1[numLigne1++], "|   %20s |  %10s |      %6d |", item->getNom(), typeProd, item->getNbSalaries());
+            sprintf(string1[numLigne1++], "|   %20s |  %10s |      %6d |      %6d |", 
+                    item->getNom(), typeProd, item->getNbSalaries(), item->getEffectifMax());
             if (display_stat_salaries){
                 for (int j = 0 ; j < item->getNbSalaries() ; j++){
                     structSalarie *employe = item->getSalarie(j);
@@ -188,7 +189,7 @@ void displayDatas(void){
                 }
             }
         }
-        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+");
+        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
     }
     // affichage des produits
     if (display_stat_produits){

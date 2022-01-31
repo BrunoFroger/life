@@ -35,7 +35,7 @@ void chargeFichier(FILE *file){
     //printf("main:chargeFichier => lancement de la boucle de lecture du fichier\n");
     char ligne[500];
     int ligne_id, ligne_genre, ligne_age;
-    char ligne_nom[50], ligne_prenom[50];
+    char ligne_nom[50], ligne_prenom[50], typeLigne[25];
     int index = 0;
     //printf("------- boucle init ----------\n");
     while (!feof(file)){
@@ -44,12 +44,33 @@ void chargeFichier(FILE *file){
         //printf("main:chargeFichier => ----------------\n");
         if (strlen(ligne) > 0){
             //printf("main:chargeFichier => analyse de la ligne %s\n", ligne);
-            sscanf(ligne, "humain %d %s %s %d %d", &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
-            if (ligne_id != indexHumain){
-                //printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
+            sscanf(ligne, "%s %d %s %s %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
+            if (strcmp(typeLigne,"humain") == 0){
+                if (ligne_id != indexHumain){
+                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
+                } else {
+                    ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
+                    //printf("main:chargeFichier => Humain %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+                }
+            } else if (strcmp(typeLigne,"entreprise") == 0){
+                if (ligne_id != nbEntreprises){
+                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
+                } else {
+                    printf(" main:chargeFichier =>  restore entreprise ...... TODO ......\n");
+                    //ptr = new Entreprisse(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
+                    //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+                }
+            } else if (strcmp(typeLigne,"produit") == 0){
+                printf(" main:chargeFichier =>  restore produits ...... TODO ......\n");
+                //ptr = new Entreprisse(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
+                //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+            } else if (strcmp(typeLigne,"salarie") == 0){
+                printf(" main:chargeFichier =>  restore salarie ...... TODO ......\n");
+                //ptr = new Entreprisse(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
+                //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
             } else {
-                ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
-                //printf("main:chargeFichier => %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+                printf(" main:chargeFichier =>   ERREUR type de ligne <%s> inconnu\n", typeLigne);
+                return;
             }
         }
     }

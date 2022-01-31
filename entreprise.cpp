@@ -15,6 +15,16 @@
 //          Entreprise::Entreprise
 //
 //-------------------------------------------
+Entreprise::Entreprise(char *datas){
+    char *dataNom[50]; 
+    int dataId, dataIdPatron, dataTypeProd, dataEffectifMax;
+}
+
+//-------------------------------------------
+//
+//          Entreprise::Entreprise
+//
+//-------------------------------------------
 Entreprise::Entreprise(char *nom, int typeProd, Humain *patron){
     strcpy(this->nom,nom);
     this->typeProduction = typeProd;
@@ -579,11 +589,6 @@ void Entreprise::sauve(FILE *fic){
         if (item->salarie != NULL){
             // salarie idEntreprise idSalarie idCptBanque status salaire derniereAugmentation productivite
             printf("Entreprise::sauve => Sauvegarde du salarie %s\n", item->salarie->getNomComplet());
-            printf("Entreprise::sauve =>           id = %d\n", this->id);
-            printf("Entreprise::sauve =>       status = %d\n", item->status);
-            printf("Entreprise::sauve => remuneration = %d\n", item->remuneration);
-            printf("Entreprise::sauve => dern augment = %d\n", item->derniereAugmentation);
-            printf("Entreprise::sauve => productivite = %d\n", item->productivite);
             sprintf(ligne, "salarie %d %d %d %d %d %d ", this->id, item->salarie->getId(), 
                     item->status, item->remuneration, item->derniereAugmentation, item->productivite);
             strcat(ligne, "\n");

@@ -57,7 +57,7 @@ void chargeFichier(FILE *file){
                     printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
                 } else {
                     printf(" main:chargeFichier =>  restore entreprise ...... TODO ......\n");
-                    //ptr = new Entreprisse(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
+                    ptr = new Entreprise();
                     //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
                 }
             } else if (strcmp(typeLigne,"produit") == 0){

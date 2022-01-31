@@ -68,6 +68,8 @@
 
         public:
             Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax);
+            Entreprise(char *nom, int typeProd, Humain *patron);
+            Entreprise(char *datas);
             bool commande(Humain *client, char *produit, int qte);
             int nbDisponibles(char *produit);
             int getPrix(char *produit);

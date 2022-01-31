@@ -26,7 +26,6 @@ Entreprise::Entreprise(char *nom, int typeProd, Humain *patron){
     // initialise liste des salaries
     for (int i = 0 ; i < MAX_SALARIE ; i++){
         listeSalarie[i].salarie = NULL;
-        listeSalarie[i].compteBancaire = NULL;
         listeSalarie[i].status = 0;
         listeSalarie[i].remuneration = 0;
         listeSalarie[i].derniereAugmentation = 0;
@@ -117,12 +116,14 @@ char *Entreprise::getStatusString(int status){
     switch(status){
         case EMPLOYE:
             return "Employe";
+        case EMPLSUPP:
+            return "Empl supp";
         case CADRE:
             return "Cadre";
         case PATRON:
             return "Patron";
     }
-    return"Inconnu";
+    return "Inconnu";
 }
 
 //-------------------------------------------
@@ -336,7 +337,7 @@ void Entreprise::production(void){
         if (ptrSalarie->salarie != NULL){
             printf("Entreprise::production => traitement du salaire de %s\n",ptrSalarie->salarie->getNomComplet());
             if (strcmp(ptrSalarie->salarie->getNomComplet(), "dieu") != 0 ) {
-                ptrSalarie->compteBancaire->credite(ptrSalarie->remuneration);
+                ptrSalarie->salarie->credite(ptrSalarie->remuneration);
             } else {
                 printf("Entreprise::production => Dieu ne recois pas de salaire !\n");
             }
@@ -555,6 +556,7 @@ void Entreprise::sauve(FILE *fic){
     strcat(ligne, "\n");
     fputs(ligne, fic);
     printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
+    fflush(fic);
 
     // boucle sur les produits
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
@@ -564,20 +566,27 @@ void Entreprise::sauve(FILE *fic){
             printf("Entreprise::sauve => Sauvegarde du produit %s\n", item->nom);
             sprintf(ligne, "produit %d %s %d %d %d %d", this->id, item->nom, 
                 item->prix, item->stock, item->stockMini, item->coutFabrication);
+            strcat(ligne, "\n");
             fputs(ligne, fic);
             printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
         }
     }
+    fflush(fic);
 
     // boucle sur les salaries
-    for (int i = 0 ; i < MAX_SALARIE ; i++){
+    for (int i = 0 ; i < nbSalaries ; i++){
         structSalarie *item = &this->listeSalarie[i];
         if (item->salarie != NULL){
             // salarie idEntreprise idSalarie idCptBanque status salaire derniereAugmentation productivite
             printf("Entreprise::sauve => Sauvegarde du salarie %s\n", item->salarie->getNomComplet());
-            sprintf(ligne, "salarie %d %d %d %d %d %d %d ", this->id, item->salarie->getId(), 
-                    item->compteBancaire->getNumCompte(), item->status, item->remuneration, 
-                    item->derniereAugmentation, item->productivite);
+            printf("Entreprise::sauve =>           id = %d\n", this->id);
+            printf("Entreprise::sauve =>       status = %d\n", item->status);
+            printf("Entreprise::sauve => remuneration = %d\n", item->remuneration);
+            printf("Entreprise::sauve => dern augment = %d\n", item->derniereAugmentation);
+            printf("Entreprise::sauve => productivite = %d\n", item->productivite);
+            sprintf(ligne, "salarie %d %d %d %d %d %d ", this->id, item->salarie->getId(), 
+                    item->status, item->remuneration, item->derniereAugmentation, item->productivite);
+            strcat(ligne, "\n");
             fputs(ligne, fic);
             printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
         }

@@ -104,6 +104,7 @@ void afficheMenu(void){
     printf("  f : liste des entreprises\n");
     printf("  g : liste des produits\n");
     printf("  h : liste des commandes en cours\n");
+    printf("  i : liste des salaries d'une entreprise\n");
     printf("  m : menu On/Off %d\n", menuOnOff);
     printf("  s : sauvegarde des donnees sur disque\n");
     printf("  v : faire vieillir la population d'un an\n");
@@ -303,17 +304,26 @@ int main(int argc, char **argv)
                 vivantsSeulement = !vivantsSeulement;
                 printf("affichage des vivants seulement : %d\n", vivantsSeulement);
                 break;
-            case 'e' : // bascule affiche liste des comptes bancaires
+            case 'e' : // affiche liste des comptes bancaires
                 afficheListeComptesBancaires();
                 break;
-            case 'f' : // bascule affiche liste des comptes bancaires
+            case 'f' : // affiche liste des comptes bancaires
                 afficheListeEntreprises();
                 break;
-            case 'g' : // bascule affiche liste des produits disponibles
+            case 'g' : // affiche liste des produits disponibles
                 afficheListeProduits();
                 break;
-            case 'h' : // bascule affiche liste des produits disponibles
+            case 'h' : // affiche liste des produits disponibles
                 afficheListeCommandes();
+                break;
+            case 'i' : // affiche liste des salarie d'une entreprise
+                Entreprise *ptrEnt;
+                for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
+                    ptrEnt = listeEntreprises[i];
+                    if (ptrEnt != NULL){
+                        ptrEnt->listeSalaries();
+                    }
+                }
                 break;
             case 'm' : // bascule affiche meno on off
                 menuOnOff = !menuOnOff;

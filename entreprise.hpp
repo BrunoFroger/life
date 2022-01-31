@@ -44,7 +44,6 @@
 
     typedef struct{
         Humain *salarie;
-        CompteBancaire *compteBancaire;
         int status;
         int remuneration;
         int derniereAugmentation; // nb periodes depuis derniere augmentation
@@ -90,6 +89,7 @@
             structSalarie *getSalarie(int index);
             void verseSalaires(void);
             void sauve(FILE *fic);
+            void listeSalaries(void);
             
 
         private:
@@ -107,7 +107,6 @@
             char * getStatusString(int status);
             CompteBancaire *compteBancaire;
             structCommande listeCommandes[MAX_COMMANDES];
-            void listeSalaries(void);
             int getProductionPossible(void);
     };
 

@@ -676,3 +676,12 @@ bool Humain::debite(int montant){
     this->compteBancaire->debite(montant);
     return true;
 }
+
+//-------------------------------------------
+//
+//          Humain::getNumCompte
+//
+//-------------------------------------------
+int Humain::getNumCompte(void){
+    return this->compteBancaire->getNumCompte();;
+}

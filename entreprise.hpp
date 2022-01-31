@@ -90,6 +90,7 @@
             void verseSalaires(void);
             void sauve(FILE *fic);
             void listeSalaries(void);
+            char * getStatusString(int status);
             
 
         private:
@@ -104,7 +105,6 @@
             structProduit listeProduits[MAX_PRODUITS];
             structSalarie listeSalarie[MAX_SALARIE];
             void generePaye(void);
-            char * getStatusString(int status);
             CompteBancaire *compteBancaire;
             structCommande listeCommandes[MAX_COMMANDES];
             int getProductionPossible(void);

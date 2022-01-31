@@ -221,6 +221,40 @@ void displayDatas(void){
         i++;
         printf("\n");
     }
+
+
+
+    // affichage des salaries
+    numLigne1=0;
+    numLigne2=0;
+    if (display_stat_salaries){
+        sprintf(string1[numLigne1++], "+--------------------------------------------------------------------+");
+        sprintf(string1[numLigne1++], "|       liste des salaries de                                        |");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
+        sprintf(string1[numLigne1++], "|         entreprise   |                nom   |   fonction | salaire |");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
+        for (int i = 0 ; i < nbEntreprises ; i++){
+            Entreprise *ptrEnt = listeEntreprises[i];
+            structSalarie *ptrSalarie;
+            for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
+                structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
+                sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
+                    ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
+            }
+        }
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+\n");
+    }
+    i=0;
+    while (true){
+        if (i < numLigne1) printf("%-80s    ",string1[i]);
+        if (i < numLigne2) {
+            if (i >= numLigne1) printf("%-80s    "," ");
+            printf("%s", string2[i]);
+        }
+        if (( i >= numLigne1) && (i > numLigne2) ) break;
+        i++;
+        printf("\n");
+    }
 }
 
 //-------------------------------------------

@@ -9,7 +9,7 @@
 CC=gcc
 #CFLAGS=-W -Wall -ansi -pedantic -Wcomment
 CFLAGS=-Wall -Wextra -Werror -clang++ -std=c++11
-LDFLAGS=-lc++
+LDFLAGS=-lc++ -lncurses
 EXEC=life
 SRC= $(wildcard *.cpp)
 OBJ= $(SRC:.cpp=.o)

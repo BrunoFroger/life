@@ -95,7 +95,7 @@ Humain::Humain(char *datas){
 //
 //-------------------------------------------
 void Humain::restore(char *datas){
-    //printf("Humain::restore => restauration des donnees d'un humain a partir d'une ligne <%s>\n", datas);
+    //printf("Humain::restore => restauration des donnees d'un humain a partir d'une ligne <%s>", datas);
     int index = 0;
     int cpt = 0;
     char tmp[50];

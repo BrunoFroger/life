@@ -68,8 +68,9 @@
 
         public:
             Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax);
-            Entreprise(char *nom, int typeProd, Humain *patron);
             Entreprise(char *datas);
+            void restore(char *datas);
+            void init(void);
             bool commande(Humain *client, char *produit, int qte);
             int nbDisponibles(char *produit);
             int getPrix(char *produit);
@@ -80,13 +81,13 @@
             void catalogue(void);
             char *getTypeProd(void);
             int getNbSalaries(void);
+            int getId(void);
             void gereCommandes(void);
             void gereRecrutement(int typeRecrutement);
             bool isInCatalogue(char *produit);
             structProduit *getProduit(int index);
             structCommande *getCommande(int index);
             bool credite(int montant);
-            bool debite(int montant);
             int getQuantiteAProduire(structProduit *produit);
             structSalarie *getSalarie(int index);
             void verseSalaires(void);
@@ -111,6 +112,7 @@
             CompteBancaire *compteBancaire;
             structCommande listeCommandes[MAX_COMMANDES];
             int getProductionPossible(void);
+            bool debite(int montant);
     };
 
 #endif

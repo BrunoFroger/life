@@ -298,3 +298,37 @@ Entreprise *getProducteur(char *produit){
     }
     return NULL;
 }
+
+//-------------------------------------------
+//
+//          getEntrepriseById
+//
+//-------------------------------------------
+Entreprise *getEntrepriseById(int id){
+    //printf("getProducteur => debut\n");
+    Entreprise *ptrEntreprise;
+    for (int i = 0 ; i < nbEntreprises ; i++){
+        ptrEntreprise = listeEntreprises[i];
+        if (ptrEntreprise->getId() == id){
+            return ptrEntreprise;
+        }
+    }
+    return NULL;
+}
+
+//-------------------------------------------
+//
+//          getHumainById
+//
+//-------------------------------------------
+Humain *getHumainById(int id){
+    //printf("getProducteur => debut\n");
+    Humain *ptr;
+    for (int i = 0 ; i < indexHumain ; i++){
+        ptr = listeHumains[i];
+        if (ptr->getId() == id){
+            return ptr;
+        }
+    }
+    return NULL;
+}

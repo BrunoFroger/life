@@ -26,5 +26,7 @@
     extern void afficheListeCommandes(void);
     extern Entreprise *getProducteur(char *produit);
     extern char *getstringBoolean(bool val);
+    extern Entreprise *getEntrepriseById(int id);
+    extern Humain *getHumainById(int id);
     
 #endif

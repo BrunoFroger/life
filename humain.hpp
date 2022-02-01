@@ -59,9 +59,9 @@
             char *getEmployeur(void);
             bool estSalarie(void);
             bool credite(int montant);
-            bool debite(int montant);
             bool commandeEnCours;
             int getNumCompte();
+            bool debite(int montant);
 
         private :
             int id;

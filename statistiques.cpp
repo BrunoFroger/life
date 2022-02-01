@@ -138,7 +138,7 @@ void displayDatas(void){
 
     if (display_stat_commandes){
         sprintf(string2[numLigne2++], "+---------------------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      commandes                                                                  |");
+        sprintf(string2[numLigne2++], "|      commandes en attente                                                       |");
         sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+");
         sprintf(string2[numLigne2++], "|           entreprise  |               client  |       nom du produit  |    qte  |");
         sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+");

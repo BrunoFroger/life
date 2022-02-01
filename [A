@@ -1,0 +1,15 @@
+humain 1 adam martin 1 22 3 1 3 0 -1 2 5 6 
+humain 2 pierre martin 1 23 0 1 5 1 -1 
+humain 3 eve dupond 2 22 3 1 1 0 -1 4 5 6 
+humain 4 paul dupond 1 21 0 0 -1 -1 3 
+humain 5 marie martin 2 25 1 1 2 1 3 7 
+humain 6 joseph martin 1 19 0 4 -1 1 3 
+humain 7 jesus martin 1 12 0 0 -1 -1 5 
+humain 8 Pierre Mercier 1 2 0 0 -1 0 -1 
+humain 9 Pierre Mercier 1 1 0 0 -1 0 -1 
+entreprise 0 supermarche 0 0 100
+produit 0 nourriture 2 1 5 1
+produit 0 vetements 10 10 3 5
+produit 0 boisson 1 10 3 2
+salarie 0 0 3 400 0 1 
+salarie 0 1 1 100 0 10 

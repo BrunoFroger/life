@@ -10,29 +10,14 @@
 #include "compteBancaire.hpp"
 #include "tools.hpp"
 
-//-------------------------------------------
-//
-//          Entreprise::Entreprise
-//
-//-------------------------------------------
-Entreprise::Entreprise(char *datas){
-    char *dataNom[50]; 
-    int dataId, dataIdPatron, dataTypeProd, dataEffectifMax;
-}
+
 
 //-------------------------------------------
 //
 //          Entreprise::Entreprise
 //
 //-------------------------------------------
-Entreprise::Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax){
-    strcpy(this->nom,nom);
-    this->typeProduction = typeProd;
-    this->patron = patron;
-    this->id = nbEntreprises;
-    this->nbEmployes = 0;
-    this->nbSalaries = 0;
-    this->nbCadres = 0;
+void Entreprise::init(void){
     // initialise liste des salaries
     for (int i = 0 ; i < MAX_SALARIE ; i++){
         listeSalarie[i].salarie = NULL;
@@ -55,6 +40,100 @@ Entreprise::Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax)
         strcpy(listeCommandes[i].nomProduit,"");
         listeCommandes[i].quantite=-1;
     }
+}
+
+//-------------------------------------------
+//
+//          Entreprise::Entreprise
+//
+//-------------------------------------------
+Entreprise::Entreprise(char *datas){
+    char dataNom[50]; 
+    int dataId, dataIdPatron, dataTypeProd, dataEffectifMax;
+    sscanf(datas,"entreprise %d %s %d %d %d", &dataId, dataNom, &dataIdPatron, &dataTypeProd, &dataEffectifMax);
+    this->id = nbEntreprises;
+    strcpy(this->nom,dataNom);
+    this->patron = getHumainById(dataIdPatron);
+    this->nbEmployes = 0;
+    this->nbSalaries = 0;
+    this->nbCadres = 0;
+    embauche(patron, PATRON);
+    this->compteBancaire = new CompteBancaire(this->nom);
+    this->compteBancaire->credite(10000);
+    listeEntreprises[nbEntreprises] = this;
+    this->effectifMax = dataEffectifMax;
+    nbEntreprises++;
+}
+
+//-------------------------------------------
+//
+//          Entreprise::restore
+//
+//-------------------------------------------
+void Entreprise::restore(char *datas){
+    char dataNom[50], typeLigne[25]; 
+    int dataIdEnt, dataIdHumain, dataTypeProd, dataEffectifMax;
+    int dataPrix, dataStock, dataStockMini, dataCoutFab;
+    int dataStatus, dataRemuneration, dataDernAugment, dataProductivite;
+    int i = 0;
+    sscanf(datas,"%s ", typeLigne);
+    if (strcmp(typeLigne, "entreprise") == 0){
+        printf("Entreprise::restore => restaure une entreprise : %s", datas);
+        sscanf(datas,"%s %d %s %d %d %d", typeLigne, &dataIdEnt, dataNom, &dataIdHumain, &dataTypeProd, &dataEffectifMax);
+        printf("..... TODO .....\n");
+    } else if (strcmp(typeLigne, "produit") == 0){
+        printf("Entreprise::restore => restaure un produit : %s", datas);
+        sscanf(datas,"%s %d %s %d %d %d %d", typeLigne, &dataIdEnt, dataNom, &dataPrix, &dataStock, &dataStockMini, &dataCoutFab);
+        while (strcmp(listeProduits[i].nom,"") != 0) {
+            i++;
+        }
+        structProduit *ptrProduit = &listeProduits[i];
+        strcpy(ptrProduit->nom, dataNom);
+        ptrProduit->prix = dataPrix;
+        ptrProduit->stock = dataStock;
+        ptrProduit->stockMini = dataStockMini;
+        ptrProduit->coutFabrication = dataCoutFab;
+        printf("Entreprise::restore => retaure le produit %s en position %d\n", ptrProduit->nom, i);
+        printf("..... TODO .....\n");
+    } else if (strcmp(typeLigne, "salarie") == 0){
+        printf("Entreprise::restore => restaure un salarie : %s", datas);
+        sscanf(datas,"%s %d %d %d %d %d %d", typeLigne, &dataIdEnt, &dataIdHumain, &dataStatus, &dataRemuneration, &dataDernAugment, &dataProductivite);
+        while (i < nbSalaries){
+            if (listeSalarie[i].salarie == NULL){
+                break;
+            } else if (listeSalarie[i].salarie->getId() == dataIdHumain){
+                printf("Ce salarie est deja enregistre\n");
+                return;
+            }
+            i++;
+        }
+        structSalarie *ptrSalarie = &listeSalarie[i];
+        ptrSalarie->salarie = listeHumains[i];
+        ptrSalarie->status = dataStatus;
+        ptrSalarie->remuneration = dataRemuneration;
+        ptrSalarie->derniereAugmentation = dataDernAugment;
+        ptrSalarie->productivite = dataProductivite;
+        nbSalaries++;
+        printf("Entreprise::restore => retaure le salarie %s en position %d\n", ptrSalarie->salarie->getNomComplet(), i);
+        printf("..... TODO .....\n");
+    } else {
+        printf("Entreprise::restore => ERREUR : type de ligne inconnu : %s\n ", typeLigne);
+    }
+}
+
+//-------------------------------------------
+//
+//          Entreprise::Entreprise
+//
+//-------------------------------------------
+Entreprise::Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax){
+    strcpy(this->nom,nom);
+    this->typeProduction = typeProd;
+    this->patron = patron;
+    this->id = nbEntreprises;
+    this->nbEmployes = 0;
+    this->nbSalaries = 0;
+    this->nbCadres = 0;
     embauche(patron, PATRON);
     this->compteBancaire = new CompteBancaire(this->nom);
     this->compteBancaire->credite(10000);
@@ -174,7 +253,7 @@ void Entreprise::embauche(Humain *personne, int status){
             printf("Entreprise::embauche => Creation d'un salarie \"%s\" dans l'entreprise \"%s\" avec un status de %s en position %d\n", 
                 ptrSalarie->salarie->getNomComplet(), this->nom, getStatusString(ptrSalarie->status), i);
             nbSalaries++;
-            listeSalaries();
+            //listeSalaries();
             return;
         }
     }
@@ -600,7 +679,6 @@ void Entreprise::sauve(FILE *fic){
     fflush(fic);
 }
 
-
 //-------------------------------------------
 //
 //          Entreprise::getEffectifMax
@@ -608,4 +686,14 @@ void Entreprise::sauve(FILE *fic){
 //-------------------------------------------
 int Entreprise::getEffectifMax(void){
     return this->effectifMax;
+}
+
+
+//-------------------------------------------
+//
+//          Entreprise::getId
+//
+//-------------------------------------------
+int Entreprise::getId(void){
+    return this->id;
 }

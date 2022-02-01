@@ -5,6 +5,8 @@
 //-----------------------------------
 
 #include <iostream>
+#include <ncurses.h>
+#include <unistd.h>
 
 #include "humain.hpp"
 #include "variables.hpp"
@@ -15,6 +17,7 @@
 
 Humain *ptr = NULL;
 Humain *ptr1 = NULL;
+Entreprise *ptrEnt;
 bool fin = false;
 char nom[50];
 char parent[50], enfant[50];
@@ -25,6 +28,40 @@ char nomFichier[50];
 int nb_valeurs = 10;
 int valeur_basse = 0;
 int valeur_haute = 100;
+bool dataSauvegardees = false;
+FILE *file;
+char saisie[50];
+
+//-------------------------------------------
+//
+//          sauveFichier
+//
+//-------------------------------------------
+void sauveFichier(){
+    printf("nom du fichier de sauvegarde (%s): ", nomFichier);
+    scanf("%s", saisie);
+    if (strlen(saisie) > 0){
+        strcpy(nomFichier, saisie);
+    }
+    file = fopen(nomFichier, "w");
+    if (file != NULL){
+        printf("lancement de la boucle de sauvegarde des %d humains\n", indexHumain);
+        for (int i = 1 ; i < indexHumain ; i ++ ){
+            ptr = listeHumains[i];
+            ptr->sauve(file);
+        }
+        printf("lancement de la boucle de sauvegarde des %d entreprises\n", nbEntreprises);
+        Entreprise *ptrEnt;
+        for (int i = 0 ; i < nbEntreprises ; i ++ ){
+            ptrEnt = listeEntreprises[i];
+            ptrEnt->sauve(file);
+        }
+        fclose(file);
+        dataSauvegardees = true;
+    } else {
+        printf("Impossible d'ouvrir %s\n", nomFichier);
+    }
+}
 
 //-------------------------------------------
 //
@@ -34,72 +71,120 @@ int valeur_haute = 100;
 void chargeFichier(FILE *file){
     //printf("main:chargeFichier => lancement de la boucle de lecture du fichier\n");
     char ligne[500];
-    int ligne_id, ligne_genre, ligne_age;
+    int ligne_id, ligne_genre, ligne_age, ligne_typeProd, ligne_effectMax;
+    int idHumain;
     char ligne_nom[50], ligne_prenom[50], typeLigne[25];
     int index = 0;
-    //printf("------- boucle init ----------\n");
+    printf("main:chargeFichier => ------- boucle init ----------\n");
     while (!feof(file)){
         ligne[0] = '\0';
         fgets(ligne, 500, file);
         //printf("main:chargeFichier => ----------------\n");
         if (strlen(ligne) > 0){
-            //printf("main:chargeFichier => analyse de la ligne %s\n", ligne);
-            sscanf(ligne, "%s %d %s %s %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
+            sscanf(ligne, "%s ", typeLigne);
+            //printf("main:chargeFichier => analyse de la ligne %s", ligne);
             if (strcmp(typeLigne,"humain") == 0){
+                printf("main:chargeFichier => traitement de la ligne %s", ligne);
+                sscanf(ligne, "%s %d %s %s %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
                 if (ligne_id != indexHumain){
-                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
+                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, indexHumain);
                 } else {
                     ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
                     //printf("main:chargeFichier => Humain %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
                 }
             } else if (strcmp(typeLigne,"entreprise") == 0){
+                printf("main:chargeFichier => traitement de la ligne %s", ligne);
+                sscanf(ligne, "%s %d %s %d %d %d", typeLigne, &ligne_id, ligne_nom, &idHumain, &ligne_typeProd, &ligne_effectMax);
                 if (ligne_id != nbEntreprises){
-                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, index);
+                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbEntreprises);
                 } else {
-                    printf(" main:chargeFichier =>  restore entreprise ...... TODO ......\n");
-                    ptr = new Entreprise();
+                    //printf("main:chargeFichier =>  restore entreprise ...... TODO ......\n");
+                    ptrEnt = new Entreprise(ligne);
                     //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
                 }
-            } else if (strcmp(typeLigne,"produit") == 0){
-                printf(" main:chargeFichier =>  restore produits ...... TODO ......\n");
-                //ptr = new Entreprisse(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
-                //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
-            } else if (strcmp(typeLigne,"salarie") == 0){
-                printf(" main:chargeFichier =>  restore salarie ...... TODO ......\n");
-                //ptr = new Entreprisse(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
-                //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
             } else {
-                printf(" main:chargeFichier =>   ERREUR type de ligne <%s> inconnu\n", typeLigne);
-                return;
+                //printf(" main:chargeFichier => boucle init : on ne traite pas ligne <%s>", ligne);
             }
         }
     }
     fseek(file, 0, 0);
-    //printf("main:chargeFichier => -------  boucle restore ----------\n");
+    printf("main:chargeFichier => -------  boucle restore ----------\n");
     while (!feof(file)){
         ligne[0] = '\0';
         int indexRestore = -1;
         fgets(ligne, 500, file);
         //printf("main:chargeFichier => -----------------\n");
-        //printf("main:chargeFichier => analyse ligne %s\n", ligne);
         if (strlen(ligne) > 0){
-            sscanf(ligne, "humain %d", &ligne_id);
+            sscanf(ligne, "%s %d", typeLigne, &ligne_id);
+            //sscanf(ligne, "humain %d", &ligne_id);
             int j = 0;
-            ptr = listeHumains[j];
-            while (ptr->getId() != ligne_id) {
-                //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptr->getId(), ligne_id);
-                ptr = listeHumains[++j];
-                indexRestore = j;
-                if (j > indexHumain){
-                    printf("ERREUR : la ligne <%s> ne reference pas un humain initialisé\n", ligne);
-                    return;
+            if (strcmp(typeLigne, "humain") == 0){
+                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                //printf("main::chargeFichier => humain detecte\n");
+                ptr = listeHumains[j];
+                while (ptr->getId() != ligne_id) {
+                    //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptr->getId(), ligne_id);
+                    ptr = listeHumains[++j];
+                    indexRestore = j;
+                    if (j > indexHumain){
+                        printf("ERREUR : la ligne <%s> ne reference pas un humain initialisé\n", ligne);
+                        return;
+                    }
                 }
+                //printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
+                ptr->restore(ligne);
+            } else if (strcmp(typeLigne, "entreprise") == 0){
+                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                //printf("main::chargeFichier => entreprise detecte\n");
+                ptrEnt = listeEntreprises[j];
+                while (ptrEnt->getId() != ligne_id) {
+                    //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptrEnt->getId(), ligne_id);
+                    ptrEnt = listeEntreprises[++j];
+                    indexRestore = j;
+                    if (j > nbEntreprises){
+                        printf("ERREUR : la ligne <%s> ne reference pas une entreprise initialisé\n", ligne);
+                        return;
+                    }
+                }
+                ptrEnt->restore(ligne);
+                //printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
+            } else if (strcmp(typeLigne,"produit") == 0){
+                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                ptrEnt = listeEntreprises[j];
+                while (ptrEnt->getId() != ligne_id) {
+                    //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptrEnt->getId(), ligne_id);
+                    ptrEnt = listeEntreprises[++j];
+                    indexRestore = j;
+                    if (j > nbEntreprises){
+                        printf("ERREUR : la ligne <%s> ne reference pas une entreprise initialisé\n", ligne);
+                        return;
+                    }
+                }
+                ptrEnt->restore(ligne);
+                printf("main:chargeFichier =>  restore produits ...... TODO ......\n");
+                //printf("main:chargeFichier => produit %s cree en pos %d\n");
+            } else if (strcmp(typeLigne,"salarie") == 0){
+                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                ptrEnt = listeEntreprises[j];
+                while (ptrEnt->getId() != ligne_id) {
+                    //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptrEnt->getId(), ligne_id);
+                    ptrEnt = listeEntreprises[++j];
+                    indexRestore = j;
+                    if (j > nbEntreprises){
+                        printf("ERREUR : la ligne <%s> ne reference pas une entreprise initialisé\n", ligne);
+                        return;
+                    }
+                }
+                ptrEnt->restore(ligne);
+                printf("main:chargeFichier =>  restore salarie ...... TODO ......\n");
+                //printf("main:chargeFichier => salarie %s cree en pos %d\n");
+            } else {
+                printf("main:chargeFichier =>   ERREUR type de ligne <%s> inconnu\n", typeLigne);
+                return;
             }
-            //printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
-            ptr->restore(ligne);
         }
     }
-
+    dataSauvegardees = true;
     fclose(file);
 }
 
@@ -151,10 +236,18 @@ void afficheMenu(void){
 //-------------------------------------------
 int main(int argc, char **argv)
 {
-    printf("Debut du programme %s\n", argv[0]);
+    printf("**********************************************\n");
+    printf("**********************************************\n");
+    printf("****\n");
+    printf("****     Debut du programme %s\n", argv[0]);
+    printf("****\n");
+    printf("**********************************************\n");
+    printf("**********************************************\n");
     // creation d'un humain
+    
     printf("creation de dieu\n");
     Humain *dieu = new Humain(HOMME, "dieu", "", 0);
+    /*
     printf("creation de l'entreprise de production alimentaire\n");
     Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu, 100);
     supermarche->addProduit("nourriture", 2, 10, 5, 1);
@@ -181,17 +274,18 @@ int main(int argc, char **argv)
         if (fic == NULL){
             printf("impossible d'ouvrir le fichier %s\n", argv[1]);
         } else {
+            strcpy(nomFichier, argv[1]);
             chargeFichier(fic);
         }
     }
 
     // boucle d'evolution
-    FILE *file;
     while (!fin){
         int car = getchar();
+        if (car == 10) car = getchar(); // suppression du retour chariot
         switch(car){
             case '1': // descendance personne
-                dieu->descendance();
+                //dieu->descendance();
                 break;
             case '2': // infos sur une personne 
                 printf("nom de la personne : ");
@@ -350,30 +444,33 @@ int main(int argc, char **argv)
                 menuOnOff = !menuOnOff;
                 break;
             case 's': // sauvegarde d'un fichier de données
-                printf("nom du fichier de sauvegarde : ");
-                scanf("%s", nomFichier);
-                file = fopen(nomFichier, "w");
-                if (file != NULL){
-                    printf("lancement de la boucle de sauvegarde des %d humains\n", indexHumain);
-                    for (int i = 1 ; i < indexHumain ; i ++ ){
-                        ptr = listeHumains[i];
-                        ptr->sauve(file);
-                    }
-                    printf("lancement de la boucle de sauvegarde des %d entreprises\n", nbEntreprises);
-                    Entreprise *ptrEnt;
-                    for (int i = 0 ; i < nbEntreprises ; i ++ ){
-                        ptrEnt = listeEntreprises[i];
-                        ptrEnt->sauve(file);
-                    }
-                    fclose(file);
-                } else {
-                    printf("Impossible d'ouvrir %s\n", nomFichier);
-                }
+                sauveFichier();
                 break;
             case 'v': // lancement d'une evolution d'une année pour chaque humain/entreprise
                 evolution();
+                dataSauvegardees=false;
                 break;
             case 'q': // quitter
+                if (! dataSauvegardees){
+                    printf("les données n('ont aps étées sauvegardées ; voulez vous les sauver [OUI/non] ? ");
+                    fflush(stdout);
+                    car = getch();
+                    /*while (car == -1 ){
+                        car = getch();
+                        sleep(100);
+                        printf("car saisi <%c>(%d)\n", car, car);
+                    } */
+                    printf("car saisi <%c>(%d)\n", car, car);
+                    //if (car != 10) { 
+                        if ((car == 'n') || (car == 'N')){
+                            fin=true;
+                            break;
+                        }
+                    //}
+                    printf("on veut sauver le fichier les donnes\n");
+                    //sauveFichier();
+                    dataSauvegardees=true;
+                }
                 fin=true;
                 break;
             case 'z': // test generateur de nombre aleatoire
@@ -418,6 +515,5 @@ int main(int argc, char **argv)
             printf("%c est pas une commande connue (? pour liste des commandes disponibles\n", car);
                 break;
         }
-        if (car != 10) car = getchar(); // suppression du retour chariot
     }
 }

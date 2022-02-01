@@ -17,3 +17,9 @@ conditions pour un mariage :
     une femme celibataire ou veuf
     difference d'age < 5
     age des futures maries > 20
+
+
+conditions de verifie 
+    une personne consomme 1 nourriture a chaque boucle
+    une personne consomme 1 boisson toutes les 2 boucles
+    une personne consomme 1 vetement toutes les 10 boucles

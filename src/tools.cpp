@@ -8,10 +8,10 @@
 #include <cstdlib>
 #include <string.h>
 #include <ctime>
-#include "tools.hpp"
-#include "humain.hpp"
-#include "variables.hpp"
-#include "compteBancaire.hpp"
+#include "../inc/tools.hpp"
+#include "../inc/humain.hpp"
+#include "../inc/variables.hpp"
+#include "../inc/compteBancaire.hpp"
 
 char listePrenomsHomme[][20] = {
     "Adam", "Joseph", "Pierre", "Paul", "Louis", "Vincent", "Louis",
@@ -38,8 +38,12 @@ char listeNomFamille[][20] = {
 //
 //-------------------------------------------
 char *getstringBoolean(bool val){
-    if (val) return "true";
-    return "false";
+    if (val){
+        strcpy(tmpString, "true");
+    } else {
+        strcpy(tmpString, "false");
+    }
+    return tmpString;
 }
 //-------------------------------------------
 //
@@ -291,7 +295,6 @@ Entreprise *getProducteur(char *produit){
     for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
         ptrEntreprise = listeEntreprises[i];
         //printf("getProducteur => test entreprise %s\n", ptrEntreprise->getNom());
-        structProduit *ptrProduit;
         if (ptrEntreprise->isInCatalogue(produit)){
             return ptrEntreprise;
         }

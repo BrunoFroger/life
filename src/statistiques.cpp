@@ -157,44 +157,43 @@ void displayDatas(void){
 
     // affichage des entreprises
     if (display_stat_entreprises){
-        sprintf(string1[numLigne1++], "+------------------------------------------------------------------+");
-        sprintf(string1[numLigne1++], "|      Entreprises                                                 |");
-        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
-        sprintf(string1[numLigne1++], "|                   nom  |    typeProd |  nb salarie | effectif max|");
-        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "+------------------------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|      Entreprises                                                 |");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "|                   nom  |    typeProd |  nb salarie | effectif max|");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+-------------+");
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *item = listeEntreprises[i];
             char typeProd[20];
             strcpy(typeProd, item->getTypeProd());
-            sprintf(string1[numLigne1++], "|   %20s |  %10s |      %6d |      %6d |", 
+            sprintf(string2[numLigne2++], "|   %20s |  %10s |      %6d |      %6d |", 
                     item->getNom(), typeProd, item->getNbSalaries(), item->getEffectifMax());
             if (display_stat_salaries){
                 for (int j = 0 ; j < item->getNbSalaries() ; j++){
-                    structSalarie *employe = item->getSalarie(j);
+                    //structSalarie *employe = item->getSalarie(j);
                     
                 }
             }
         }
-        sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+-------------+");
     }
 
     // affichage des salaries
     if (display_stat_salaries){
-        sprintf(string2[numLigne2++], "+--------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|       liste des salaries de                                        |");
-        sprintf(string2[numLigne2++], "+----------------------+----------------------+------------+---------+");
-        sprintf(string2[numLigne2++], "|         entreprise   |                nom   |   fonction | salaire |");
-        sprintf(string2[numLigne2++], "+----------------------+----------------------+------------+---------+");
+        sprintf(string1[numLigne1++], "+--------------------------------------------------------------------+");
+        sprintf(string1[numLigne1++], "|       liste des salaries par entreprise                            |");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
+        sprintf(string1[numLigne1++], "|         entreprise   |                nom   |   fonction | salaire |");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *ptrEnt = listeEntreprises[i];
-            structSalarie *ptrSalarie;
             for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
                 structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
-                sprintf(string2[numLigne2++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
+                sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
                     ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
             }
         }
-        sprintf(string2[numLigne2++], "+----------------------+----------------------+------------+---------+\n");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+\n");
     }
     displayBloc();
 
@@ -220,8 +219,8 @@ void displayDatas(void){
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
     }
     if (display_stat_commandes){
-        sprintf(string2[numLigne2++], "+----------------------------------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      commandes                                                                               |");
+        sprintf(string2[numLigne2++], "+----------------------------------------------------------------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|      commandes                                                                                           |");
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
         sprintf(string2[numLigne2++], "|  num cde  |           entreprise  |               client  |       nom du produit  |    qte  |     status |");
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
@@ -229,7 +228,7 @@ void displayDatas(void){
         for (int i = 0 ; i < MAX_COMMANDES ; i++){
             ptrCommande = listeCommandes[i++];
             if (ptrCommande != NULL){
-                sprintf(string2[numLigne2++], "|  %5d    |  %20s |  %20s |  %20s |  %6d | %10s |", ptrCommande->getNumero();, ptrCommande->getFabricant()->getNom(), 
+                sprintf(string2[numLigne2++], "|  %5d    |  %20s |  %20s |  %20s |  %6d | %10s |", ptrCommande->getNumero(), ptrCommande->getFabricant()->getNom(), 
                     ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), 
                     ptrCommande->getQuantite(), ptrCommande->getStatusString());
             }

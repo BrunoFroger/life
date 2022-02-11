@@ -18,19 +18,17 @@ OBJ=$(patsubst src/%.o, obj/%.o, $(TMP))
 EXEC=life
 
 ALL : $(EXEC)
-	@echo "debut de all"
 
 $(EXEC) : $(OBJ)
-	@echo "construction de l'executable"
 	@$(CC) -o $@ $^ $(LDFLAGS)
 	@chmod +x $(EXEC)
 	@echo "executable $(EXEC) genere"
 
 obj/%.o: src/%.cpp
+	@echo "compilation de $<"
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	@echo "debut de clean"
 	@rm  $(OBJDIR)*.o
 	@rm  $(EXEC)
 	@echo "clean effectue"

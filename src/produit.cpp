@@ -82,5 +82,8 @@ int Produit::getId(void){
 //-------------------------------------------
 void Produit::sauve(FILE *fichier){
     printf("Produit::sauve => debut\n");
+    for (int i = 0 ; i < MAX_PRODUITS ; i++){
+        fprintf(fichier, "%d %s %d %d %d %d\n", this->id, this->nom, this->prix, this->stock, this->stockMini, this->coutFabrication);
+    }
     printf("Produit::sauve => fin\n");
 }

@@ -7,25 +7,30 @@
 
 
 CC=gcc
-#CFLAGS=-W -Wall -ansi -pedantic -Wcomment
-CFLAGS=-Wall -Wextra -Werror -clang++ -std=c++11
+SRCDIR= src/
+OBJDIR = obj/
+INCDIR = inc/
+CFLAGS=-Wall -Wextra -Werror -std=c++11
 LDFLAGS=-lc++ -lncurses
+SRC = $(wildcard src/*.cpp)
+TMP=$(patsubst %.cpp, %.o, $(SRC))
+OBJ=$(patsubst src/%.o, obj/%.o, $(TMP))
 EXEC=life
-SRC= $(wildcard *.cpp)
-OBJ= $(SRC:.cpp=.o)
 
-all: $(EXEC)
+ALL : $(EXEC)
+	@echo "debut de all"
 
-$(EXEC): $(OBJ)
+$(EXEC) : $(OBJ)
+	@echo "construction de l'executable"
 	@$(CC) -o $@ $^ $(LDFLAGS)
 	@chmod +x $(EXEC)
 	@echo "executable $(EXEC) genere"
 
-%.o: %.c %.h
+obj/%.o: src/%.cpp
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	@rm -rf *.o
-	@rm -rf $(EXEC)
+	@echo "debut de clean"
+	@rm  $(OBJDIR)*.o
+	@rm  $(EXEC)
 	@echo "clean effectue"
-	make

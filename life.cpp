@@ -24,13 +24,26 @@ char parent[50], enfant[50];
 char pere[50], mere[50];
 char genre;
 bool trouve;
-char nomFichier[50];
 int nb_valeurs = 10;
 int valeur_basse = 0;
 int valeur_haute = 100;
-bool dataSauvegardees = false;
+bool dataSauvegardees = true;
 FILE *file;
 char saisie[50];
+char prompt[50];
+
+//-------------------------------------------
+//
+//          setPrompt
+//
+//-------------------------------------------
+void setPrompt(char *texte){
+    if (strlen(texte) > 0){
+        sprintf(prompt, "life (%s) > ", nomFichier);
+    } else {
+        strcpy(prompt, "life > ");
+    }
+}
 
 //-------------------------------------------
 //
@@ -42,11 +55,13 @@ void sauveFichier(){
     scanf("%s", saisie);
     if (strlen(saisie) > 0){
         strcpy(nomFichier, saisie);
+        setPrompt(saisie);
     }
     file = fopen(nomFichier, "w");
     if (file != NULL){
-        printf("lancement de la boucle de sauvegarde des %d humains\n", indexHumain);
-        for (int i = 1 ; i < indexHumain ; i ++ ){
+        printf("lancement de la boucle de sauvegarde des %d humains\n", nbHumains - 1);
+        // on commence a 1 car on ne sauveagrde pas dieu
+        for (int i = 1 ; i < nbHumains ; i ++ ){
             ptr = listeHumains[i];
             ptr->sauve(file);
         }
@@ -55,6 +70,22 @@ void sauveFichier(){
         for (int i = 0 ; i < nbEntreprises ; i ++ ){
             ptrEnt = listeEntreprises[i];
             ptrEnt->sauve(file);
+        }
+        printf("lancement de la boucle de sauvegarde des %d Commandes\n", nbCommandes);
+        Commande *ptrCde;
+        for (int i = 0 ; i < MAX_COMMANDES ; i ++ ){
+            ptrCde = listeCommandes[i];
+            if (ptrCde != NULL){
+                ptrCde->sauve(file);
+            }
+        }
+        printf("lancement de la boucle de sauvegarde des %d produits\n", nbProduits);
+        Produit *ptrProd;
+        for (int i = 0 ; i < MAX_PRODUITS ; i ++ ){
+            ptrProd = listeProduits[i];
+            if (ptrProd != NULL){
+                ptrProd->sauve(file);
+            }
         }
         fclose(file);
         dataSauvegardees = true;
@@ -86,11 +117,11 @@ void chargeFichier(FILE *file){
             if (strcmp(typeLigne,"humain") == 0){
                 printf("main:chargeFichier => traitement de la ligne %s", ligne);
                 sscanf(ligne, "%s %d %s %s %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
-                if (ligne_id != indexHumain){
-                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, indexHumain);
+                if (ligne_id != nbHumains){
+                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbHumains);
                 } else {
                     ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
-                    //printf("main:chargeFichier => Humain %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+                    //printf("main:chargeFichier => Humain %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
                 }
             } else if (strcmp(typeLigne,"entreprise") == 0){
                 printf("main:chargeFichier => traitement de la ligne %s", ligne);
@@ -100,7 +131,7 @@ void chargeFichier(FILE *file){
                 } else {
                     //printf("main:chargeFichier =>  restore entreprise ...... TODO ......\n");
                     ptrEnt = new Entreprise(ligne);
-                    //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), indexHumain - 1);
+                    //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
                 }
             } else {
                 //printf(" main:chargeFichier => boucle init : on ne traite pas ligne <%s>", ligne);
@@ -126,7 +157,7 @@ void chargeFichier(FILE *file){
                     //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptr->getId(), ligne_id);
                     ptr = listeHumains[++j];
                     indexRestore = j;
-                    if (j > indexHumain){
+                    if (j > nbHumains){
                         printf("ERREUR : la ligne <%s> ne reference pas un humain initialisé\n", ligne);
                         return;
                     }
@@ -185,6 +216,7 @@ void chargeFichier(FILE *file){
         }
     }
     dataSauvegardees = true;
+    setPrompt(nomFichier);
     fclose(file);
 }
 
@@ -209,7 +241,7 @@ void afficheMenu(void){
     printf("  e : liste des comptes bancaires\n");
     printf("  f : liste des entreprises\n");
     printf("  g : liste des produits\n");
-    printf("  h : liste des commandes en cours\n");
+    //printf("  h : liste des commandes en cours\n");
     printf("  i : liste des salaries d'une entreprise\n");
     printf("  m : menu On/Off %d\n", menuOnOff);
     printf("  s : sauvegarde des donnees sur disque\n");
@@ -224,7 +256,6 @@ void afficheMenu(void){
     printf("  G : stats : affiche infos salaries des entreprises %s\n", getstringBoolean(display_stat_salaries));
     printf("  F : stats : affiche infos commandes en cours %s\n", getstringBoolean(display_stat_commandes));
     printf("  ? : affiche ce menu\n");
-    printf("  > ");
 }
 
 //-------------------------------------------
@@ -247,6 +278,7 @@ int main(int argc, char **argv)
     
     printf("creation de dieu\n");
     Humain *dieu = new Humain(HOMME, "dieu", "", 0);
+    setPrompt("");
     /*
     printf("creation de l'entreprise de production alimentaire\n");
     Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu, 100);
@@ -281,8 +313,13 @@ int main(int argc, char **argv)
 
     // boucle d'evolution
     while (!fin){
+        if (listeAuto) afficheListeHumains();
+        if (statAuto) statistiques();
+        if (menuOnOff) afficheMenu();
+        printf("%s", prompt);
+        fflush(stdin);
         int car = getchar();
-        if (car == 10) car = getchar(); // suppression du retour chariot
+        //if (car == 10) car = getchar(); // suppression du retour chariot
         switch(car){
             case '1': // descendance personne
                 //dieu->descendance();
@@ -290,7 +327,7 @@ int main(int argc, char **argv)
             case '2': // infos sur une personne 
                 printf("nom de la personne : ");
                 scanf("%s", nom);
-                for (int i = 0 ; i < indexHumain ; i ++ ){
+                for (int i = 0 ; i < nbHumains ; i ++ ){
                     ptr = listeHumains[i];
                     if (ptr != NULL){
                         if (strcmp(ptr->getNom(), nom) == 0){
@@ -303,7 +340,7 @@ int main(int argc, char **argv)
                 printf("nom de l'homme : ");
                 scanf("%s", pere);
                 trouve = false;
-                for (int i = 0 ; i < indexHumain ; i ++ ){
+                for (int i = 0 ; i < nbHumains ; i ++ ){
                     ptr = listeHumains[i];
                     if (ptr != NULL){
                         if (strcmp(ptr->getNom(), pere) == 0) {
@@ -317,6 +354,7 @@ int main(int argc, char **argv)
                             }
                             printf("mariage possible pour %s\n", ptr->getNom());
                             trouve=true;
+                            dataSauvegardees=false;
                             break;
                         }
                     }
@@ -324,7 +362,7 @@ int main(int argc, char **argv)
                 if (trouve){
                     printf("nom de la femme : ");
                     scanf("%s", mere);
-                    for (int i = 0 ; i < indexHumain ; i ++ ){
+                    for (int i = 0 ; i < nbHumains ; i ++ ){
                         ptr1 = listeHumains[i];
                         if (ptr1 != NULL){
                             if (strcmp(ptr1->getNom(), mere) == 0) {
@@ -338,6 +376,7 @@ int main(int argc, char **argv)
                                 }
                                 printf("mariage possible pour %s\n", ptr1->getNom());
                                 ptr1->mariage(ptr);
+                                dataSauvegardees=false;
                                 break;
                             }
                         }
@@ -349,7 +388,7 @@ int main(int argc, char **argv)
                 scanf("%s", parent);
                 trouve = false;
                 char *nomDuPere;
-                for (int i = 0 ; i < indexHumain ; i ++ ){
+                for (int i = 0 ; i < nbHumains ; i ++ ){
                     ptr = listeHumains[i];
                     if (ptr != NULL){
                         if (strcmp(ptr->getNom(), parent) == 0) {
@@ -381,10 +420,12 @@ int main(int argc, char **argv)
                         case 'h' : 
                             ptr->naissance(HOMME, nomDuPere, enfant);
                             printf("naissance de %s OK\n", enfant);
+                            dataSauvegardees=false;
                             break;
                         case 'F' : 
                         case 'f' :
                             ptr->naissance(FEMME, nomDuPere, enfant);
+                            dataSauvegardees=false;
                             printf("naissance de %s OK\n", enfant);
                             break;
                         default :
@@ -414,6 +455,7 @@ int main(int argc, char **argv)
                 } else {
                     printf("Impossible d'ouvrir %s\n", nomFichier);
                 }
+                dataSauvegardees=true;
                 break;
             case 'd' : // bascule affiche vivants seulement
                 vivantsSeulement = !vivantsSeulement;
@@ -428,9 +470,9 @@ int main(int argc, char **argv)
             case 'g' : // affiche liste des produits disponibles
                 afficheListeProduits();
                 break;
-            case 'h' : // affiche liste des produits disponibles
+            /*case 'h' : // affiche liste des produits disponibles
                 afficheListeCommandes();
-                break;
+                break;*/
             case 'i' : // affiche liste des salarie d'une entreprise
                 Entreprise *ptrEnt;
                 for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
@@ -443,39 +485,35 @@ int main(int argc, char **argv)
             case 'm' : // bascule affiche meno on off
                 menuOnOff = !menuOnOff;
                 break;
-            case 's': // sauvegarde d'un fichier de données
-                sauveFichier();
-                break;
-            case 'v': // lancement d'une evolution d'une année pour chaque humain/entreprise
-                evolution();
-                dataSauvegardees=false;
-                break;
             case 'q': // quitter
                 if (! dataSauvegardees){
-                    printf("les données n('ont aps étées sauvegardées ; voulez vous les sauver [OUI/non] ? ");
+                    printf("les données n'ont pas étées sauvegardées ; voulez vous les sauver [OUI/non] ? ");
                     fflush(stdout);
-                    car = getch();
-                    /*while (car == -1 ){
-                        car = getch();
-                        sleep(100);
-                        printf("car saisi <%c>(%d)\n", car, car);
-                    } */
-                    printf("car saisi <%c>(%d)\n", car, car);
+                    fflush(stdin);
+                    car = getchar();
                     //if (car != 10) { 
                         if ((car == 'n') || (car == 'N')){
                             fin=true;
                             break;
                         }
                     //}
-                    printf("on veut sauver le fichier les donnes\n");
+                    printf("on veut sauver le fichier (printf a supprimer)\n");
                     //sauveFichier();
                     dataSauvegardees=true;
                 }
                 fin=true;
                 break;
+            case 's': // sauvegarde d'un fichier de données
+                sauveFichier();
+                dataSauvegardees=true;
+                break;
+            case 'v': // lancement d'une evolution d'une année pour chaque humain/entreprise
+                evolution();
+                dataSauvegardees=false;
+                break;
             case 'z': // test generateur de nombre aleatoire
-            printf("valeur basse : "); scanf("%d", &valeur_basse);
-            printf("valeur haute : "); scanf("%d", &valeur_haute);
+                printf("valeur basse : "); scanf("%d", &valeur_basse);
+                printf("valeur haute : "); scanf("%d", &valeur_haute);
                 printf("test generateur de nombre aleatoire sur %d valeurs entre %d et %d\n", nb_valeurs, valeur_basse, valeur_haute);
                 for (int i = 0 ; i < nb_valeurs ; i++){
                     printf("%d\t", getRandom(valeur_haute - valeur_basse) + valeur_basse);
@@ -507,12 +545,9 @@ int main(int argc, char **argv)
                 afficheMenu();
                 break;
             case '\n':
-                if (listeAuto) afficheListeHumains();
-                if (statAuto) statistiques();
-                if (menuOnOff) afficheMenu();
                 break;
             default:
-            printf("%c est pas une commande connue (? pour liste des commandes disponibles\n", car);
+                printf("%c est pas une commande connue (? pour liste des commandes disponibles\n", car);
                 break;
         }
     }

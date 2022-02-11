@@ -20,8 +20,6 @@ $(EXEC): $(OBJ)
 	@$(CC) -o $@ $^ $(LDFLAGS)
 	@chmod +x $(EXEC)
 	@echo "executable $(EXEC) genere"
-#	./$(EXEC)
-
 
 %.o: %.c %.h
 	@$(CC) -o $@ -c $< $(CFLAGS)

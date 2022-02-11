@@ -18,8 +18,31 @@ conditions pour un mariage :
     difference d'age < 5
     age des futures maries > 20
 
+gestion de commandes de chaque produits
+    chaque individu commande 1 nouriture a chaque cycle
+    une entreprise fabrique des produits en fonction des comandes en cours
+    si trop de commande en cours creation d'une nouvelle entreprise
 
 conditions de verifie 
     une personne consomme 1 nourriture a chaque boucle
     une personne consomme 1 boisson toutes les 2 boucles
     une personne consomme 1 vetement toutes les 10 boucles
+
+
+condition d'evolution des salaries d'une entreprise
+    un salarie de salarie superieur
+        si plus de 10 cycle d'experience
+        et si besoin de production > seuil a definir 1 salarie supp pour 10 salarie
+    un salarie supperieur devient cadre
+        si plus de 10 cycles d'experience
+        et si nombre de salarie superieur > seuil a definir  
+        et si 1 cadre pour 20 salarie
+    reductiopn d'effectif
+        si plus d'argent sur compte Compte bancaire
+            fermeture de l'entreprise
+        si plus de commande
+            suppresssion de personnel
+                suppression de cadre si plus asssez d'nbEmployes
+                sinon suppression d'employes supperieurs
+                sinon supression d'employes
+

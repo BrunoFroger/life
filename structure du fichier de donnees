@@ -1,0 +1,42 @@
+structure du fichier de donnees
+
+Humain :
+    nom
+    id
+    prenom
+    nom
+    genre
+    age
+    nbEnfants
+    status
+
+Entreprise : 
+    id
+    nom
+    id_patron
+    typeProduction
+    effectifMax
+
+produits :
+    id
+    nom
+    prix
+    stock
+    stockMini
+    coutFabrication
+
+Salarie :
+    id
+    id_humain
+    status
+    remuneration
+    derniereAugmentation
+    productivite
+
+Commandes :
+    numero
+    status
+    quantite
+    id_client
+    id_fabricant
+    id_produit

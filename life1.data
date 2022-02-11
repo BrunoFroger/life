@@ -1,7 +1,0 @@
-1;adam;1;0;3;1;eve;dieu;;pierre;marie;joseph;
-2;pierre;1;0;0;0;;adam;;
-3;eve;2;0;3;1;adam;dieu;;paul;marie;joseph;
-4;paul;1;0;0;0;;;eve;
-5;marie;2;0;1;0;;adam;eve;jesus;
-6;joseph;1;0;0;0;;adam;eve;
-7;jesus;1;0;0;0;;;marie;

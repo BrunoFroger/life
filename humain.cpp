@@ -38,8 +38,8 @@ void Humain::setGenreTexte(){
 //
 //-------------------------------------------
 Humain::Humain(int genre, char *nom, char *prenom, int age){
-    //printf("debut creation humain %s %s en position %d\n", prenom, nom, indexHumain);
-    this->id=indexHumain;
+    //printf("debut creation humain %s %s en position %d\n", prenom, nom, nbHumains);
+    this->id=nbHumains;
     this->genre = genre;
     setGenreTexte();
     this->age = age;
@@ -53,8 +53,9 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     for (int i = 0 ; i < MAX_ENFANTS ; i++){
         this->enfants[i]=NULL;
     }
-    listeHumains[indexHumain++] = this;
-    listeHumains[indexHumain] = NULL;
+    listeHumains[nbHumains] = this;
+    nbHumains++;
+    listeHumains[nbHumains] = NULL;
     //displayInfos();
     //printf("fin creation humain %s\n", nom);
     this->employeur=NULL;
@@ -114,7 +115,7 @@ void Humain::restore(char *datas){
     this->id = datas_id;
     //printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
     //        this->id, this->prenom, this->nom, this->genre, this->age, this->status, this->nbEnfants);
-    for (int i = 0 ; i < indexHumain ; i++){
+    for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
         if (ptr->id == datas_idConjoint) {
             ptr->conjoint = this;
@@ -150,6 +151,7 @@ void Humain::restore(char *datas){
 //-------------------------------------------
 Humain::~Humain(){
     // rien a faire pour le moment
+    nbHumains--;
 }
 
 //-------------------------------------------
@@ -500,7 +502,7 @@ void Humain::sauve(FILE *fic){
     char ligne[500];
     char tmp[500];
     int thisPere, thisMere, thisConjoint;
-    for (int i = 0 ; i < indexHumain ; i++){
+    for (int i = 0 ; i < nbHumains ; i++){
         // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
         sprintf(tmp, "humain %d %s %s %d %d %d %d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status);
         //printf("tmp = %s\n", tmp);
@@ -574,7 +576,7 @@ void Humain::vieillir(void){
                     // candidat potentiel au mariage
                     //printf("%s est candidat au mariage\n", this->nom);
                     // recherche partenaire
-                    for (int j = 0 ; j < indexHumain ; j++){
+                    for (int j = 0 ; j < nbHumains ; j++){
                         ptr1 = listeHumains[j];
                         if ((ptr1->getGenreTexte()[0] == 'F') && (ptr1->getAge() >= AGE_DEBUT_MARIAGE)){
                             if ((ptr1->getStatus() == 'C') || (ptr1->getStatus() == 'V')){
@@ -684,4 +686,14 @@ bool Humain::debite(int montant){
 //-------------------------------------------
 int Humain::getNumCompte(void){
     return this->compteBancaire->getNumCompte();;
+}
+
+//-------------------------------------------
+//
+//          Humain::boucleTraitement
+//
+//-------------------------------------------
+void Humain::boucleTraitement(void){
+    printf("Humain::boucleTraitement => debut\n");
+    printf("Humain::boucleTraitement => fin\n");
 }

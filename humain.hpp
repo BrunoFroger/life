@@ -8,7 +8,6 @@
 #define __HUMAIN__
 
     #include <string>
-    #include "entreprise.hpp"
 
     // genre humain
     #define HOMME 1
@@ -36,6 +35,7 @@
             ~Humain();
             void restore(char *datas);
             void sauve(FILE *fic);
+            void boucleTraitement(void);
             void displayInfos(void);
             void mariage(Humain *conjoint);
             Humain *naissance(int genre, char *nom, char *prenom);

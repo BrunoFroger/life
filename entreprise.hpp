@@ -4,17 +4,15 @@
 //
 //-----------------------------------
 
-#include <stdio.h>
-#include <string>
 
 
 #ifndef __ENTREPRISE__
 #define __ENTREPRISE__
 
-    #include "humain.hpp"
-    #include "compteBancaire.hpp"  
-
-    #define MAX_COMMANDES   200
+    #include <stdio.h>
+    #include <string>
+    #include "variables.hpp"
+    #include "produit.hpp"
 
     #define MAX_PRODUITS    10
     #define PROD_NOURITURE  1
@@ -69,10 +67,12 @@
         public:
             Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax);
             Entreprise(char *datas);
+            ~Entreprise(void);
             void restore(char *datas);
             void init(void);
             bool commande(Humain *client, char *produit, int qte);
             int nbDisponibles(char *produit);
+            int nbDisponibles(Produit *produit);
             int getPrix(char *produit);
             void addProduit(char *nom, int prix, int stock, int stockMini, int coutProd);
             void production(void);
@@ -85,8 +85,9 @@
             void gereCommandes(void);
             void gereRecrutement(int typeRecrutement);
             bool isInCatalogue(char *produit);
+            bool isInCatalogue(Produit *produit);
             structProduit *getProduit(int index);
-            structCommande *getCommande(int index);
+            //structCommande *getCommande(int index);
             bool credite(int montant);
             int getQuantiteAProduire(structProduit *produit);
             structSalarie *getSalarie(int index);
@@ -95,6 +96,8 @@
             void listeSalaries(void);
             char * getStatusString(int status);
             int getEffectifMax(void);
+            bool produitEnStock(Produit *produit);
+            void boucleTraitement(void);
             
 
         private:
@@ -106,11 +109,12 @@
             int nbEmployes;
             int nbCadres;
             int effectifMax;
+            Produit *listeProduit[MAX_PRODUITS];
             structProduit listeProduits[MAX_PRODUITS];
             structSalarie listeSalarie[MAX_SALARIE];
             void generePaye(void);
             CompteBancaire *compteBancaire;
-            structCommande listeCommandes[MAX_COMMANDES];
+            //structCommande listeCommandes[MAX_COMMANDES];
             int getProductionPossible(void);
             bool debite(int montant);
     };

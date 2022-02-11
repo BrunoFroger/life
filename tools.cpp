@@ -140,11 +140,11 @@ enfantDieu getRandomEnfant(void){
 //-------------------------------------------
 void afficheListeHumains(void){
     Humain *ptr;
-    printf("nombres d'humains crees : %d\n", indexHumain);
+    printf("nombres d'humains crees : %d\n", nbHumains);
     printf("+------+-----------------------+-------+-------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
     printf("|  id  |                   nom | status| genre | age  | solde banque |                      employeur |                       conjoint |                 pere |                 mere | nb enfants |\n");
     printf("+------+-----------------------+-------+-------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
-    for (int i = 0 ; i < indexHumain ; i++){
+    for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
         if (vivantsSeulement && (ptr->getStatus() == 'X')) {
             //printf("on imprime pas les morts \n");
@@ -260,7 +260,7 @@ void afficheListeProduits(void){
 //          afficheListeCommandes
 //
 //-------------------------------------------
-void afficheListeCommandes(void){
+/*void afficheListeCommandes(void){
     printf("+---------------------------------------------------------------------------------+\n");
     printf("|      commandes                                                                  |\n");
     printf("+-----------------------+-----------------------+-----------------------+---------+\n");
@@ -278,7 +278,7 @@ void afficheListeCommandes(void){
         }
     }
     printf("+-----------------------+-----------------------+-----------------------+---------+\n");
-}
+}*/
 
 //-------------------------------------------
 //
@@ -324,7 +324,7 @@ Entreprise *getEntrepriseById(int id){
 Humain *getHumainById(int id){
     //printf("getProducteur => debut\n");
     Humain *ptr;
-    for (int i = 0 ; i < indexHumain ; i++){
+    for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
         if (ptr->getId() == id){
             return ptr;

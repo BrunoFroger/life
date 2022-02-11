@@ -14,7 +14,7 @@
 
 //-------------------------------------------
 //
-//          Entreprise::Entreprise
+//          Entreprise::init
 //
 //-------------------------------------------
 void Entreprise::init(void){
@@ -34,12 +34,19 @@ void Entreprise::init(void){
         listeProduits[i].stockMini = 0;
         listeProduits[i].coutFabrication = 0;
     }
-    // initialise liste des commandes
-    for (int i = 0 ; i < MAX_COMMANDES ; i++){
-        listeCommandes[i].client = NULL;
-        strcpy(listeCommandes[i].nomProduit,"");
-        listeCommandes[i].quantite=-1;
+    // initialise liste des produits
+    for (int i = 0 ; i < MAX_PRODUITS ; i++){
+        listeProduit[i] = NULL;
     }
+}
+
+//-------------------------------------------
+//
+//          Entreprise::~Entreprise
+//
+//-------------------------------------------
+Entreprise::~Entreprise(void){
+    nbEntreprises--;
 }
 
 //-------------------------------------------
@@ -301,6 +308,8 @@ int Entreprise::getPrix(char *produit){
 //-------------------------------------------
 bool Entreprise::commande(Humain *client, char *produit, int qte){
     printf("Entreprise::commande => debut \n");
+    printf("... TODO.... \n");
+    /*
     if (strcmp(client->getNom(),"dieu") != 0){
         printf("Entreprise::commande => tentative de commmande de %s dans entreprise %s par %s\n",
             produit, this->nom, client->getNomComplet());
@@ -324,6 +333,8 @@ bool Entreprise::commande(Humain *client, char *produit, int qte){
         printf("Entreprise::commande => fin \n");
         return false;
     }
+    */
+    printf("Entreprise::commande => fin \n");
 }
 
 //-------------------------------------------
@@ -361,6 +372,9 @@ int Entreprise::getProductionPossible(void){
 //
 //-------------------------------------------
 int Entreprise::getQuantiteAProduire(structProduit *produit){
+    printf("Entreprise::getQuantiteAProduire => debut\n");
+    printf("... TODO... \n");
+    /*
     int quantiteAProduire = produit->stockMini - produit->stock;
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *ptrCommande = &listeCommandes[i];
@@ -368,8 +382,12 @@ int Entreprise::getQuantiteAProduire(structProduit *produit){
             quantiteAProduire += ptrCommande->quantite;
         }
     }
+    
     //printf("Entreprise::getQuantiteAProduire => la quantite a produire est de %d\n", quantiteAProduire);
     return quantiteAProduire;
+    */
+    printf("Entreprise::getQuantiteAProduire => fin\n");
+   return 0;
 }
 
 //-------------------------------------------
@@ -473,6 +491,22 @@ structProduit *Entreprise::getProduit(int index){
 
 //-------------------------------------------
 //
+//          Entreprise::produitEnStock
+//
+//-------------------------------------------
+bool Entreprise::produitEnStock(Produit *produit){
+    Produit *ptrProduit;
+    for (int i = 0 ; i < MAX_PRODUITS ; i++){
+        ptrProduit = this->listeProduit[i];
+        if (ptrProduit == produit){
+            return true;
+        }
+    }
+    return false;
+}
+
+//-------------------------------------------
+//
 //          Entreprise::getSalarie
 //
 //-------------------------------------------
@@ -489,13 +523,13 @@ structSalarie *Entreprise::getSalarie(int index){
 //          Entreprise::getCommande
 //
 //-------------------------------------------
-structCommande *Entreprise::getCommande(int index){
+/*structCommande *Entreprise::getCommande(int index){
     if (listeCommandes[index].client != NULL){
         return &listeCommandes[index];
     } else {
         return NULL;
     }
-}
+}*/
 
 //-------------------------------------------
 //
@@ -532,6 +566,8 @@ bool Entreprise::debite(int montant){
 //
 //-------------------------------------------
 void Entreprise::gereCommandes(void){
+    printf("...TODO...\n");
+    /*
     printf("Entreprise::gereCommandes => debut \n");
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *ptrCommande = &listeCommandes[i];
@@ -568,6 +604,7 @@ void Entreprise::gereCommandes(void){
             }
         }
     }
+    */
     printf("Entreprise::gereCommandes => fin \n");
 }
 
@@ -627,7 +664,22 @@ bool Entreprise::isInCatalogue(char *produit){
     }
     return false;
 }
-
+//-------------------------------------------
+//
+//          Entreprise::isInCatalogue
+//
+//-------------------------------------------
+bool Entreprise::isInCatalogue(Produit *produit){
+    printf("Entreprise::isInCatalogue => debut tests si %s au catalogue\n", produit->getNom());
+    Produit *ptrProduit;
+    for (int i = 0 ; i < MAX_PRODUITS ; i++){
+        ptrProduit = listeProduit[i];
+        if (ptrProduit == produit){
+            return true;
+        }
+    }
+    return false;
+}
 
 //-------------------------------------------
 //
@@ -696,4 +748,14 @@ int Entreprise::getEffectifMax(void){
 //-------------------------------------------
 int Entreprise::getId(void){
     return this->id;
+}
+
+//-------------------------------------------
+//
+//          Entreprise::boucleTraitement
+//
+//-------------------------------------------
+void Entreprise::boucleTraitement(void){
+    printf("Entreprise::boucleTraitement => debut\n");
+    printf("Entreprise::boucleTraitement => fin\n");
 }

@@ -2,6 +2,26 @@ TODO
 
 - bug dans restauration de donnees 
 
+- creer classe produits 
+    - membres
+        - nom du produit
+        - prix
+        - entreprise fabricante
+        - delai livraison
+    - methode
+        - getprix
+        - get stock
+        - 
+- creer classe commande
+    - memnbres de la classe 
+        - client
+        - produit commandé
+        - quantite
+    - methodes
+        - commande
+        - statusCommande
+        - receptionCommande
+
 
 - gerer la fabricaiton quand il y a trop de commandes en cours stock < stock mini
 - recruter quand capacite de production trop faible

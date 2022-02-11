@@ -6,10 +6,10 @@
 
 #include "variables.hpp"
 #include "tools.hpp"
-#include "humain.hpp"
-#include "entreprise.hpp"
-#include "compteBancaire.hpp"
 
+#define TAILLE_TABLEAU  85
+#define NB_COLONNES     3
+#define NB_LIGNES       40
 #define NB_MAX_ENFANTS  1000
 
 int nbEnfants = 0;
@@ -45,6 +45,11 @@ bool display_stat_entreprises = true;
 bool display_stat_produits = true;
 bool display_stat_salaries = true;
 bool display_stat_commandes = true;
+char string1[40][200], string2[40][200], string3[40][200];
+char blocs[NB_COLONNES][NB_LIGNES][200];
+int numLigne1=0, numLigne2=0, numLigne3=0;
+int numLignes[NB_COLONNES];
+char displayNomFichier[50];
 
 //-------------------------------------------
 //
@@ -55,6 +60,31 @@ int getNbVivants(void){
     return nbVivants;
 }
 
+//-------------------------------------------
+//
+//          displayBloc
+//
+//-------------------------------------------
+void displayBloc(void){
+    int i = 0;
+    while (true){
+        if (i < numLigne1){
+            printf("%-*s",TAILLE_TABLEAU, string1[i]);
+        }
+        if (i < numLigne2){
+            printf("%-*s",TAILLE_TABLEAU, string2[i]);
+        }
+        if (i < numLigne3) {
+            printf("%-s", string3[i]);
+        }
+        if (( i >= numLigne1) && (i > numLigne2)  && (i > numLigne3) ) break;
+        i++;
+        printf("\n");
+    }
+    numLigne1=0;
+    numLigne2=0;
+    numLigne3=0;
+}
 
 //-------------------------------------------
 //
@@ -62,15 +92,13 @@ int getNbVivants(void){
 //
 //-------------------------------------------
 void displayDatas(void){    
-    char string1[40][200], string2[40][200];
-    int numLigne1=0, numLigne2=0;
     if (display_stat_humain){
         sprintf(string1[numLigne1++], "+---------------------------------------------------+");
-        sprintf(string1[numLigne1++], "|                statistiques                       |");
+        sprintf(string1[numLigne1++], "|    statistiques %-25s         |", displayNomFichier);
         sprintf(string1[numLigne1++], "+-------------------+---------------+---------------+");
         sprintf(string1[numLigne1++], "|        Item       +    nb total   +   nb vivants  |");
         sprintf(string1[numLigne1++], "+-------------------+---------------+---------------+");
-        sprintf(string1[numLigne1++], "| population totale |  %5d        |  %5d        |", indexHumain - 1, nbVivants);
+        sprintf(string1[numLigne1++], "| population totale |  %5d        |  %5d        |", nbHumains - 1, nbVivants);
         sprintf(string1[numLigne1++], "| nb hommes         |  %5d        |  %5d        |", nbHommes, nbHommesVivants);
         sprintf(string1[numLigne1++], "| nb femmes         |  %5d        |  %5d        |", nbFemmes, nbFemmesVivantes);
         sprintf(string1[numLigne1++], "| nb couples        |  %5d        |               |", nbCouples);
@@ -109,67 +137,25 @@ void displayDatas(void){
         sprintf(string2[numLigne2++], "| aff liste auto   | %7s |   %c |",  getstringBoolean(listeAuto), 'a');
         sprintf(string2[numLigne2++], "+------------------+---------+-----+");
     }
-    int i = 0;
-    while (true){
-        if (i < numLigne1) printf("%-80s    ",string1[i]);
-        if (i < numLigne2) printf("%s", string2[i]);
-        if (( i >= numLigne1) && (i > numLigne2) ) break;
-        i++;
-        printf("\n");
-    }
-
     // affichage des comptes bancaires
-    numLigne1=0;
-    numLigne2=0;
     if (display_stat_cptBanque){
-        sprintf(string1[numLigne1++], "+-------------------------------------------+");
-        sprintf(string1[numLigne1++], "|      Comptes bancaires                    |");
-        sprintf(string1[numLigne1++], "+------------------------+---------+--------+");
-        sprintf(string1[numLigne1++], "|             nom Client | num cpt |  solde |");
-        sprintf(string1[numLigne1++], "+------------------------+---------+--------+");
+        sprintf(string3[numLigne3++], "+-------------------------------------------+");
+        sprintf(string3[numLigne3++], "|      Comptes bancaires                    |");
+        sprintf(string3[numLigne3++], "+------------------------+---------+--------+");
+        sprintf(string3[numLigne3++], "|             nom Client | num cpt |  solde |");
+        sprintf(string3[numLigne3++], "+------------------------+---------+--------+");
         for (int i = 0 ; i < nbComptesBancaires ; i++){
             if (listeComptesBancaires[i]->getNumCompte() != -1){
                 CompteBancaire *item = listeComptesBancaires[i];
-                sprintf(string1[numLigne1++], "|   %20s |  %06d | %6d |", item->getNomClient(), item->getNumCompte(), item->getSolde());
+                sprintf(string3[numLigne3++], "|   %20s |  %06d | %6d |", item->getNomClient(), item->getNumCompte(), item->getSolde());
             }
         }
-        sprintf(string1[numLigne1++], "+------------------------+---------+--------+");
+        sprintf(string3[numLigne3++], "+------------------------+---------+--------+");
     }
+    displayBloc();
 
-    if (display_stat_commandes){
-        sprintf(string2[numLigne2++], "+---------------------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      commandes en attente                                                       |");
-        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+");
-        sprintf(string2[numLigne2++], "|           entreprise  |               client  |       nom du produit  |    qte  |");
-        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+");
-        for (int i = 0 ; i < nbEntreprises ; i++){
-            Entreprise *ptrEnt = listeEntreprises[i];
-            structCommande *ptrCommande;
-            int j=0;
-            ptrCommande = ptrEnt->getCommande(j++);
-            while (ptrCommande != NULL){
-                sprintf(string2[numLigne2++], "|  %20s |  %20s |  %20s |  %6d |", ptrEnt->getNom(), 
-                    ptrCommande->client->getNomComplet(), ptrCommande->nomProduit, ptrCommande->quantite);
-                ptrCommande = ptrEnt->getCommande(j++);
-            }
-        }
-        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+");
-    }
-    i=0;
-    while (true){
-        if (i < numLigne1) printf("%-80s    ",string1[i]);
-        if (i < numLigne2) {
-            if (i >= numLigne1) printf("%-80s    "," ");
-            printf("%s", string2[i]);
-        }
-        if (( i >= numLigne1) && (i > numLigne2) ) break;
-        i++;
-        printf("\n");
-    }
 
     // affichage des entreprises
-    numLigne1=0;
-    numLigne2=0;
     if (display_stat_entreprises){
         sprintf(string1[numLigne1++], "+------------------------------------------------------------------+");
         sprintf(string1[numLigne1++], "|      Entreprises                                                 |");
@@ -191,71 +177,66 @@ void displayDatas(void){
         }
         sprintf(string1[numLigne1++], "+------------------------+-------------+-------------+-------------+");
     }
+
+    // affichage des salaries
+    if (display_stat_salaries){
+        sprintf(string2[numLigne2++], "+--------------------------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|       liste des salaries de                                        |");
+        sprintf(string2[numLigne2++], "+----------------------+----------------------+------------+---------+");
+        sprintf(string2[numLigne2++], "|         entreprise   |                nom   |   fonction | salaire |");
+        sprintf(string2[numLigne2++], "+----------------------+----------------------+------------+---------+");
+        for (int i = 0 ; i < nbEntreprises ; i++){
+            Entreprise *ptrEnt = listeEntreprises[i];
+            structSalarie *ptrSalarie;
+            for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
+                structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
+                sprintf(string2[numLigne2++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
+                    ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
+            }
+        }
+        sprintf(string2[numLigne2++], "+----------------------+----------------------+------------+---------+\n");
+    }
+    displayBloc();
+
+
     // affichage des produits
     if (display_stat_produits){
-        sprintf(string2[numLigne2++], "+-----------------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      produits                                                               |");
-        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+---------+---------+---------+");
-        sprintf(string2[numLigne2++], "|           entreprise  |       nom du produit  |    prix |  stock  | stk min |");
-        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+---------+---------+---------+");
+        sprintf(string1[numLigne1++], "+-----------------------------------------------------------------------------+");
+        sprintf(string1[numLigne1++], "|      produits                                                               |");
+        sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
+        sprintf(string1[numLigne1++], "|           entreprise  |       nom du produit  |    prix |  stock  | stk min |");
+        sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *ptrEnt = listeEntreprises[i];
             structProduit *ptrProduit;
             int j=0;
             ptrProduit = ptrEnt->getProduit(j++);
             while (ptrProduit != NULL){
-                sprintf(string2[numLigne2++], "|  %20s |  %20s |  %6d |  %6d |  %6d |", ptrEnt->getNom(), 
+                sprintf(string1[numLigne1++], "|  %20s |  %20s |  %6d |  %6d |  %6d |", ptrEnt->getNom(), 
                     ptrProduit->nom, ptrProduit->prix, ptrProduit->stock, ptrProduit->stockMini);
                 ptrProduit = ptrEnt->getProduit(j++);
             }
         }
-        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+---------+---------+---------+");
+        sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
     }
-    i=0;
-    while (true){
-        if (i < numLigne1) printf("%-80s    ",string1[i]);
-        if (i < numLigne2) {
-            if (i >= numLigne1) printf("%-80s    "," ");
-            printf("%s", string2[i]);
-        }
-        if (( i >= numLigne1) && (i > numLigne2) ) break;
-        i++;
-        printf("\n");
-    }
-
-
-
-    // affichage des salaries
-    numLigne1=0;
-    numLigne2=0;
-    if (display_stat_salaries){
-        sprintf(string1[numLigne1++], "+--------------------------------------------------------------------+");
-        sprintf(string1[numLigne1++], "|       liste des salaries de                                        |");
-        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
-        sprintf(string1[numLigne1++], "|         entreprise   |                nom   |   fonction | salaire |");
-        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
-        for (int i = 0 ; i < nbEntreprises ; i++){
-            Entreprise *ptrEnt = listeEntreprises[i];
-            structSalarie *ptrSalarie;
-            for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
-                structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
-                sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
-                    ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
+    if (display_stat_commandes){
+        sprintf(string2[numLigne2++], "+----------------------------------------------------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|      commandes                                                                               |");
+        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+------------+");
+        sprintf(string2[numLigne2++], "|           entreprise  |               client  |       nom du produit  |    qte  |     status |");
+        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+------------+");
+        Commande *ptrCommande;
+        for (int i = 0 ; i < MAX_COMMANDES ; i++){
+            ptrCommande = listeCommandes[i++];
+            if (ptrCommande != NULL){
+                sprintf(string2[numLigne2++], "|  %20s |  %20s |  %20s |  %6d | %10s |", ptrCommande->getFabricant()->getNom(), 
+                    ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), 
+                    ptrCommande->getQuantite(), ptrCommande->getStatusString());
             }
         }
-        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+\n");
+        sprintf(string2[numLigne2++], "+-----------------------+-----------------------+-----------------------+---------+------------+");
     }
-    i=0;
-    while (true){
-        if (i < numLigne1) printf("%-80s    ",string1[i]);
-        if (i < numLigne2) {
-            if (i >= numLigne1) printf("%-80s    "," ");
-            printf("%s", string2[i]);
-        }
-        if (( i >= numLigne1) && (i > numLigne2) ) break;
-        i++;
-        printf("\n");
-    }
+    displayBloc();
 }
 
 //-------------------------------------------
@@ -265,7 +246,12 @@ void displayDatas(void){
 //-------------------------------------------
 void statistiques(void){
     Humain *ptr;
-    for (int i = 1 ; i < indexHumain ; i++){
+    if (strlen(nomFichier) > 0){
+        sprintf(displayNomFichier, "fichier %s", nomFichier);
+    } else {
+        strcpy(displayNomFichier, "");
+    }
+    for (int i = 1 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
         if (strcmp(ptr->getGenreTexte(),"Homme") == 0) {
             nbHommes++;
@@ -317,7 +303,7 @@ void statistiques(void){
             }
         }
     }
-    nbVivants = indexHumain - 1 - nbMorts;
+    nbVivants = nbHumains - 1 - nbMorts;
     nbHommesVivants = nbHommes - nbHommesMorts;
     nbFemmesVivantes = nbFemmes - nbFemmesMortes;
     nbCouples /= 2; // divise par 2 car on compte les deux membres du couple marie

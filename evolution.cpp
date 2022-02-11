@@ -9,6 +9,7 @@
 #include "variables.hpp"
 #include "statistiques.hpp"
 #include "tools.hpp"
+#include "commande.hpp"
 
 
 //-------------------------------------------
@@ -21,9 +22,31 @@ void evolution(void){
     printf("evolution ==> debut \n");
     Humain *ptrIndividu;
     Entreprise *ptrEnt;
+    Commande *ptrCommande;
+    int i;
+
+    for (i = 0 ; i < MAX_HUMAINS ; i++){
+        if (listeHumains[i] != NULL){
+            listeHumains[i]->boucleTraitement();
+        }
+    }
+
+    for (i = 0 ; i < MAX_ENTREPRISES ; i++){
+        if (listeEntreprises[i] != NULL){
+            listeEntreprises[i]->boucleTraitement();
+        }
+    }
+
+    for (i = 0 ; i < MAX_COMMANDES ; i++){
+        if (listeCommandes[i] != NULL){
+            listeEntreprises[i]->boucleTraitement();
+        }
+    }
+
+    return;
 
     // vieillissemnt de la population
-    for (int i = 0 ; i < indexHumain ; i++){
+    for (int i = 0 ; i < nbHumains ; i++){
         ptrIndividu = listeHumains[i];
         ptrIndividu->vieillir();
         // consommation de nourriture pour vivre

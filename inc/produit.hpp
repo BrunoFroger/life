@@ -5,16 +5,6 @@
 //-----------------------------------
 
 
-
-// definition des types de produits
-#define PRODUIT_ALIMENTAIRE     100
-#define PRODUIT_SERVICES        200
-#define PRODUIT_VETEMENTS       300
-#define PRODUIT_AUTOMOBILE      400
-#define PRODUIT_MAISON          500
-#define PRODUIT_LOISIR          600
-#define PRODUIT_EQUIP_MAISON    700
-
 // definition des produits
 #define P_ALI_VIANDE            101
 #define P_ALI_LEGUME            102
@@ -36,6 +26,16 @@
 #define P_AUT_CARBURANT         403
 #define P_AUT_ASSURANCE         404
 
+#define P_MAI_LOYER             501
+#define P_MAI_CREDIT            502
+#define P_MAI_CAHAUFFAGE        503
+#define P_MAI_ACHAT_MEUBLES     504
+#define P_MAI_REPARATIONS       505
+#define P_MAI_ASSURANCE         506
+#define P_MAI_MAISON            510
+#define P_MAI_APPART            511
+#define P_MAI_RENOV             520
+
 #define P_EQU_MAI_FRIGO         701
 #define P_EQU_MAI_GAZINIERE     702
 #define P_EQU_MAI_LAVE_LINGE    702
@@ -53,17 +53,22 @@
     
     class Produit {
         public:
-            Produit(char *nom, int type, int stockInitial, int stockMini, int prix, int coutFabrication);
+            Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication);
             ~Produit(void);
             char *getNom(void);
             int getPrix(void);
             int getStock(void);
+            int getStockMini(void);
             void sauve(FILE *fichier);
             int getId(void);
+            int getProducteurId(void);
+            char *getTypeProd(void);
+            int getQuantiteAProduire(void);
 
         private:
             int id;
             char nom[50];
+            int producteurId;
             int type;
             int stock;
             int stockMini;

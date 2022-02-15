@@ -26,18 +26,6 @@ void Entreprise::init(void){
         listeSalarie[i].derniereAugmentation = 0;
         listeSalarie[i].productivite = 0;
     }
-    // initialise liste des produits
-    for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        strcpy(listeProduits[i].nom,"");
-        listeProduits[i].prix = 0;
-        listeProduits[i].stock = 0;
-        listeProduits[i].stockMini = 0;
-        listeProduits[i].coutFabrication = 0;
-    }
-    // initialise liste des produits
-    for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        listeProduit[i] = NULL;
-    }
 }
 
 //-------------------------------------------
@@ -80,27 +68,12 @@ Entreprise::Entreprise(char *datas){
 void Entreprise::restore(char *datas){
     char dataNom[50], typeLigne[25]; 
     int dataIdEnt, dataIdHumain, dataTypeProd, dataEffectifMax;
-    int dataPrix, dataStock, dataStockMini, dataCoutFab;
     int dataStatus, dataRemuneration, dataDernAugment, dataProductivite;
     int i = 0;
     sscanf(datas,"%s ", typeLigne);
     if (strcmp(typeLigne, "entreprise") == 0){
         printf("Entreprise::restore => restaure une entreprise : %s", datas);
         sscanf(datas,"%s %d %s %d %d %d", typeLigne, &dataIdEnt, dataNom, &dataIdHumain, &dataTypeProd, &dataEffectifMax);
-        printf("..... TODO .....\n");
-    } else if (strcmp(typeLigne, "produit") == 0){
-        printf("Entreprise::restore => restaure un produit : %s", datas);
-        sscanf(datas,"%s %d %s %d %d %d %d", typeLigne, &dataIdEnt, dataNom, &dataPrix, &dataStock, &dataStockMini, &dataCoutFab);
-        while (strcmp(listeProduits[i].nom,"") != 0) {
-            i++;
-        }
-        structProduit *ptrProduit = &listeProduits[i];
-        strcpy(ptrProduit->nom, dataNom);
-        ptrProduit->prix = dataPrix;
-        ptrProduit->stock = dataStock;
-        ptrProduit->stockMini = dataStockMini;
-        ptrProduit->coutFabrication = dataCoutFab;
-        printf("Entreprise::restore => retaure le produit %s en position %d\n", ptrProduit->nom, i);
         printf("..... TODO .....\n");
     } else if (strcmp(typeLigne, "salarie") == 0){
         printf("Entreprise::restore => restaure un salarie : %s", datas);
@@ -169,29 +142,6 @@ int Entreprise::getNbSalaries(void){
 
 //-------------------------------------------
 //
-//          Entreprise::getTypeProd
-//
-//-------------------------------------------
-char *Entreprise::getTypeProd(void){
-    switch (this->typeProduction){
-        case PROD_NOURITURE:
-            strcpy(tmpString, "Nouriture");
-            break;
-        case PROD_MAISON:
-            strcpy(tmpString, "Maison");
-            break;
-        case PROD_VOITURE:
-            strcpy(tmpString, "Voiture");
-            break;
-        default:
-            strcpy(tmpString, "");
-            break;
-    }
-    return tmpString;
-}
-
-//-------------------------------------------
-//
 //          Entreprise::catalogue
 //
 //-------------------------------------------
@@ -201,9 +151,11 @@ void Entreprise::catalogue(void){
     printf("+---------------------------+-----------+---------+\n");
     printf("|            Nom du produit |     prix  |   stock |\n");
     printf("+---------------------------+-----------+---------+\n");
+    Produit *ptrProduit;
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        if (strcmp(this->listeProduits[i].nom,"") != 0){
-            printf("|     %20s  |   %6d  |   %4d  |\n", this->listeProduits[i].nom, this->listeProduits[i].prix, this->listeProduits[i].stock);
+        ptrProduit = listeProduit[i];
+        if (ptrProduit != NULL){
+            printf("|     %20s  |   %6d  |   %4d  |\n", ptrProduit->getNom(), ptrProduit->getPrix(), ptrProduit->getStock());
         }
     }
     printf("+---------------------------+-----------+---------+\n");
@@ -283,20 +235,8 @@ void Entreprise::embauche(Humain *personne, int status){
 //          Entreprise::addProduit
 //
 //-------------------------------------------
-void Entreprise::addProduit(char *nom, int prix, int stock, int stockMini, int coutProd){
-    for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        structProduit *item = &this->listeProduits[i];
-        if (strcmp(item->nom,"") == 0){
-            strcpy(item->nom, nom);
-            item->prix = prix;
-            item->stock = stock;
-            item->stockMini = stockMini;
-            item->coutFabrication = coutProd;
-            printf("Entreprise::addProduit => (produit n° %d) ajout du produit %s au prix de %d, avec un stock de %d\n", i, item->nom, item->prix, item->stock);
-            //this->catalogue();
-            return;
-        }
-    }
+void Entreprise::addProduit(Produit *newProduit){
+    listeProduit[nbProduits++] = newProduit;
 }
 
 //-------------------------------------------
@@ -306,8 +246,10 @@ void Entreprise::addProduit(char *nom, int prix, int stock, int stockMini, int c
 //-------------------------------------------
 int Entreprise::getPrix(char *produit){
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        if (strcmp(produit, listeProduits[i].nom) == 0){
-            return listeProduits[i].prix;
+        if (listeProduit[i] != NULL){
+            if (strcmp(produit, listeProduits[i]->getNom()) == 0){
+                return listeProduit[i]->getPrix();
+            }
         }
     }
     return -1;
@@ -320,11 +262,13 @@ int Entreprise::getPrix(char *produit){
 //-------------------------------------------
 int Entreprise::nbDisponibles(char *produit){
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        if (strcmp(produit, listeProduits[i].nom) == 0){
-            return listeProduits[i].stock;
+        if (listeProduit[i] != NULL){
+            if (strcmp(produit, listeProduits[i]->getNom()) == 0){
+                return listeProduit[i]->getStock();
+            }
         }
     }
-    return -1;
+    return 0;
 }
 
 //-------------------------------------------
@@ -407,19 +351,6 @@ void Entreprise::listeSalaries(void){
 
 //-------------------------------------------
 //
-//          Entreprise::getProduit
-//
-//-------------------------------------------
-structProduit *Entreprise::getProduit(int index){
-    if (strcmp(listeProduits[index].nom,"") != 0){
-        return &listeProduits[index];
-    } else {
-        return NULL;
-    }
-}
-
-//-------------------------------------------
-//
 //          Entreprise::produitEnStock
 //
 //-------------------------------------------
@@ -493,10 +424,40 @@ void Entreprise::gereCommandes(void){
 //-------------------------------------------
 void Entreprise::gereRecrutement(int typeRecrutement){
     printf("Analyse si besoin de recruter des salariés\n");
+    int besoinDeProduction = 0;
+    Produit *ptrProduit;
     for (int i = 0 ; i< MAX_PRODUITS ; i++){
-        structProduit *ptrProduit = &listeProduits[i];
-        if (strcmp(ptrProduit->nom, "") != 0 ){
-            if (ptrProduit->stock <= ptrProduit->stockMini){
+        ptrProduit = listeProduit[i];
+        besoinDeProduction += ptrProduit->getQuantiteAProduire();
+    }
+    if (besoinDeProduction > getProductionPossible()){
+        // il faut recruter
+        printf("Entreprise::gereRecrutement => besoin de recruter : .... TODO .....\n");
+        Humain *ptrHumain;
+        for (int i = 0 ; i < MAX_HUMAINS ; i++){
+            ptrHumain = listeHumains[i];
+            if (ptrHumain != NULL){
+                // on verifie si cette personne est employable
+                if ( (ptrHumain->getStatus() != MORT) &&
+                    (ptrHumain->getAge() > AGE_DEBUT_ACTIVITE) &&
+                    (ptrHumain->getAge() < AGE_RETRAITE ) &&
+                    (ptrHumain->getEmployeur() != NULL) ){
+                    // cette personne est disponible pour etre embauchée
+                    //if ()
+                    embauche(ptrHumain, typeRecrutement);
+                    if (nbEmployes > nbCadres * 20) {
+                        // trop de salaries, il faut recruter un cadre
+                        gereRecrutement(CADRE);
+                    } 
+                }
+            }
+        }
+    }
+
+
+        /*
+        if (strcmp(ptrProduit->getNom(), "") != 0 ){
+            if (ptrProduit->getStock() <= ptrProduit->getStockMini()){
                 int productionPossible = getProductionPossible();
                 if (ptrProduit->coutFabrication > productionPossible){
                     printf("recrutement necessaire pour maintenir le stock de %s\n", ptrProduit->nom);
@@ -522,26 +483,9 @@ void Entreprise::gereRecrutement(int typeRecrutement){
                     printf("  .... A verifier .... \n");
                 }
             }
-        }
-    }
+        }*/
 }
 
-//-------------------------------------------
-//
-//          Entreprise::isInCatalogue
-//
-//-------------------------------------------
-bool Entreprise::isInCatalogue(char *produit){
-    //printf("Entreprise::isInCatalogue => debut tests si %s au catalogue\n", produit);
-    structProduit ptrProduit;
-    for (int i = 0 ; i < MAX_PRODUITS ; i++){
-        ptrProduit = listeProduits[i];
-        if (strcmp(ptrProduit.nom, produit) == 0){
-            return true;
-        }
-    }
-    return false;
-}
 //-------------------------------------------
 //
 //          Entreprise::isInCatalogue
@@ -565,7 +509,7 @@ bool Entreprise::isInCatalogue(Produit *produit){
 //
 //-------------------------------------------
 void Entreprise::sauve(FILE *fic){
-    printf("Entreprise::sauve => Sauvegarde de l'entreprise %s\n", this->nom);
+    //printf("Entreprise::sauve => Sauvegarde de l'entreprise %s\n", this->nom);
     char ligne[500];
     char tmp[500];
     int id_patron = this->patron->getId();
@@ -575,9 +519,10 @@ void Entreprise::sauve(FILE *fic){
     strcat(ligne, tmp);
     strcat(ligne, "\n");
     fputs(ligne, fic);
-    printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
+    //printf("Entreprise::sauve => Ligne a sauvegarder : %s\n", ligne);
     fflush(fic);
 
+    /*
     // boucle sur les produits
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
         structProduit *item = &this->listeProduits[i];
@@ -592,7 +537,7 @@ void Entreprise::sauve(FILE *fic){
         }
     }
     fflush(fic);
-
+    */
     // boucle sur les salaries
     for (int i = 0 ; i < nbSalaries ; i++){
         structSalarie *item = &this->listeSalarie[i];

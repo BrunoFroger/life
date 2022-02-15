@@ -24,6 +24,7 @@
     class Commande {
         public:
             Commande(Produit *produit, int quantité, Humain *client);
+            Commande(char *datas);
             ~Commande(void);
             int getStatus(void);
             void boucleTraitement(void);
@@ -42,6 +43,7 @@
             Humain *client;
             Entreprise *fabricant;
             Produit *produit;
+            void displayCommande(void);
     };
 
 

@@ -6,6 +6,7 @@
 
 #ifndef __TOOLS__
 #define __TOOLS__
+    #include "variables.hpp"
     #include "entreprise.hpp"
 
     typedef struct{
@@ -28,5 +29,7 @@
     extern char *getstringBoolean(bool val);
     extern Entreprise *getEntrepriseById(int id);
     extern Humain *getHumainById(int id);
+    extern Produit *getProduitById(int id);
+    extern Commande *getCommandeById(int id);
     
 #endif

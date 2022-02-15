@@ -19,6 +19,8 @@ Entreprise :
 
 produits :
     id
+    type
+    id_entreprise
     nom
     prix
     stock

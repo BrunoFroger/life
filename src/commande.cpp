@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "../inc/variables.hpp"
+#include "../inc/tools.hpp"
 
 //-------------------------------------------
 //
@@ -25,6 +26,7 @@ Commande::~Commande(void){
 //
 //-------------------------------------------
 Commande::Commande(Produit *produit, int qte, Humain *client){
+    printf("Commande::Commande => creation d'une commande mode standard \n");
     this->produit = produit;
     this->client = client;
     this->quantite = qte;
@@ -45,6 +47,46 @@ Commande::Commande(Produit *produit, int qte, Humain *client){
 
 //-------------------------------------------
 //
+//          Commande::Commande
+//
+//-------------------------------------------
+Commande::Commande(char *datas){
+    printf("Commande::Commande => creation d'une commande avec ligne datas (%s)\n", datas);
+    int ligne_numero, ligne_status, ligne_quantite, ligne_clientId, ligne_entrepriseId, ligne_produitId;
+    sscanf(datas, "commande %d %d %d %d %d %d", &ligne_numero, &ligne_status, &ligne_quantite, &ligne_clientId, &ligne_entrepriseId, &ligne_produitId);
+    this->numero = ligne_numero;
+    this->status = ligne_status;
+    this->quantite = ligne_quantite;
+    this->client = getHumainById(ligne_clientId);
+    this->fabricant = getEntrepriseById(ligne_entrepriseId);
+    this->produit = getProduitById(ligne_produitId);
+    nbCommandes++;
+    //displayCommande();
+    // on a pas trouvé d'entreprise qui a ce produit en stock
+    // il faut creer une entreprise qui fabrique ce produit
+    printf("Commande::Commande => ERREUR : aucune entreprise ne fabrique ce produit %s\n", produit->getNom());
+}
+
+//-------------------------------------------
+//
+//          Commande::displayCommande
+//
+//-------------------------------------------
+void Commande::displayCommande(void){
+    printf("+-----------------------------------+\n");
+    printf("|     commande n°  %5d            |\n", this->numero);
+    printf("+----------+------------------------+\n");
+    printf("| Status   |  %20s  |\n", this->getStatusString());
+    printf("| quantite |  %20d  |\n", this->quantite);
+    printf("| clientId |  %20s  |\n", this->client->getNomComplet());
+    printf("| entrepId |  %20s  |\n", this->fabricant->getNom());
+    printf("| produit  |  %20s  |\n", this->produit->getNom());
+    printf("+----------+------------------------+\n");
+    
+}
+
+//-------------------------------------------
+//
 //          Commande::getStatus
 //
 //-------------------------------------------
@@ -61,17 +103,23 @@ void Commande::boucleTraitement(void){
     printf("Commande::boucleTraitement => boucleTraitement : debut\n");
     switch(this->status){
         case COMMANDE_INITIALISEE:
-            printf("Commande::boucleTraitement => boucleTraitement : commande initialisee\n");
+            printf("Commande::boucleTraitement => boucleTraitement : commande de %s initialisee\n", this->produit->getNom());
             // recherche d'une entreprise capable de founir ce produit
             // boucle sur les entreprises
             Entreprise *ptrEntreprise;
-            for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
+            int i;
+            for (i = 0 ; i < MAX_ENTREPRISES ; i++){
                 ptrEntreprise = listeEntreprises[i];
                 // boucle sur les produits de cette entreprise
                 if (ptrEntreprise->produitEnStock(this->produit)){
                     // le produit est en stock, on accepte la commande
                     this->status = COMMANDE_EN_COURS;
+                    break;
                 }
+            }
+            if (i == MAX_ENTREPRISES){
+                printf("Commande::boucleTraitement => aucune entreprise trouvée pour ce produit\n");
+                printf("... TODO .... creer une entreprise\n");
             }
             break;
         case COMMANDE_EN_COURS:
@@ -170,11 +218,12 @@ int Commande::getNumero(void){
 void Commande::sauve(FILE *fichier){
     printf("Commande::sauve => debut\n");
     int id_client, id_fabricant, id_produit;
-    for (int i = 0 ; i < MAX_COMMANDES ; i++){
-        id_client = this->client->getId();
-        id_fabricant = this->fabricant->getId();
-        id_produit = this->produit->getId();
-        fprintf(fichier, "%d %d %d %d %d %d", this->numero, this->status, this->quantite, id_client, id_fabricant, id_produit);
-    }
+    id_client = this->client->getId();
+    id_fabricant = this->fabricant->getId();
+    id_produit = this->produit->getId();
+    sprintf(tmpString,"commande %d %d %d %d %d %d", this->numero, this->status, this->quantite, id_client, id_fabricant, id_produit);
+    printf("Commande::sauve => ligne sauvegardee : %s\n", tmpString);
+    fprintf(fichier, "%s\n", tmpString);
+    fflush(fichier);
     printf("Commande::sauve => fin\n");
 }

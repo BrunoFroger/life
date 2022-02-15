@@ -67,23 +67,33 @@ int getNbVivants(void){
 //-------------------------------------------
 void displayBloc(void){
     int i = 0;
+    //printf("display bloc : i=%d, numLigne1=%d, numLigne2=%d, numLigne3=%d\n", i, numLigne1, numLigne2, numLigne3);
     while (true){
         if (i < numLigne1){
             printf("%-*s",TAILLE_TABLEAU, string1[i]);
+        } else if (i >= numLigne1) {
+            printf("%-*s",TAILLE_TABLEAU, "  ");
         }
+
         if (i < numLigne2){
             printf("%-*s",TAILLE_TABLEAU, string2[i]);
+        } else if (i >= numLigne2) {
+            printf("%-*s",TAILLE_TABLEAU, "  ");
         }
+
         if (i < numLigne3) {
             printf("%-s", string3[i]);
         }
-        if (( i >= numLigne1) && (i > numLigne2)  && (i > numLigne3) ) break;
+
+        if (( i >= numLigne1) && (i >= numLigne2)  && (i >= numLigne3) ) break;
         i++;
         printf("\n");
     }
+    printf("\n");
     numLigne1=0;
     numLigne2=0;
     numLigne3=0;
+    i=0;
 }
 
 //-------------------------------------------
@@ -157,25 +167,17 @@ void displayDatas(void){
 
     // affichage des entreprises
     if (display_stat_entreprises){
-        sprintf(string2[numLigne2++], "+------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      Entreprises                                                 |");
-        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+-------------+");
-        sprintf(string2[numLigne2++], "|                   nom  |    typeProd |  nb salarie | effectif max|");
-        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "+----------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|      Entreprises                                   |");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "|                   nom  |  nb salarie | effectif max|");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+");
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *item = listeEntreprises[i];
-            char typeProd[20];
-            strcpy(typeProd, item->getTypeProd());
-            sprintf(string2[numLigne2++], "|   %20s |  %10s |      %6d |      %6d |", 
-                    item->getNom(), typeProd, item->getNbSalaries(), item->getEffectifMax());
-            if (display_stat_salaries){
-                for (int j = 0 ; j < item->getNbSalaries() ; j++){
-                    //structSalarie *employe = item->getSalarie(j);
-                    
-                }
-            }
+            sprintf(string2[numLigne2++], "|   %20s |      %6d |      %6d |", 
+                    item->getNom(), item->getNbSalaries(), item->getEffectifMax());
         }
-        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+");
     }
 
     // affichage des salaries
@@ -205,6 +207,7 @@ void displayDatas(void){
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
         sprintf(string1[numLigne1++], "|           entreprise  |       nom du produit  |    prix |  stock  | stk min |");
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
+        /*
         for (int i = 0 ; i < nbEntreprises ; i++){
             Entreprise *ptrEnt = listeEntreprises[i];
             structProduit *ptrProduit;
@@ -214,6 +217,16 @@ void displayDatas(void){
                 sprintf(string1[numLigne1++], "|  %20s |  %20s |  %6d |  %6d |  %6d |", ptrEnt->getNom(), 
                     ptrProduit->nom, ptrProduit->prix, ptrProduit->stock, ptrProduit->stockMini);
                 ptrProduit = ptrEnt->getProduit(j++);
+            }
+        }*/
+        Produit *ptrProduit;
+        Entreprise *ptrEntreprise;
+        for (int i = 0 ; i < MAX_PRODUITS ; i++){
+            ptrProduit = listeProduits[i];
+            if (ptrProduit != NULL){
+                ptrEntreprise = getEntrepriseById(ptrProduit->getProducteurId());
+                sprintf(string1[numLigne1++], "|  %20s |  %20s |  %6d |  %6d |  %6d |", ptrEntreprise->getNom(), 
+                    ptrProduit->getNom(), ptrProduit->getPrix(), ptrProduit->getStock(), ptrProduit->getStockMini());
             }
         }
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
@@ -225,9 +238,13 @@ void displayDatas(void){
         sprintf(string2[numLigne2++], "|  num cde  |           entreprise  |               client  |       nom du produit  |    qte  |     status |");
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
         Commande *ptrCommande;
+        //printf("nbCommandes = %d\n", nbCommandes);
         for (int i = 0 ; i < MAX_COMMANDES ; i++){
-            ptrCommande = listeCommandes[i++];
+            //printf("test commande %d\n", i);
+            ptrCommande = listeCommandes[i];
+            //printf("ptrCommande initialise\n");
             if (ptrCommande != NULL){
+                //printf("ptrCommande != null\n");
                 sprintf(string2[numLigne2++], "|  %5d    |  %20s |  %20s |  %20s |  %6d | %10s |", ptrCommande->getNumero(), ptrCommande->getFabricant()->getNom(), 
                     ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), 
                     ptrCommande->getQuantite(), ptrCommande->getStatusString());

@@ -432,43 +432,45 @@ bool Humain::addEnfant(Humain *enfant){
 Humain *Humain::naissance(int genre, char *nom, char *prenom){
     //printf(" %s %s donne naissance à %s\n", this->prenom, this->prenom, nom);
     if (this->nbEnfants >= MAX_ENFANTS){
-        printf("ERREUR : nb enfants > %d\n", MAX_ENFANTS);
-    } else {
-        //printf(" max enfants pas atteint, on continue\n");
-        //printf("on initialise l'enfant %d\n", nbEnfants);
-        try{
-            Humain *ptr;
-            ptr = ::new Humain(genre, nom, prenom, 0);
-            //if (strcmp(this->nom,"dieu") !=0){
-                this->addEnfant(ptr);
-            //}
-            if (this->conjoint != NULL){
-                this->conjoint->addEnfant(ptr);
-            }
-            //printf("initialisation des parents\n");
-            if (this->genre == HOMME){
-                //printf("le pere declare\n");
-                ptr->pere=this;
-                ptr->mere=this->conjoint;
-            } else {
-                //printf("la mere declare (%s)\n", this->nom);
-                ptr->pere=this->conjoint;
-                ptr->mere=this;
-            }
-            if (ptr->pere != NULL){
-                //printf("pere : %s\n", ptr->pere->nom);
-            }
-            if (ptr->mere != NULL){
-                //printf("mere : %s\n", ptr->mere->nom);
-            }
-            //ptr->displayInfos();
-            //printf(" declaration de naissance de %s => OK\n", nom);
-            return ptr;
-        } catch(...){
-            printf("ERREUR => impossible de creer un enfant\n");
+        if (strcmp(this->getNom(), "dieu") != 0){
+            printf("ERREUR : %s a atteint le nombre maximal d'enfants (%d)\n", this->getNomComplet(), MAX_ENFANTS);
+            return NULL;
         }
+    } 
+    //printf(" max enfants pas atteint, on continue\n");
+    //printf("on initialise l'enfant %d\n", nbEnfants);
+    try{
+        Humain *ptr;
+        ptr = ::new Humain(genre, nom, prenom, 0);
+        //if (strcmp(this->nom,"dieu") !=0){
+            this->addEnfant(ptr);
+        //}
+        if (this->conjoint != NULL){
+            this->conjoint->addEnfant(ptr);
+        }
+        //printf("initialisation des parents\n");
+        if (this->genre == HOMME){
+            //printf("le pere declare\n");
+            ptr->pere=this;
+            ptr->mere=this->conjoint;
+        } else {
+            //printf("la mere declare (%s)\n", this->nom);
+            ptr->pere=this->conjoint;
+            ptr->mere=this;
+        }
+        if (ptr->pere != NULL){
+            //printf("pere : %s\n", ptr->pere->nom);
+        }
+        if (ptr->mere != NULL){
+            //printf("mere : %s\n", ptr->mere->nom);
+        }
+        //ptr->displayInfos();
+        //printf(" declaration de naissance de %s => OK\n", nom);
+        return ptr;
+    } catch(...){
+        printf("ERREUR => impossible de creer un enfant\n");
     }
-    printf(" fin naissance de %s %s => KO\n", this->nom, this->prenom);
+    printf(" fin naissance de %s=> KO\n", this->getNomComplet());
     return NULL;
 }
 
@@ -494,7 +496,7 @@ void Humain::deces(void){
 //
 //-------------------------------------------
 void Humain::sauve(FILE *fic){
-    printf("Humain::sauve => Sauvegarde de %s\n", this->getNomComplet());
+    //printf("Humain::sauve => Sauvegarde de %s\n", this->getNomComplet());
     char ligne[500];
     char tmp[500];
     int thisPere, thisMere, thisConjoint;
@@ -518,7 +520,7 @@ void Humain::sauve(FILE *fic){
         }
         strcat(ligne, "\n");
     }
-    printf("Humain::sauve => Ligne a sauvegarder : %s\n", ligne);
+    //printf("Humain::sauve => Ligne a sauvegarder : %s\n", ligne);
     fputs(ligne, fic);
     fflush(fic);
 }
@@ -690,5 +692,6 @@ int Humain::getNumCompte(void){
 //-------------------------------------------
 void Humain::boucleTraitement(void){
     printf("Humain::boucleTraitement => debut\n");
+    this->vieillir();
     printf("Humain::boucleTraitement => fin\n");
 }

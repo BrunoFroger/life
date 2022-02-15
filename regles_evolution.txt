@@ -1,22 +1,96 @@
 regles d'evolution de la population
 
-conditions pour une naissance :
-    dieu cree des humains aleatoirement si nbhumains < 4
-    pere et mere maries
-    age des parents > 25
-    age des parents < 40
-    sexe de l'enfant random
-    demander nom de l'enfant
+Boucle générale d'evolution
+    nb jour incremente a chaque cycle
+    mise a jour des boucles d'evolution de chaque listes d'items :
+        humains
+        entreprises
+        commandes
+        Produits
 
-conditions pour deces
-    age > 60 + random(20)
-    random accident
+Evolution d'un humain
+    chaque jour 
+        age (nb jours) += 1
+        verifier etat des finances pour savoir si on peut acheter quelque chose
+    1 fois par semaine
+        commande de nourriture
+        commande de boisson
+    1 fois par mois
+        payer loyer ou emprunt
+        acheter vetement
+        payer les charges
+            assurances
+            energie
+            loisirs
+        test mariage
+    1 fois par an
+        test si naissance possible
+    conditions pour un mariage : 
+        un homme celibataire ou veuf
+        une femme celibataire ou veuve
+        difference d'age < 5
+        age des 2 personnes à maries > 20
+    conditions pour deces
+        age > 60 + random(20)
+        random accident
+    conditions pour une naissance :
+        dieu cree des humains aleatoirement si nbhumains < seuil defini
+        pere et mere maries
+        age des parents > 25
+        age des parents < 40
+        sexe de l'enfant random
+        Nom de l'enfant = nom du pere
+        prenom de l'enfant random
 
-conditions pour un mariage : 
-    un homme celibataire ou veuf
-    une femme celibataire ou veuf
-    difference d'age < 5
-    age des futures maries > 20
+evolution d'une entreprise 
+    chaque jour
+        verifier s'il y a des commandes a produire
+        produire si necessaire en fonctipn de la capacite de production
+    1 fois par semaine
+        lancer les recrutements si necessaire
+    1 fois par mois
+        payer les salaires
+    1 fois par an
+        reduire les effectifs si trop de capacite de production
+
+evolution d'un salarie
+    chaque jour
+        produire en focntion de sa capacite a produire
+    1 fois par semaine
+        verifier capacite a evoluer de poste
+    1 fois par mois
+        recevoir un salaire
+    1 fois par an
+        conges
+
+evolution d'un produit
+    chaque jour
+        etablir la quantite a produire d'apres les commandes en cours (ETAT INIT)
+        si stock < stockMini lancer production
+    1 fois par semaine
+        si une demande de produit est insatisfaite, creer une entreprise capable de le produire
+    1 fois par mois
+    1 fois par an
+
+
+evolution d'une commande
+    chaque jour
+        faire evoluer le satus de la commande 
+            passer de INIT a EN_COURS si entreprise trouvee et produit diponible
+            passer de EN_COURS à DISPONIBLE si produit reservé chez le fournisseur
+            passer de DISPONIBLE à LIVREE si produit recupere par le client
+            dans l'etat LIVREE debiter le client et crediter le fournisseur
+    1 fois par semaine
+        detruire les commandes terminées
+    1 fois par mois
+    1 fois par an
+
+
+
+
+
+
+generation automatique des commandes
 
 gestion de commandes de chaque produits
     chaque individu commande 1 nouriture a chaque cycle

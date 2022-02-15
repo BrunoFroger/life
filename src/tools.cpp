@@ -220,18 +220,16 @@ void afficheListeComptesBancaires(void){
 //
 //-------------------------------------------
 void afficheListeEntreprises(void){
-    printf("+----------------------------------------------------+\n");
-    printf("|      Entreprises                                   |\n");
-    printf("+------------------------+-------------+-------------+\n");
-    printf("|                   nom  |    typeProd |  nb salarie |\n");
-    printf("+------------------------+-------------+-------------+\n");
+    printf("+--------------------------------------+\n");
+    printf("|      Entreprises                     |\n");
+    printf("+------------------------+-------------+\n");
+    printf("|                   nom  |  nb salarie |\n");
+    printf("+------------------------+-------------+\n");
     for (int i = 0 ; i < nbEntreprises ; i++){
         Entreprise *item = listeEntreprises[i];
-        char typeProd[20];
-        strcpy(typeProd, item->getTypeProd());
-        printf("|   %20s |  %10s |      %6d |\n", item->getNom(), typeProd, item->getNbSalaries());
+        printf("|   %20s |      %6d |\n", item->getNom(), item->getNbSalaries());
     }
-    printf("+------------------------+-------------+-------------+\n");
+    printf("+------------------------+-------------+\n");
 }
 
 //-------------------------------------------
@@ -246,14 +244,15 @@ void afficheListeProduits(void){
     printf("|           entreprise  |       nom du produit  |    prix |  stock  | stk min |\n");
     printf("+-----------------------+-----------------------+---------+---------+---------+\n");
     for (int i = 0 ; i < nbEntreprises ; i++){
-        Entreprise *ptrEnt = listeEntreprises[i];
-        structProduit *ptrProduit;
+        Produit *ptrProduit;
+        Entreprise *ptrEnt;
         int j=0;
-        ptrProduit = ptrEnt->getProduit(j++);
+        ptrProduit = listeProduits[j];
         while (ptrProduit != NULL){
+            ptrEnt = getEntrepriseById(ptrProduit->getProducteurId());
             printf("|  %20s |  %20s |  %6d |  %6d |  %6d |\n", ptrEnt->getNom(), 
-                ptrProduit->nom, ptrProduit->prix, ptrProduit->stock, ptrProduit->stockMini);
-            ptrProduit = ptrEnt->getProduit(j++);
+                ptrProduit->getNom(), ptrProduit->getPrix(), ptrProduit->getStock(), ptrProduit->getStockMini());
+            ptrProduit = listeProduits[++j];
         }
     }
     printf("+-----------------------+-----------------------+---------+---------+---------+\n");
@@ -264,42 +263,21 @@ void afficheListeProduits(void){
 //          afficheListeCommandes
 //
 //-------------------------------------------
-/*void afficheListeCommandes(void){
+void afficheListeCommandes(void){
     printf("+---------------------------------------------------------------------------------+\n");
     printf("|      commandes                                                                  |\n");
     printf("+-----------------------+-----------------------+-----------------------+---------+\n");
     printf("|           entreprise  |               client  |       nom du produit  |    qte  |\n");
     printf("+-----------------------+-----------------------+-----------------------+---------+\n");
-    for (int i = 0 ; i < nbEntreprises ; i++){
-        Entreprise *ptrEnt = listeEntreprises[i];
-        structCommande *ptrCommande;
-        int j=0;
-        ptrCommande = ptrEnt->getCommande(j++);
+    for (int i = 0 ; i < nbCommandes ; i++){
+        Commande *ptrCommande = listeCommandes[i];
         while (ptrCommande != NULL){
-            printf("|  %20s |  %20s |  %20s |  %6d |\n", ptrEnt->getNom(), 
-                ptrCommande->client->getNomComplet(), ptrCommande->nomProduit, ptrCommande->quantite);
-            ptrCommande = ptrEnt->getCommande(j++);
+            printf("|  %20s |  %20s |  %20s |  %6d |\n", ptrCommande->getFabricant()->getNom(), 
+                ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), ptrCommande->getQuantite());
+            ptrCommande = listeCommandes[++i];
         }
     }
     printf("+-----------------------+-----------------------+-----------------------+---------+\n");
-}*/
-
-//-------------------------------------------
-//
-//          getProducteur
-//
-//-------------------------------------------
-Entreprise *getProducteur(char *produit){
-    //printf("getProducteur => debut\n");
-    Entreprise *ptrEntreprise;
-    for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
-        ptrEntreprise = listeEntreprises[i];
-        //printf("getProducteur => test entreprise %s\n", ptrEntreprise->getNom());
-        if (ptrEntreprise->isInCatalogue(produit)){
-            return ptrEntreprise;
-        }
-    }
-    return NULL;
 }
 
 //-------------------------------------------
@@ -308,11 +286,12 @@ Entreprise *getProducteur(char *produit){
 //
 //-------------------------------------------
 Entreprise *getEntrepriseById(int id){
-    //printf("getProducteur => debut\n");
+    //printf("tools::getEntrepriseById => debut (%d)\n", id);
     Entreprise *ptrEntreprise;
     for (int i = 0 ; i < nbEntreprises ; i++){
         ptrEntreprise = listeEntreprises[i];
         if (ptrEntreprise->getId() == id){
+            //printf("tools::getEntrepriseById => entreprise trouvee");
             return ptrEntreprise;
         }
     }
@@ -325,11 +304,45 @@ Entreprise *getEntrepriseById(int id){
 //
 //-------------------------------------------
 Humain *getHumainById(int id){
-    //printf("getProducteur => debut\n");
+    //printf("tools::getHumainById => debut (%d)\n", id);
     Humain *ptr;
     for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
         if (ptr->getId() == id){
+            return ptr;
+        }
+    }
+    return NULL;
+}
+
+//-------------------------------------------
+//
+//          getProduitById
+//
+//-------------------------------------------
+Produit *getProduitById(int id){
+    //printf("tools::getProduitById => debut (%d)\n", id);
+    Produit *ptr;
+    for (int i = 0 ; i < nbProduits ; i++){
+        ptr = listeProduits[i];
+        if (ptr->getId() == id){
+            return ptr;
+        }
+    }
+    return NULL;
+}
+
+//-------------------------------------------
+//
+//          getCommandeById
+//
+//-------------------------------------------
+Commande *getCommandeById(int id){
+    //printf("getProducteur => debut\n");
+    Commande *ptr;
+    for (int i = 0 ; i < nbCommandes ; i++){
+        ptr = listeCommandes[i];
+        if (ptr->getNumero() == id){
             return ptr;
         }
     }

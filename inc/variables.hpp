@@ -8,15 +8,17 @@
 #ifndef __VARIABLES__
 #define __VARIABLES__
 
+    #define MAX_ENTREPRISES     25
+    #define MAX_PRODUITS        1000
+    #define MAX_COMMANDES       1000
+    #define MAX_HUMAINS         10000
+
     #include "humain.hpp"
     #include "entreprise.hpp"
     #include "produit.hpp"
     #include "commande.hpp"
     #include "compteBancaire.hpp"
 
-    #define MAX_ENTREPRISES     25
-    #define MAX_COMMANDES       1000
-    #define MAX_HUMAINS         10000
     #define MIN_HUMAINS         15
     #define AGE_DEBUT_MARIAGE   20
     //#define AGE_FIN_MARIAGE     100

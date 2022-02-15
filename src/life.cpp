@@ -14,10 +14,13 @@
 #include "../inc/tools.hpp"
 #include "../inc/entreprise.hpp"
 #include "../inc/evolution.hpp"
+#include "../inc/initMonde.hpp"
 
 Humain *ptr = NULL;
 Humain *ptr1 = NULL;
 Entreprise *ptrEnt;
+Produit *ptrProduit;
+Commande *ptrCommande;
 bool fin = false;
 char nom[50];
 char parent[50], enfant[50];
@@ -72,20 +75,20 @@ void sauveFichier(){
             ptrEnt = listeEntreprises[i];
             ptrEnt->sauve(file);
         }
-        printf("lancement de la boucle de sauvegarde des %d Commandes\n", nbCommandes);
-        Commande *ptrCde;
-        for (int i = 0 ; i < MAX_COMMANDES ; i ++ ){
-            ptrCde = listeCommandes[i];
-            if (ptrCde != NULL){
-                ptrCde->sauve(file);
-            }
-        }
         printf("lancement de la boucle de sauvegarde des %d produits\n", nbProduits);
         Produit *ptrProd;
         for (int i = 0 ; i < MAX_PRODUITS ; i ++ ){
             ptrProd = listeProduits[i];
             if (ptrProd != NULL){
                 ptrProd->sauve(file);
+            }
+        }
+        printf("lancement de la boucle de sauvegarde des %d Commandes\n", nbCommandes);
+        Commande *ptrCde;
+        for (int i = 0 ; i < MAX_COMMANDES ; i ++ ){
+            ptrCde = listeCommandes[i];
+            if (ptrCde != NULL){
+                ptrCde->sauve(file);
             }
         }
         fclose(file);
@@ -104,33 +107,57 @@ void chargeFichier(FILE *file){
     //printf("main:chargeFichier => lancement de la boucle de lecture du fichier\n");
     char ligne[500];
     int ligne_id, ligne_genre, ligne_age, ligne_typeProd, ligne_effectMax;
+    int ligne_type, ligne_entrepriseId, ligne_prix, ligne_stock, ligne_stockMini, ligne_coutFabrication;
     int idHumain;
     char ligne_nom[50], ligne_prenom[50], typeLigne[25];
-    printf("main:chargeFichier => ------- boucle init ----------\n");
+    printf("life:chargeFichier => ------- boucle init ----------\n");
     while (!feof(file)){
         ligne[0] = '\0';
         fgets(ligne, 500, file);
+        ligne[strlen(ligne)-1]='\0';    // suppression du RC
         //printf("main:chargeFichier => ----------------\n");
         if (strlen(ligne) > 0){
             sscanf(ligne, "%s ", typeLigne);
             //printf("main:chargeFichier => analyse de la ligne %s", ligne);
             if (strcmp(typeLigne,"humain") == 0){
-                printf("main:chargeFichier => traitement de la ligne %s", ligne);
+                //printf("main:chargeFichier => traitement de la ligne %s", ligne);
                 sscanf(ligne, "%s %d %s %s %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
                 if (ligne_id != nbHumains){
-                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbHumains);
+                    printf("life:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbHumains);
                 } else {
                     ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
                     //printf("main:chargeFichier => Humain %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
                 }
             } else if (strcmp(typeLigne,"entreprise") == 0){
-                printf("main:chargeFichier => traitement de la ligne %s", ligne);
+                //printf("main:chargeFichier => traitement de la ligne %s", ligne);
                 sscanf(ligne, "%s %d %s %d %d %d", typeLigne, &ligne_id, ligne_nom, &idHumain, &ligne_typeProd, &ligne_effectMax);
                 if (ligne_id != nbEntreprises){
-                    printf("main:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbEntreprises);
+                    printf("life:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbEntreprises);
                 } else {
                     //printf("main:chargeFichier =>  restore entreprise ...... TODO ......\n");
                     ptrEnt = new Entreprise(ligne);
+                    //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
+                }
+            } else if (strcmp(typeLigne,"produit") == 0){
+                //printf("main:chargeFichier => traitement de la ligne %s", ligne);
+                sscanf(ligne, "%s %d %d %d %s %d %d %d %d", typeLigne, &ligne_id, &ligne_type, &ligne_entrepriseId, ligne_nom, &ligne_prix, &ligne_stock, &ligne_stockMini, &ligne_coutFabrication);
+                if (ligne_id != nbProduits){
+                    printf("life:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbProduits);
+                } else {
+                    //printf("main:chargeFichier =>  restore entreprise ...... TODO ......\n");
+                    ptrProduit = new Produit(ligne_nom, ligne_type, ligne_entrepriseId, ligne_stock, ligne_stockMini, ligne_prix, ligne_coutFabrication);
+                    listeProduits[nbProduits-1] = ptrProduit;
+                    //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
+                }
+            } else if (strcmp(typeLigne,"commande") == 0){
+                //printf("main:chargeFichier => traitement de la ligne %s", ligne);
+                sscanf(ligne, "commande %d ", &ligne_id);
+                if (ligne_id != nbCommandes){
+                    printf("life:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbCommandes);
+                } else {
+                    //printf("main:chargeFichier =>  restore entreprise ...... TODO ......\n");
+                    ptrCommande = new Commande(ligne);
+                    listeCommandes[nbCommandes - 1] = ptrCommande;
                     //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
                 }
             } else {
@@ -139,7 +166,7 @@ void chargeFichier(FILE *file){
         }
     }
     fseek(file, 0, 0);
-    printf("main:chargeFichier => -------  boucle restore ----------\n");
+    printf("life:chargeFichier => -------  boucle restore ----------\n");
     while (!feof(file)){
         ligne[0] = '\0';
         int indexRestore = -1;
@@ -150,7 +177,7 @@ void chargeFichier(FILE *file){
             //sscanf(ligne, "humain %d", &ligne_id);
             int j = 0;
             if (strcmp(typeLigne, "humain") == 0){
-                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                //printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
                 //printf("main::chargeFichier => humain detecte\n");
                 ptr = listeHumains[j];
                 while (ptr->getId() != ligne_id) {
@@ -165,7 +192,7 @@ void chargeFichier(FILE *file){
                 //printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
                 ptr->restore(ligne);
             } else if (strcmp(typeLigne, "entreprise") == 0){
-                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                //printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
                 //printf("main::chargeFichier => entreprise detecte\n");
                 ptrEnt = listeEntreprises[j];
                 while (ptrEnt->getId() != ligne_id) {
@@ -179,23 +206,8 @@ void chargeFichier(FILE *file){
                 }
                 ptrEnt->restore(ligne);
                 //printf("main:chargeFichier => indexRestore(%d), ligne(%s)\n", indexRestore, ligne);
-            } else if (strcmp(typeLigne,"produit") == 0){
-                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
-                ptrEnt = listeEntreprises[j];
-                while (ptrEnt->getId() != ligne_id) {
-                    //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptrEnt->getId(), ligne_id);
-                    ptrEnt = listeEntreprises[++j];
-                    indexRestore = j;
-                    if (j > nbEntreprises){
-                        printf("ERREUR : la ligne <%s> ne reference pas une entreprise initialisé\n", ligne);
-                        return;
-                    }
-                }
-                ptrEnt->restore(ligne);
-                printf("main:chargeFichier =>  restore produits ...... TODO ......\n");
-                //printf("main:chargeFichier => produit %s cree en pos %d\n");
             } else if (strcmp(typeLigne,"salarie") == 0){
-                printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
+                //printf("main:chargeFichier => complement traitement de la ligne %s", ligne);
                 ptrEnt = listeEntreprises[j];
                 while (ptrEnt->getId() != ligne_id) {
                     //printf("main:chargeFichier => test correspondance id ptr->getId()=%d, ligne_id=%d\n ", ptrEnt->getId(), ligne_id);
@@ -207,10 +219,14 @@ void chargeFichier(FILE *file){
                     }
                 }
                 ptrEnt->restore(ligne);
-                printf("main:chargeFichier =>  restore salarie ...... TODO ......\n");
+                //printf("main:chargeFichier =>  restore salarie ...... TODO ......\n");
                 //printf("main:chargeFichier => salarie %s cree en pos %d\n");
+            } else if (strcmp(typeLigne,"produit") == 0) {
+                // rien a faire
+            } else if (strcmp(typeLigne,"commande") == 0) {
+                // rien a faire
             } else {
-                printf("main:chargeFichier =>   ERREUR type de ligne <%s> inconnu\n", typeLigne);
+                printf("life:chargeFichier =>   ERREUR type de ligne <%s> inconnu\n", typeLigne);
                 return;
             }
         }
@@ -244,8 +260,9 @@ void afficheMenu(void){
     //printf("  h : liste des commandes en cours\n");
     printf("  i : liste des salaries d'une entreprise\n");
     printf("  m : menu On/Off %d\n", menuOnOff);
+    printf("  r : reset datas et chargement population par defaut\n");
     printf("  s : sauvegarde des donnees sur disque\n");
-    printf("  v : faire vieillir la population d'un an\n");
+    printf("  v : faire vieillir la population\n");
     printf("  q : quitte le programme\n");
     printf("  z : test generateur de nombre aleatoire\n");
     printf("  A : stats : affiche infos Humains %s\n", getstringBoolean(display_stat_humain));
@@ -505,6 +522,9 @@ int main(int argc, char **argv)
                     dataSauvegardees=true;
                 }
                 fin=true;
+                break;
+            case 'r': // reset datas et chargement population par defaut
+                initMonde(dieu);
                 break;
             case 's': // sauvegarde d'un fichier de données
                 sauveFichier();

@@ -29,6 +29,7 @@ obj/%.o: src/%.cpp
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	@rm  $(OBJDIR)*.o
-	@rm  $(EXEC)
+	@rm  -f $(OBJDIR)*.o
+	@rm  -f $(EXEC)
 	@echo "clean effectue"
+	@make

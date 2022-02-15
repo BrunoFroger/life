@@ -4,6 +4,14 @@
 //
 //-----------------------------------
 
+// definition des types de production
+#define PRODUIT_ALIMENTAIRE     100
+#define PRODUIT_SERVICES        200
+#define PRODUIT_VETEMENTS       300
+#define PRODUIT_AUTOMOBILE      400
+#define PRODUIT_MAISON          500
+#define PRODUIT_LOISIR          600
+#define PRODUIT_EQUIP_MAISON    700
 
 
 #ifndef __ENTREPRISE__
@@ -14,10 +22,6 @@
     #include "variables.hpp"
     #include "produit.hpp"
 
-    #define MAX_PRODUITS    10
-    #define PROD_NOURITURE  1
-    #define PROD_MAISON     2
-    #define PROD_VOITURE    3
 
     #define MAX_SALARIE     50
     #define AGE_DEBUT_ACTIVITE    20
@@ -48,6 +52,7 @@
         int productivite;   // nb unite de travail de ce salarie 
     } structSalarie;
 
+    /*
     typedef struct{
         char nom[20];
         int prix;
@@ -61,6 +66,7 @@
         char nomProduit[20];
         int quantite;
     } structCommande;
+    */
 
     class Entreprise{
 
@@ -74,7 +80,7 @@
             int nbDisponibles(char *produit);
             int nbDisponibles(Produit *produit);
             int getPrix(char *produit);
-            void addProduit(char *nom, int prix, int stock, int stockMini, int coutProd);
+            void addProduit(Produit *addProduit);
             void production(void);
             char *getNom(void);
             void embauche(Humain *personne, int status);
@@ -84,9 +90,8 @@
             int getId(void);
             void gereCommandes(void);
             void gereRecrutement(int typeRecrutement);
-            bool isInCatalogue(char *produit);
             bool isInCatalogue(Produit *produit);
-            structProduit *getProduit(int index);
+            //structProduit *getProduit(int index);
             bool credite(int montant);
             structSalarie *getSalarie(int index);
             void verseSalaires(void);
@@ -108,7 +113,7 @@
             int nbCadres;
             int effectifMax;
             Produit *listeProduit[MAX_PRODUITS];
-            structProduit listeProduits[MAX_PRODUITS];
+            //structProduit listeProduits[MAX_PRODUITS];
             structSalarie listeSalarie[MAX_SALARIE];
             void generePaye(void);
             CompteBancaire *compteBancaire;

@@ -45,6 +45,7 @@
     extern int nbProduits;
     extern int nbCommandes;
     extern char nomFichier[];
+    extern char nomFichierJson[];
     extern char tmpString[];
     extern char tmpString1[];
 

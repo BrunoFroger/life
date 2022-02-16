@@ -13,6 +13,8 @@
 #include "../inc/tools.hpp"
 #include "../inc/compteBancaire.hpp"
 
+
+
 //-------------------------------------------
 //
 //          Humain::setGenreTexte
@@ -37,7 +39,7 @@ void Humain::setGenreTexte(){
 //          Humain::Humain
 //
 //-------------------------------------------
-Humain::Humain(int genre, char *nom, char *prenom, int age){
+Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     //printf("debut creation humain %s %s en position %d\n", prenom, nom, nbHumains);
     this->id=nbHumains;
     this->genre = genre;
@@ -47,7 +49,7 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     strcpy(this->nom, nom);
     strcpy(this->prenom, prenom);
     this->status=CELIBATAIRE;
-    this->mere=NULL;
+    this->mere=pere;
     this->pere=NULL;
     this->conjoint=NULL;
     for (int i = 0 ; i < MAX_ENFANTS ; i++){
@@ -62,6 +64,9 @@ Humain::Humain(int genre, char *nom, char *prenom, int age){
     this->compteBancaire = new CompteBancaire(this->getNomComplet());
     this->compteBancaire->credite(100);
     this->commandeEnCours=false;
+    for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
+        listeProduitsHumain[i] = NULL;
+    }
 }
 
 //-------------------------------------------
@@ -200,11 +205,15 @@ void Humain::displayInfos(void){
 //
 //-------------------------------------------
 void Humain::mariage(Humain *conjoint){
+    char homme[50];
+    strcpy(homme,this->getNomComplet());
+    char femme[50];
+    strcpy(femme, conjoint->getNomComplet());
     this->conjoint = conjoint;
     this->status=MARIE;
     this->conjoint->conjoint=this;
     this->conjoint->status=MARIE;
-    printf("declaration mariage de %s avec %s\n", this->getNomComplet(), conjoint->getNomComplet());
+    printf("declaration mariage de %s avec %s\n", homme, femme);
 }
 
 //-------------------------------------------
@@ -441,7 +450,7 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
     //printf("on initialise l'enfant %d\n", nbEnfants);
     try{
         Humain *ptr;
-        ptr = ::new Humain(genre, nom, prenom, 0);
+        ptr = ::new Humain(0, genre, nom, prenom, 0);
         //if (strcmp(this->nom,"dieu") !=0){
             this->addEnfant(ptr);
         //}
@@ -492,6 +501,126 @@ void Humain::deces(void){
 
 //-------------------------------------------
 //
+//          Humain::testMariage
+//
+//-------------------------------------------
+void Humain::testMariage(void){
+    // test candidats au mariage
+    // recherche d'un homme celibataire ou veuf
+    Humain *ptrHumain = NULL;
+    if ((this->getGenreTexte()[0] == 'H') && (this->getAge() >= AGE_DEBUT_MARIAGE)){
+        if ((this->getStatus() == 'C') || (this->getStatus() == 'V')){
+            // candidat potentiel au mariage
+            //printf("%s est candidat au mariage\n", this->nom);
+            // recherche partenaire
+            for (int j = 0 ; j < nbHumains ; j++){
+                ptrHumain = listeHumains[j];
+                if ((ptrHumain->getGenreTexte()[0] == 'F') && (ptrHumain->getAge() >= AGE_DEBUT_MARIAGE)){
+                    if ((ptrHumain->getStatus() == 'C') || (ptrHumain->getStatus() == 'V')){
+                        // candidate potentielle au mariage
+                        //printf("%s est candidate au mariage\n", ptr1->nom);
+                        int differenceAge = abs(this->getAge() - ptrHumain->getAge());
+                        if (differenceAge > DIFF_AGE_MARIAGE){
+                            //printf("mariage impossible a cause de la difference d'age\n");
+                        } else {
+                            if ((rand() % PROBA_MARIAGE) == 0){
+                                // 1 chance sur n qu'elle accepte
+                                ptrHumain->mariage(this);
+                                return;
+                            }else {
+                                //printf("mariage refuse\n");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+//-------------------------------------------
+//
+//          Humain::testNaissance
+//
+//-------------------------------------------
+void Humain::testNaissance(void){
+    // test generation d'une naissance
+    Humain *ptrHumain = NULL;
+    if (this->getGenreTexte()[0] == 'H'){
+        if (this->conjoint != NULL){
+            ptrHumain = this->conjoint;
+            //printf("teste compatibilite naissance entre %s et %s\n", this->getNomComplet(), ptr1->getNomComplet());
+            if ((this->getAge() > AGE_DEBUT_NAISSANCE) && (ptrHumain->getAge() > AGE_DEBUT_NAISSANCE)){
+                //printf("Les deux parents ont + 25 ans\n");
+                if ((this->getAge() < AGE_FIN_NAISSANCE) && (ptrHumain->getAge() < AGE_FIN_NAISSANCE)){
+                    //printf("Les deux parents ont - 40 ans\n");
+                    //printf("%s et %s sont les futurs parents\n", this->getNomComplet(), ptr1->getNomComplet());
+                    char newPrenom[25];
+                    int genreEnfant = getRandomGenre();
+                    switch (genreEnfant){
+                        case HOMME:
+                            //printf("%s et %s ont un fils\n", this->getNomComplet(), ptr1->getNomComplet());
+                            strcpy(newPrenom,getPrenomMasculin());
+                            break;
+                        case FEMME:
+                            //printf("%s et %s ont une fille\n", this->getNomComplet(), ptr1->getNomComplet());
+                            strcpy(newPrenom,getPrenomFeminin());
+                            break;
+                        default:
+                            printf("ERREUR : genre de l'enfant inconuu (%d)\n", genreEnfant);
+                            break;
+                    }
+                    //printf("prenom de l'enfant : ");
+                    //scanf("%s", saisie);
+                    if ((rand() % 5) == 0){ // 1 chance sur 5 d'avoir un enfant cette annee
+                        this->naissance(genreEnfant, this->nom, newPrenom);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//-------------------------------------------
+//
+//          Humain::achats
+//
+//-------------------------------------------
+void Humain::achats(void){
+    // genere des cachats en fonction des ressources et des besoins
+    produitClient *ptrProduitClient;
+    //Produit *ptrProduit;
+
+    // on supprime les produits dont la date de validite est dépassée
+    for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
+         ptrProduitClient = this->listeProduitsHumain[i];
+         int ageProduit = age - ptrProduitClient->dateAchat;
+         if (ageProduit > ptrProduitClient->duree){
+             printf("Humain::achats => produit périmé -> on le supprime\n");
+             delete ptrProduitClient;
+             this->listeProduitsHumain[i] = NULL;
+         }
+    }
+
+    // etablir liste des besoin de cet humain en fonction de ses ressources
+    //int budget = getSoldeBancaire();
+
+    // declenchements d'achats de premiere necessite
+    setListeProduitEnManque();
+}
+
+//-------------------------------------------
+//
+//          Humain::setListeProduitEnManque
+//
+//-------------------------------------------
+void Humain::setListeProduitEnManque(){
+
+}
+
+//-------------------------------------------
+//
 //          Humain::sauve
 //
 //-------------------------------------------
@@ -500,28 +629,61 @@ void Humain::sauve(FILE *fic){
     char ligne[500];
     char tmp[500];
     int thisPere, thisMere, thisConjoint;
-    for (int i = 0 ; i < nbHumains ; i++){
-        // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
-        sprintf(tmp, "humain %d %s %s %d %d %d %d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status);
-        //printf("tmp = %s\n", tmp);
-        if (this->pere == NULL) thisPere = -1;
-        else thisPere = this->pere->getId();
-        if (this->mere == NULL) thisMere = -1;
-        else thisMere = this->mere->getId();
-        if (this->conjoint == NULL) thisConjoint = -1;
-        else thisConjoint = this->conjoint->getId();
-        sprintf(ligne, "%s %d %d %d ", tmp, thisConjoint, thisPere, thisMere);
-        //printf("ligne = %s\n", ligne);
-        //printf("sauvegarde de %d enfants\n", nbEnfants);
-        for (int j = 0 ; j < nbEnfants ; j++){
-            //printf("sauvegarde de l'enfant %d\n", j);
-            sprintf(tmp,"%d ", this->enfants[j]->getId());
-            strcat(ligne, tmp);
-        }
-        strcat(ligne, "\n");
+    if (this->pere == NULL) thisPere = -1;
+    else thisPere = this->pere->getId();
+    if (this->mere == NULL) thisMere = -1;
+    else thisMere = this->mere->getId();
+    if (this->conjoint == NULL) thisConjoint = -1;
+    else thisConjoint = this->conjoint->getId();
+    // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
+    sprintf(tmp, "humain %d %s %s %d %d %d %d %d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status, thisPere);
+    //printf("tmp = %s\n", tmp);
+    sprintf(ligne, "%s %d %d %d ", tmp, thisConjoint, thisPere, thisMere);
+    //printf("ligne = %s\n", ligne);
+    //printf("sauvegarde de %d enfants\n", nbEnfants);
+    for (int j = 0 ; j < nbEnfants ; j++){
+        //printf("sauvegarde de l'enfant %d\n", j);
+        sprintf(tmp,"%d ", this->enfants[j]->getId());
+        strcat(ligne, tmp);
     }
+    strcat(ligne, "\n");
     //printf("Humain::sauve => Ligne a sauvegarder : %s\n", ligne);
     fputs(ligne, fic);
+    fflush(fic);
+}
+
+//-------------------------------------------
+//
+//          Humain::sauveJson
+//
+//-------------------------------------------
+void Humain::sauveJson(FILE *fic){
+    //printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    int thisPere, thisMere, thisConjoint;
+    if (this->pere == NULL) thisPere = -1;
+    else thisPere = this->pere->getId();
+    if (this->mere == NULL) thisMere = -1;
+    else thisMere = this->mere->getId();
+    if (this->conjoint == NULL) thisConjoint = -1;
+    else thisConjoint = this->conjoint->getId();
+    fprintf(fic, "      { \"id\": %d, ", this->id);
+    fprintf(fic, "\"prenom\": \"%s\" ,", this->prenom);
+    fprintf(fic, "\"nom\": \"%s\" ,", this->nom);
+    fprintf(fic, "\"genre\": %d ,", this->genre);
+    fprintf(fic, "\"age\": %d ,", this->age);
+    fprintf(fic, "\"nbEnfants\": %d ,", this->nbEnfants);
+    fprintf(fic, "\"status\": %d ,", this->status);
+    fprintf(fic, "\"idConjoint\": %d ,", thisConjoint);
+    fprintf(fic, "\"idPere\": %d ,", thisPere);
+    fprintf(fic, "\"idMere\": %d ,", thisMere);
+    fprintf(fic, "\"enfants\": [ ");
+    for (int j = 0 ; j < nbEnfants ; j++){
+        //printf("sauvegarde de l'enfant %d\n", j);
+        fprintf(fic, "      {\"id\": %d},", this->enfants[j]->getId());
+    }
+    fprintf(fic, " ]");
+    fprintf(fic, " },");
+    fprintf(fic, "\n");
     fflush(fic);
 }
 
@@ -531,7 +693,6 @@ void Humain::sauve(FILE *fic){
 //
 //-------------------------------------------
 void Humain::vieillir(void){
-    Humain *ptrHumain;
     if (strcmp(this->nom, "dieu") != 0){ // dieu ne vieilli pas => immortel
         if (this->status != MORT){ // on ne fait pas vieillir les morts
             this->age++;
@@ -565,76 +726,6 @@ void Humain::vieillir(void){
                 this-> deces();
                 return;
             }
-
-            // test candidats au mariage
-            // recherche d'un homme celibataire ou veuf
-            if ((this->getGenreTexte()[0] == 'H') && (this->getAge() >= AGE_DEBUT_MARIAGE)){
-                if ((this->getStatus() == 'C') || (this->getStatus() == 'V')){
-                    // candidat potentiel au mariage
-                    //printf("%s est candidat au mariage\n", this->nom);
-                    // recherche partenaire
-                    for (int j = 0 ; j < nbHumains ; j++){
-                        ptrHumain = listeHumains[j];
-                        if ((ptrHumain->getGenreTexte()[0] == 'F') && (ptrHumain->getAge() >= AGE_DEBUT_MARIAGE)){
-                            if ((ptrHumain->getStatus() == 'C') || (ptrHumain->getStatus() == 'V')){
-                                // candidate potentielle au mariage
-                                //printf("%s est candidate au mariage\n", ptr1->nom);
-                                int differenceAge = abs(this->getAge() - ptrHumain->getAge());
-                                if (differenceAge > DIFF_AGE_MARIAGE){
-                                    //printf("mariage impossible a cause de la difference d'age\n");
-                                } else {
-                                    if ((rand() % PROBA_MARIAGE) == 0){
-                                        // 1 chance sur n qu'elle accepte
-                                        ptrHumain->mariage(this);
-                                        return;
-                                    }else {
-                                        //printf("mariage refuse\n");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // test generation d'une naissance
-            ptrHumain = NULL;
-            if (this->getGenreTexte()[0] == 'H'){
-                if (this->conjoint != NULL){
-                    ptrHumain = this->conjoint;
-                    //printf("teste compatibilite naissance entre %s et %s\n", this->getNomComplet(), ptr1->getNomComplet());
-                    if ((this->getAge() > AGE_DEBUT_NAISSANCE) && (ptrHumain->getAge() > AGE_DEBUT_NAISSANCE)){
-                        //printf("Les deux parents ont + 25 ans\n");
-                        if ((this->getAge() < AGE_FIN_NAISSANCE) && (ptrHumain->getAge() < AGE_FIN_NAISSANCE)){
-                            //printf("Les deux parents ont - 40 ans\n");
-                            //printf("%s et %s sont les futurs parents\n", this->getNomComplet(), ptr1->getNomComplet());
-                            char newPrenom[25];
-                            int genreEnfant = getRandomGenre();
-                            switch (genreEnfant){
-                                case HOMME:
-                                    //printf("%s et %s ont un fils\n", this->getNomComplet(), ptr1->getNomComplet());
-                                    strcpy(newPrenom,getPrenomMasculin());
-                                    break;
-                                case FEMME:
-                                    //printf("%s et %s ont une fille\n", this->getNomComplet(), ptr1->getNomComplet());
-                                    strcpy(newPrenom,getPrenomFeminin());
-                                    break;
-                                default:
-                                    printf("ERREUR : genre de l'enfant inconuu (%d)\n", genreEnfant);
-                                    break;
-                            }
-                            //printf("prenom de l'enfant : ");
-                            //scanf("%s", saisie);
-                            if ((rand() % 5) == 0){ // 1 chance sur 5 d'avoir un enfant cette annee
-                                this->naissance(genreEnfant, this->nom, newPrenom);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // gestion des achats potentiels
         }
     } else {
         // dieu genere des naissance s'il n'y pas assez d'humains
@@ -693,5 +784,8 @@ int Humain::getNumCompte(void){
 void Humain::boucleTraitement(void){
     printf("Humain::boucleTraitement => debut\n");
     this->vieillir();
+    this->testMariage();
+    this->testNaissance();
+    this->achats();
     printf("Humain::boucleTraitement => fin\n");
 }

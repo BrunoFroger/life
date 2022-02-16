@@ -13,10 +13,12 @@
         char nom[20];
         char prenom[20];
         int genre;
+        int age;
     }enfantDieu;
 
     extern int getRandom(int range);
     extern enfantDieu getRandomEnfant(void);
+    extern enfantDieu getRandomEnfant(int age);
     extern void afficheListeHumains(void);
     extern char *getPrenomMasculin(void);
     extern char *getPrenomFeminin(void);

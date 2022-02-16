@@ -43,6 +43,7 @@
     #define PRODUCTIVITE_PATRON     1
 
     class Humain;
+    class CompteBancaire;
 
     typedef struct{
         Humain *salarie;
@@ -96,6 +97,7 @@
             structSalarie *getSalarie(int index);
             void verseSalaires(void);
             void sauve(FILE *fic);
+            void sauveJson(FILE *fic);
             void listeSalaries(void);
             char * getStatusString(int status);
             int getEffectifMax(void);

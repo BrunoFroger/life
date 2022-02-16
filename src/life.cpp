@@ -31,7 +31,7 @@ int nb_valeurs = 10;
 int valeur_basse = 0;
 int valeur_haute = 100;
 bool dataSauvegardees = true;
-FILE *file;
+FILE *file, *fileJson;
 char saisie[50];
 char prompt[50];
 int idx;
@@ -59,38 +59,59 @@ void sauveFichier(){
     scanf("%s", saisie);
     if (strlen(saisie) > 0){
         strcpy(nomFichier, saisie);
+        strcpy(nomFichierJson, saisie);
+        strcat(nomFichierJson, ".json");
         setPrompt(saisie);
     }
     file = fopen(nomFichier, "w");
+    fileJson = fopen(nomFichierJson, "w");
     if (file != NULL){
+        fputs("{\n", fileJson);
         printf("lancement de la boucle de sauvegarde des %d humains\n", nbHumains - 1);
         // on commence a 1 car on ne sauveagrde pas dieu
+        fputs(" \"humain\": [\n", fileJson);
         for (int i = 1 ; i < nbHumains ; i ++ ){
             ptr = listeHumains[i];
             ptr->sauve(file);
+            ptr->sauveJson(fileJson);
         }
+        fputs(" ],\n", fileJson);
+        fflush(fileJson);
         printf("lancement de la boucle de sauvegarde des %d entreprises\n", nbEntreprises);
         Entreprise *ptrEnt;
+        fputs(" \"entreprise\": [\n", fileJson);
         for (int i = 0 ; i < nbEntreprises ; i ++ ){
             ptrEnt = listeEntreprises[i];
             ptrEnt->sauve(file);
+            ptrEnt->sauveJson(fileJson);
         }
+        fputs(" ],\n", fileJson);
+        fflush(fileJson);
         printf("lancement de la boucle de sauvegarde des %d produits\n", nbProduits);
         Produit *ptrProd;
+        fputs(" \"produits\": [\n", fileJson);
         for (int i = 0 ; i < MAX_PRODUITS ; i ++ ){
             ptrProd = listeProduits[i];
             if (ptrProd != NULL){
                 ptrProd->sauve(file);
+                ptrProd->sauveJson(fileJson);
             }
         }
+        fputs(" ],\n", fileJson);
+        fflush(fileJson);
         printf("lancement de la boucle de sauvegarde des %d Commandes\n", nbCommandes);
         Commande *ptrCde;
+        fputs(" \"commande\": [\n", fileJson);
         for (int i = 0 ; i < MAX_COMMANDES ; i ++ ){
             ptrCde = listeCommandes[i];
             if (ptrCde != NULL){
                 ptrCde->sauve(file);
+                ptrCde->sauveJson(fileJson);
             }
         }
+        fputs(" ]\n", fileJson);
+        fputs("}\n", fileJson);
+        fflush(fileJson);
         fclose(file);
         dataSauvegardees = true;
     } else {
@@ -106,8 +127,8 @@ void sauveFichier(){
 void chargeFichier(FILE *file){
     //printf("main:chargeFichier => lancement de la boucle de lecture du fichier\n");
     char ligne[500];
-    int ligne_id, ligne_genre, ligne_age, ligne_typeProd, ligne_effectMax;
-    int ligne_type, ligne_entrepriseId, ligne_prix, ligne_stock, ligne_stockMini, ligne_coutFabrication;
+    int ligne_id, ligne_genre, ligne_age, ligne_typeProd, ligne_effectMax, ligne_idPere;
+    int ligne_type, ligne_entrepriseId, ligne_prix, ligne_stock, ligne_stockMini, ligne_coutFabrication, ligne_dureeVie, ligne_delaiFab, ligne_indNeccess;
     int idHumain;
     char ligne_nom[50], ligne_prenom[50], typeLigne[25];
     printf("life:chargeFichier => ------- boucle init ----------\n");
@@ -121,11 +142,11 @@ void chargeFichier(FILE *file){
             //printf("main:chargeFichier => analyse de la ligne %s", ligne);
             if (strcmp(typeLigne,"humain") == 0){
                 //printf("main:chargeFichier => traitement de la ligne %s", ligne);
-                sscanf(ligne, "%s %d %s %s %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age);
+                sscanf(ligne, "%s %d %s %s %d %d %d", typeLigne, &ligne_id, ligne_prenom, ligne_nom, &ligne_genre, &ligne_age, &ligne_idPere);
                 if (ligne_id != nbHumains){
                     printf("life:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbHumains);
                 } else {
-                    ptr = new Humain(ligne_genre, ligne_nom, ligne_prenom, ligne_age);
+                    ptr = new Humain(getHumainById(ligne_idPere), ligne_genre, ligne_nom, ligne_prenom, ligne_age);
                     //printf("main:chargeFichier => Humain %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
                 }
             } else if (strcmp(typeLigne,"entreprise") == 0){
@@ -140,12 +161,12 @@ void chargeFichier(FILE *file){
                 }
             } else if (strcmp(typeLigne,"produit") == 0){
                 //printf("main:chargeFichier => traitement de la ligne %s", ligne);
-                sscanf(ligne, "%s %d %d %d %s %d %d %d %d", typeLigne, &ligne_id, &ligne_type, &ligne_entrepriseId, ligne_nom, &ligne_prix, &ligne_stock, &ligne_stockMini, &ligne_coutFabrication);
+                sscanf(ligne, "%s %d %d %d %s %d %d %d %d %d %d %d", typeLigne, &ligne_id, &ligne_type, &ligne_entrepriseId, ligne_nom, &ligne_prix, &ligne_stock, &ligne_stockMini, &ligne_coutFabrication, &ligne_dureeVie, &ligne_delaiFab, &ligne_indNeccess);
                 if (ligne_id != nbProduits){
                     printf("life:chargeFichier => ERREUR : ligne <%s> non attendue id=%d au lieu de %d\n", ligne, ligne_id, nbProduits);
                 } else {
                     //printf("main:chargeFichier =>  restore entreprise ...... TODO ......\n");
-                    ptrProduit = new Produit(ligne_nom, ligne_type, ligne_entrepriseId, ligne_stock, ligne_stockMini, ligne_prix, ligne_coutFabrication);
+                    ptrProduit = new Produit(ligne_nom, ligne_type, ligne_entrepriseId, ligne_stock, ligne_stockMini, ligne_prix, ligne_coutFabrication, ligne_dureeVie, ligne_delaiFab, ligne_indNeccess);
                     listeProduits[nbProduits-1] = ptrProduit;
                     //printf("main:chargeFichier => Entreprise %s cree en pos %d\n", ptr->getNomComplet(), nbHumains - 1);
                 }
@@ -296,7 +317,7 @@ int main(int argc, char **argv)
     printf("creation de dieu\n");
     strcpy(tmpString,"dieu");
     strcpy(tmpString1,"");
-    Humain *dieu = new Humain(HOMME, tmpString, tmpString1, 0);
+    Humain *dieu = new Humain(0, HOMME, tmpString, tmpString1, 0);
     idx = dieu->getId();
     strcpy(tmpString,"");
     setPrompt(tmpString);
@@ -321,13 +342,17 @@ int main(int argc, char **argv)
 
     // analyse des parametres pour eventuellment charger un fichier de donnees
     if (argc > 1){
-        printf("ouverture du fichier %s\n", argv[1]);
-        FILE *fic = fopen(argv[1], "r");
-        if (fic == NULL){
-            printf("impossible d'ouvrir le fichier %s\n", argv[1]);
+        if (strcmp(argv[1], "init") == 0){
+            initMonde(dieu);
         } else {
-            strcpy(nomFichier, argv[1]);
-            chargeFichier(fic);
+            printf("ouverture du fichier %s\n", argv[1]);
+            FILE *fic = fopen(argv[1], "r");
+            if (fic == NULL){
+                printf("impossible d'ouvrir le fichier %s\n", argv[1]);
+            } else {
+                strcpy(nomFichier, argv[1]);
+                chargeFichier(fic);
+            }
         }
     }
 

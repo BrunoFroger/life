@@ -18,7 +18,7 @@ int lastIdProduit=0;
 //          Produit::Produit
 //
 //-------------------------------------------
-Produit::Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication){
+Produit::Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication, int dureeVie, int delaiFab, int indiceNecessite){
     //printf("Produit::Produit => creation du produit %d\n", nbProduits);
     this->id = lastIdProduit++;
     strcpy(this->nom, nom);
@@ -28,6 +28,9 @@ Produit::Produit(char *nom, int type, int producteur_id, int stockInitial, int s
     this->stockMini = stockMini;
     this->prix = prix;
     this->coutFabrication = coutFabrication;
+    this->dureeVie = dureeVie;
+    this->delaiFabrication = delaiFab;
+    this->indiceNecessite = indiceNecessite;
     nbProduits++;
 }
 
@@ -113,8 +116,32 @@ int Produit::getQuantiteAProduire(void){
 //-------------------------------------------
 void Produit::sauve(FILE *fichier){
     printf("Produit::sauve => debut\n");
-    fprintf(fichier, "produit %d %d %d %s %d %d %d %d\n", this->id, this->type, this->producteurId, this->nom, this->prix, this->stock, this->stockMini, this->coutFabrication);
+    fprintf(fichier, "produit %d %d %d %s %d %d %d %d %d %d %d\n", this->id, this->type, this->producteurId, this->nom, 
+        this->prix, this->stock, this->stockMini, this->coutFabrication, this->dureeVie, this->delaiFabrication, this->indiceNecessite);
     printf("Produit::sauve => fin\n");
+}
+
+//-------------------------------------------
+//
+//          Produit::sauveJson
+//
+//-------------------------------------------
+void Produit::sauveJson(FILE *fic){
+    //printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    fprintf(fic, "      { \"id\": %d, ", this->id);
+    fprintf(fic, "\"type\": \"%d\" ,", this->type);
+    fprintf(fic, "\"producteurId\": \"%d\" ,", this->producteurId);
+    fprintf(fic, "\"nom\": \"%s\" ,", this->nom);
+    fprintf(fic, "\"prix\": %d ,", this->prix);
+    fprintf(fic, "\"stock\": %d ,", this->stock);
+    fprintf(fic, "\"stockMini\": %d ,", this->stockMini);
+    fprintf(fic, "\"coutFabrication\": %d ,", this->coutFabrication);
+    fprintf(fic, "\"dureeVie\": %d ,", this->dureeVie);
+    fprintf(fic, "\"delaiFabrication\": %d ,", delaiFabrication);
+    fprintf(fic, "\"indiceNecessite\": %d", this->indiceNecessite);
+    fprintf(fic, " },");
+    fprintf(fic, "\n");
+    fflush(fic);
 }
 
 //-------------------------------------------
@@ -150,4 +177,13 @@ char *Produit::getTypeProd(void){
             break;
     }
     return tmpString;
+}
+
+//-------------------------------------------
+//
+//          Produit::getindiceNecessite
+//
+//-------------------------------------------
+int Produit::getindiceNecessite(void){
+    return indiceNecessite;
 }

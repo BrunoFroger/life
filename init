@@ -1,0 +1,79 @@
+humain 1 Laura Chevalier 2 0 0 0 -1 0 -1 
+humain 2 Michel Dupuis 1 0 0 0 -1 0 -1 
+humain 3 Pierre Lucas 1 0 0 0 -1 0 -1 
+humain 4 Celine Chevalier 2 0 0 0 -1 0 -1 
+humain 5 Louis Lacroix 1 0 0 0 -1 0 -1 
+humain 6 Georges Cordier 1 0 0 0 -1 0 -1 
+humain 7 Daniel Colin 1 0 0 0 -1 0 -1 
+humain 8 Louis Masson 1 0 0 0 -1 0 -1 
+humain 9 Julie Collet 2 0 0 0 -1 0 -1 
+humain 10 Stephanie Breton 2 0 0 0 -1 0 -1 
+humain 11 Marcel Chevalier 1 0 0 0 -1 0 -1 
+humain 12 Marie Colin 2 0 0 0 -1 0 -1 
+humain 13 Daniel Moulin 1 0 0 0 -1 0 -1 
+humain 14 Monique Collet 2 0 0 0 -1 0 -1 
+humain 15 Louis Caron 1 0 0 0 -1 0 -1 
+humain 16 Helene Masson 2 0 0 0 -1 0 -1 
+humain 17 Stephanie Legrand 2 0 0 0 -1 0 -1 
+humain 18 Jean Chevalier 1 0 0 0 -1 0 -1 
+humain 19 Denise Riviere 2 0 0 0 -1 0 -1 
+humain 20 Marcel Aubry 1 0 0 0 -1 0 -1 
+humain 21 Joseph Poirier 1 0 0 0 -1 0 -1 
+humain 22 Brigitte Leconte 2 0 0 0 -1 0 -1 
+humain 23 Sylvie Aubry 2 0 0 0 -1 0 -1 
+humain 24 Marie Colin 2 0 0 0 -1 0 -1 
+humain 25 Laura Lacroix 2 0 0 0 -1 0 -1 
+humain 26 Louis Roche 1 0 0 0 -1 0 -1 
+humain 27 Lea Colin 2 0 0 0 -1 0 -1 
+humain 28 Julie Leger 2 0 0 0 -1 0 -1 
+humain 29 Paul Blanchard 1 0 0 0 -1 0 -1 
+humain 30 Bernard Morin 1 0 0 0 -1 0 -1 
+humain 31 jules Dupont 1 0 0 0 -1 0 -1 
+humain 32 Nicole Durand 2 0 0 0 -1 0 -1 
+humain 33 Adam Colin 1 0 0 0 -1 0 -1 
+humain 34 Julie Cordier 2 0 0 0 -1 0 -1 
+humain 35 Julie Garnier 2 0 0 0 -1 0 -1 
+humain 36 Denise Leconte 2 0 0 0 -1 0 -1 
+humain 37 Celine Durand 2 0 0 0 -1 0 -1 
+humain 38 Anne Riviere 2 0 0 0 -1 0 -1 
+humain 39 Elise Dupont 2 0 0 0 -1 0 -1 
+humain 40 Marcel Masson 1 0 0 0 -1 0 -1 
+humain 41 Georges Fontaine 1 0 0 0 -1 0 -1 
+humain 42 Christine Breton 2 0 0 0 -1 0 -1 
+humain 43 Jacques Picard 1 0 0 0 -1 0 -1 
+humain 44 Joseph Caron 1 0 0 0 -1 0 -1 
+humain 45 Joseph Moulin 1 0 0 0 -1 0 -1 
+humain 46 Anne Duval 2 0 0 0 -1 0 -1 
+humain 47 Marie Breton 2 0 0 0 -1 0 -1 
+humain 48 Nicole Leclerc 2 0 0 0 -1 0 -1 
+humain 49 Suzanne Lacroix 2 0 0 0 -1 0 -1 
+entreprise 0 epicerie 0 100 10
+salarie 0 0 3 400 0 1 
+entreprise 1 entrepreneur 0 500 50
+salarie 1 0 3 400 0 1 
+entreprise 2 vetements 0 300 2
+salarie 2 0 3 400 0 1 
+entreprise 3 garage 0 400 5
+salarie 3 0 3 400 0 1 
+entreprise 4 electroMenager 0 700 5
+salarie 4 0 3 400 0 1 
+produit 0 101 0 viande 10 10 5 4 7 1 0
+produit 1 102 0 legume 10 10 5 4 7 1 0
+produit 2 105 0 laitage 10 10 5 4 7 1 0
+produit 3 104 0 fruit 10 10 5 4 7 1 0
+produit 4 103 0 boisson 2 20 5 1 50 2 0
+produit 5 304 2 basket 50 5 2 20 400 20 5
+produit 6 304 2 pull 40 5 2 15 500 20 5
+produit 7 304 2 pantalon 50 5 2 20 500 20 5
+produit 8 304 2 blouson 50 5 2 20 1000 30 5
+produit 9 304 2 manteau 100 2 1 40 2000 30 10
+produit 10 304 2 impermeable 100 2 1 40 2000 30 10
+produit 11 401 3 voiture 10000 5 2 8000 40000 120 20
+produit 12 401 3 moto 5000 5 2 3500 35000 120 100
+produit 13 701 4 frigo 300 2 1 80 40000 30 25
+produit 14 702 4 gaziniere 300 2 1 80 40000 30 25
+produit 15 702 4 laveLinge 300 2 1 80 40000 30 40
+produit 16 703 4 laveVaiss 300 2 1 80 40000 30 70
+produit 17 704 4 secheLinge 300 2 1 80 40000 30 80
+produit 18 510 1 maison 200000 0 0 100000 400000 300 200
+produit 19 511 1 appart_etudiant 20000 0 0 10000 400000 300 1000

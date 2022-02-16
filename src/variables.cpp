@@ -20,6 +20,7 @@ int nouveauNumeroCommande=1;
 int nbCommandes=0;
 int nbProduits=0;
 char nomFichier[50];
+char nomFichierJson[50];
 char tmpString[50];
 char tmpString1[50];
 

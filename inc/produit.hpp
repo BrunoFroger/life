@@ -53,17 +53,19 @@
     
     class Produit {
         public:
-            Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication);
+            Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication, int dureeVie, int delaiFab, int indiceNecessite);
             ~Produit(void);
             char *getNom(void);
             int getPrix(void);
             int getStock(void);
             int getStockMini(void);
             void sauve(FILE *fichier);
+            void sauveJson(FILE *fic);
             int getId(void);
             int getProducteurId(void);
             char *getTypeProd(void);
             int getQuantiteAProduire(void);
+            int getindiceNecessite(void);
 
         private:
             int id;
@@ -74,6 +76,9 @@
             int stockMini;
             int coutFabrication;
             int prix;
+            int delaiFabrication;
+            int dureeVie;
+            int indiceNecessite;        // 0 indispensable puis increment si moins indispensable
     };
 
 #endif

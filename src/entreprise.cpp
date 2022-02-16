@@ -556,6 +556,25 @@ void Entreprise::sauve(FILE *fic){
 
 //-------------------------------------------
 //
+//          Entreprise::sauveJson
+//
+//-------------------------------------------
+void Entreprise::sauveJson(FILE *fic){
+    //printf("Entreprise::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    int id_patron;
+    id_patron = this->patron->getId();
+    fprintf(fic, "      { \"id\": %d, ", this->id);
+    fprintf(fic, "\"nom\": \"%s\" ,", this->nom);
+    fprintf(fic, "\"id_patron\": \"%d\" ,", id_patron);
+    fprintf(fic, "\"typeProduction\": %d ,", this->typeProduction);
+    fprintf(fic, "\"effectifMax\": %d ,", this->effectifMax);
+    fprintf(fic, " },");
+    fprintf(fic, "\n");
+    fflush(fic);
+}
+
+//-------------------------------------------
+//
 //          Entreprise::getEffectifMax
 //
 //-------------------------------------------

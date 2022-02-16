@@ -34,6 +34,7 @@
             int getQuantite(void);
             char *getStatusString(void);
             void sauve(FILE *fichier);
+            void sauveJson(FILE *fic);
             int getNumero();
 
         private:

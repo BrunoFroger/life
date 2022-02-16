@@ -227,3 +227,25 @@ void Commande::sauve(FILE *fichier){
     fflush(fichier);
     printf("Commande::sauve => fin\n");
 }
+
+//-------------------------------------------
+//
+//          Commande::sauveJson
+//
+//-------------------------------------------
+void Commande::sauveJson(FILE *fic){
+    //printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    int id_client, id_fabricant, id_produit;
+    id_client = this->client->getId();
+    id_fabricant = this->fabricant->getId();
+    id_produit = this->produit->getId();
+    fprintf(fic, "      { \"id\": %d, ", this->numero);
+    fprintf(fic, "\"status\": \"%d\" ,", this->status);
+    fprintf(fic, "\"quantite\": \"%d\" ,", this->quantite);
+    fprintf(fic, "\"id_client\": %d ,", id_client);
+    fprintf(fic, "\"id_fabricant\": %d ,", id_fabricant);
+    fprintf(fic, "\"id_produit\": %d ,", id_produit);
+    fprintf(fic, " },");
+    fprintf(fic, "\n");
+    fflush(fic);
+}

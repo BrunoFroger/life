@@ -8,6 +8,7 @@
 #define __HUMAIN__
 
     #include <string>
+    #include "variables.hpp"
 
     // genre humain
     #define HOMME 1
@@ -15,6 +16,7 @@
     #define INCONNU 3
 
     #define MAX_ENFANTS 15
+    #define MAX_ACHAT_CLIENT    250
 
     // status 
     #define CELIBATAIRE 0
@@ -25,16 +27,24 @@
 
     class Entreprise;
     class CompteBancaire;
+    class Produit;
+
+    typedef struct{
+        Produit *produit;
+        int dateAchat;
+        int duree;
+    } produitClient;
 
     class Humain{
 
         public :
             Humain();
-            Humain(int genre, char *nom, char *prenom, int age);
+            Humain(Humain *pere, int genre, char *nom, char *prenom, int age);
             Humain(char *datas);
             ~Humain();
             void restore(char *datas);
             void sauve(FILE *fic);
+            void sauveJson(FILE *fic);
             void boucleTraitement(void);
             void displayInfos(void);
             void mariage(Humain *conjoint);
@@ -64,14 +74,14 @@
             bool debite(int montant);
 
         private :
-            int id;
-            int genre;
-            int age;
+            int id;         // id unique
+            int genre;      // H ou F
+            int age;        // nb jours
             int nbEnfants;
             char genreTexte[10];
             char nom[50];
             char prenom[50];
-            int status;
+            int status;     // celibataire, marie, veuf, mort, ...
             Humain *conjoint;
             Humain *pere;
             Humain *mere;
@@ -80,6 +90,12 @@
             void setGenreTexte();
             Entreprise *employeur;
             CompteBancaire *compteBancaire;
+            void testMariage(void);
+            void testNaissance(void);
+            void achats(void);
+            produitClient *listeProduitsHumain[MAX_ACHAT_CLIENT];
+            void setListeProduitEnManque(void);
+            Produit *listeProduitsEnManque[MAX_ACHAT_CLIENT];
     };
 
 #endif

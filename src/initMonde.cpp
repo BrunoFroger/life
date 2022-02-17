@@ -59,14 +59,14 @@ void initMonde(Humain *dieu){
 
     // creation des humains
     enfantDieu enfant;
-    printf("initMonde => generation des premiers humains\n");
+    //printf("initMonde => generation des premiers humains\n");
     // creation des personnes directement issues de dieu
     for (i = 0 ; i < INIT_NB_HUMAINS ; i++){
         enfant = getRandomEnfant(getRandom(20) + 20); // creation d'adultes entre 20 et 40 ans
         new Humain(dieu, enfant.genre, enfant.nom, enfant.prenom, enfant.age);
     }
 
-    printf("initMonde => mariage d'une partie de la population\n");
+    //printf("initMonde => mariage d'une partie de la population\n");
     // creation des couples 1/3 celibataires ; 2/3 de maries
     int nbCouples = 0;
     Humain *ptrHomme, *ptrFemme, *ptrHumain;
@@ -89,7 +89,7 @@ void initMonde(Humain *dieu){
         if (nbCouples >= (INIT_NB_HUMAINS / 3)) break;
     }
 
-    printf("initMonde => generation des enfants\n");
+    //printf("initMonde => generation des enfants\n");
     // creation des enfants entre 1 et 3 enfnats par couples
     for (int i = 0 ; i < INIT_NB_HUMAINS ; i++){
         ptrHomme = listeHumains[i];
@@ -97,7 +97,7 @@ void initMonde(Humain *dieu){
             ptrHomme = listeHumains[i];
             // c'est un homme marie, on peut lui donner des enfants
             int nbEnfantsAGenerer = getRandom(4);
-            printf("on genere %d enfants pour %s\n", nbEnfantsAGenerer, ptrHomme->getNomComplet());
+            //printf("on genere %d enfants pour %s\n", nbEnfantsAGenerer, ptrHomme->getNomComplet());
             for (int j = 0 ; j < nbEnfantsAGenerer ; j++){
                 int genre = getRandomGenre();
                 if (genre == HOMME) {
@@ -147,7 +147,7 @@ void initMonde(Humain *dieu){
 
     new Produit((char *)"maison", P_MAI_MAISON, entrepreneur->getId(), 0, 0, 200000, 100000, 400000, 300, 200);
     new Produit((char *)"appart_etudiant", P_MAI_APPART, entrepreneur->getId(), 0, 0, 20000, 10000, 400000, 300, 1000);
-    afficheListeProduits();
+    //afficheListeProduits();
 
     // creation des commandes initiales
     Produit *ptrProduit;
@@ -164,5 +164,5 @@ void initMonde(Humain *dieu){
     //afficheListeEntreprises();
 
     // affichage des statistiques 
-    statistiques();
+    //statistiques();
 }

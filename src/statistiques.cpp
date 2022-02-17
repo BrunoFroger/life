@@ -166,6 +166,28 @@ void displayDatas(void){
     }
     displayBloc();
 
+    // affichage des salaries
+    if (display_stat_salaries){
+        sprintf(string1[numLigne1++], "+--------------------------------------------------------------------+");
+        sprintf(string1[numLigne1++], "|       liste des salaries par entreprise                            |");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
+        sprintf(string1[numLigne1++], "|         entreprise   |                nom   |   fonction | salaire |");
+        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
+        for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
+            Entreprise *ptrEnt = listeEntreprises[i];
+            if(ptrEnt != NULL){
+                //printf("%d salaries dans %s\n", ptrEnt->getNbSalaries(), ptrEnt->getNom());
+                for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
+                    structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
+                    sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
+                        ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
+                }
+                if (ptrEnt->getNbSalaries() > 0){
+                    sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
+                }
+            }
+        }
+    }
 
     // affichage des entreprises
     if (display_stat_entreprises){
@@ -189,26 +211,6 @@ void displayDatas(void){
             }
         }
         sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
-    }
-
-    // affichage des salaries
-    if (display_stat_salaries){
-        sprintf(string1[numLigne1++], "+--------------------------------------------------------------------+");
-        sprintf(string1[numLigne1++], "|       liste des salaries par entreprise                            |");
-        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
-        sprintf(string1[numLigne1++], "|         entreprise   |                nom   |   fonction | salaire |");
-        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
-        for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
-            Entreprise *ptrEnt = listeEntreprises[i];
-            if(ptrEnt != NULL){
-                for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
-                    structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
-                    sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
-                        ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
-                }
-            }
-        }
-        sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+\n");
     }
     displayBloc();
 

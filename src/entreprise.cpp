@@ -121,7 +121,7 @@ Entreprise::Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax)
     listeEntreprises[nbEntreprises] = this;
     this->effectifMax = effectifMax;
     nbEntreprises++;
-    printf("Entreprise::Entreprise => entreprise %s cree avec liste de donnes (id=%d)\n", this->nom, this->id);
+    printf("Entreprise::Entreprise => entreprise %s cree (id=%d)\n", this->nom, this->id);
 }
 
 //-------------------------------------------
@@ -247,9 +247,10 @@ void Entreprise::supprimeSalarie(Humain *personne){
         if (ptrSalarie->salarie == personne){
             ptrSalarie->salarie = NULL;
             ptrSalarie->status = 0;
-            printf("Entreprise::embauche => suppression d'un salarie \"%s\" de l'entreprise \"%s\" \n", 
+            ptrSalarie->salarie->setEmployeur(NULL);
+            printf("Entreprise::supprimeSalarie => suppression d'un salarie \"%s\" de l'entreprise \"%s\" \n", 
                 ptrSalarie->salarie->getNomComplet(), this->nom);
-            nbSalaries++;
+            nbSalaries--;
             //listeSalaries();
             return;
         }
@@ -635,23 +636,27 @@ Humain *Entreprise::getPatron(void){
 //
 //-------------------------------------------
 void Entreprise::checkPatron(void){
-    if (this->patron == NULL){
-        printf("Entreprise::checkPatron => pas de patron pour %s\n", this->nom);
-        Humain *ptrHumain;
-        for (int i = 0 ; i < MAX_HUMAINS ; i++){
-            ptrHumain = listeHumains[i];
-            if (ptrHumain != NULL){
-                if (! ptrHumain->estSalarie()){
-                    printf("Entreprise::checkPatron => %s ne travaille pas on peut le recruter\n", ptrHumain->getNomComplet());
-                    // cette personne ne travaille pas, elle peut devenir le patron de cette entreprise
-                    this->embauche(ptrHumain, PATRON);
-                    return;
-                }
+    if (this->patron != NULL){
+        if (this->patron->getStatus() != MORT){
+            //printf("Entreprise::checkPatron => %s a deja un patron\n", this->nom);
+            return;
+        }
+        // le patron es tdecede, on le remplace
+        this->supprimeSalarie(this->patron);
+    }
+    //printf("Entreprise::checkPatron => pas de patron pour %s\n", this->nom);
+    Humain *ptrHumain;
+    for (int i = 0 ; i < MAX_HUMAINS ; i++){
+        ptrHumain = listeHumains[i];
+        if (ptrHumain != NULL){
+            if (! ptrHumain->estSalarie()){
+                //printf("Entreprise::checkPatron => %s ne travaille pas on peut le recruter\n", ptrHumain->getNomComplet());
+                // cette personne ne travaille pas, elle peut devenir le patron de cette entreprise
+                this->embauche(ptrHumain, PATRON);
+                return;
             }
         }
-    } else {
-        printf("Entreprise::checkPatron => %s a deja un patron\n", this->nom);
-    }
+    }  
 }
 
 //-------------------------------------------
@@ -660,8 +665,8 @@ void Entreprise::checkPatron(void){
 //
 //-------------------------------------------
 void Entreprise::boucleTraitement(void){
-    printf("Entreprise::boucleTraitement =>-------------------------------------------------\n");
-    printf("Entreprise::boucleTraitement => debut %s (%d)\n", this->nom, this->id);
+    //printf("Entreprise::boucleTraitement =>-------------------------------------------------\n");
+    //printf("Entreprise::boucleTraitement => debut %s (%d)\n", this->nom, this->id);
     checkPatron();
-    printf("Entreprise::boucleTraitement => fin\n");
+    //printf("Entreprise::boucleTraitement => fin\n");
 }

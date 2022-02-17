@@ -108,10 +108,10 @@ int Commande::getStatus(void){
 //
 //-------------------------------------------
 void Commande::boucleTraitement(void){
-    printf("Commande::boucleTraitement => boucleTraitement : debut\n");
+    //printf("Commande::boucleTraitement => boucleTraitement : debut\n");
     switch(this->status){
         case COMMANDE_INITIALISEE:
-            printf("Commande::boucleTraitement => boucleTraitement : commande de %s initialisee\n", this->produit->getNom());
+            //printf("Commande::boucleTraitement => boucleTraitement : commande de %s initialisee\n", this->produit->getNom());
             // recherche d'une entreprise capable de founir ce produit
             // boucle sur les entreprises
             Entreprise *ptrEntreprise;

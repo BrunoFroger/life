@@ -7,8 +7,7 @@ TODO
 - retablir sauvegarde si necessaire quand on quitte 
 - gerer versement de salaire
 - creer une entreprise si capacite de production trop faible
-- initialiser les entreprise avec un patron a null
-- nommer un parton dans une entreprise quand le patron est dieu ou qu'il meurre
+- nommer un parton dans une entreprise quand le patron meurre
 - en cas de deces, supprimer la personne de :
     - salarie
     - humains

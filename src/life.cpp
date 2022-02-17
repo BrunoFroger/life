@@ -314,7 +314,7 @@ int main(int argc, char **argv)
     printf("**********************************************\n");
     // creation d'un humain
     
-    printf("creation de dieu\n");
+    //printf("creation de dieu\n");
     strcpy(tmpString,"dieu");
     strcpy(tmpString1,"");
     Humain *dieu = new Humain(0, HOMME, tmpString, tmpString1, 0);

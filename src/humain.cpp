@@ -40,7 +40,6 @@ void Humain::setGenreTexte(){
 //
 //-------------------------------------------
 Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
-    //printf("debut creation humain %s %s en position %d\n", prenom, nom, nbHumains);
     this->id=nbHumains;
     this->genre = genre;
     setGenreTexte();
@@ -75,6 +74,7 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
         mesProduits[i] = NULL;
     }
+    printf("Humain::Humain => humain cree : %s en position %d\n", this->getNomComplet(), nbHumains);
 }
 
 //-------------------------------------------
@@ -179,9 +179,7 @@ bool Humain::estSalarie(void){
 //
 //-------------------------------------------
 void Humain::setEmployeur(Entreprise *ptrEntreprise){
-    if (ptrEntreprise != NULL){
-        this->employeur = ptrEntreprise;
-    }
+    this->employeur = ptrEntreprise;
 }
 
 //-------------------------------------------
@@ -232,7 +230,7 @@ void Humain::mariage(Humain *conjoint){
     this->status=MARIE;
     this->conjoint->conjoint=this;
     this->conjoint->status=MARIE;
-    printf("declaration mariage de %s avec %s\n", homme, femme);
+    printf("Humain::mariage => declaration mariage de %s avec %s\n", homme, femme);
 }
 
 //-------------------------------------------
@@ -456,7 +454,7 @@ bool Humain::addEnfant(Humain *enfant){
 //
 //-------------------------------------------
 Humain *Humain::naissance(int genre, char *nom, char *prenom){
-    //printf(" %s %s donne naissance à %s\n", this->prenom, this->prenom, nom);
+    printf("Humain::naissance => %s donne naissance à %s\n", this->getNomComplet(), prenom);
     if (this->nbEnfants >= MAX_ENFANTS){
         if (strcmp(this->getNom(), "dieu") != 0){
             printf("ERREUR : %s a atteint le nombre maximal d'enfants (%d)\n", this->getNomComplet(), MAX_ENFANTS);
@@ -496,7 +494,7 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
     } catch(...){
         printf("ERREUR => impossible de creer un enfant\n");
     }
-    printf(" fin naissance de %s=> KO\n", this->getNomComplet());
+    printf("Humain::naissance => naissance de %s=> KO\n", this->getNomComplet());
     return NULL;
 }
 
@@ -826,10 +824,10 @@ void Humain::commande(Produit *produit, int quantite){
 //
 //-------------------------------------------
 void Humain::boucleTraitement(void){
-    printf("Humain::boucleTraitement => debut pour %s\n", getNomComplet());
+    //printf("Humain::boucleTraitement => debut pour %s\n", getNomComplet());
     this->vieillir();
     this->testMariage();
     this->testNaissance();
     this->achats();
-    printf("Humain::boucleTraitement => fin\n");
+    //printf("Humain::boucleTraitement => fin\n");
 }

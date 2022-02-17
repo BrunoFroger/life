@@ -85,6 +85,7 @@
             void production(void);
             char *getNom(void);
             void embauche(Humain *personne, int status);
+            void supprimeSalarie(Humain *personne);
             void catalogue(void);
             char *getTypeProd(void);
             int getNbSalaries(void);
@@ -103,6 +104,7 @@
             int getEffectifMax(void);
             bool produitEnStock(Produit *produit);
             void boucleTraitement(void);
+            Humain *getPatron(void);
             
 
         private:
@@ -122,6 +124,7 @@
             //structCommande listeCommandes[MAX_COMMANDES];
             int getProductionPossible(void);
             bool debite(int montant);
+            void checkPatron(void);
     };
 
 #endif

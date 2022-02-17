@@ -33,13 +33,20 @@ void evolution(void){
 
     for (i = 0 ; i < MAX_ENTREPRISES ; i++){
         if (listeEntreprises[i] != NULL){
+            //printf("evolution => lancement du traitement de %s\n", listeEntreprises[i]->getNom());
             listeEntreprises[i]->boucleTraitement();
         }
     }
 
     for (i = 0 ; i < MAX_COMMANDES ; i++){
         if (listeCommandes[i] != NULL){
-            listeEntreprises[i]->boucleTraitement();
+            listeCommandes[i]->boucleTraitement();
+        }
+    }
+
+    for (i = 0 ; i < MAX_PRODUITS ; i++){
+        if (listeProduits[i] != NULL){
+            listeProduits[i]->boucleTraitement();
         }
     }
 

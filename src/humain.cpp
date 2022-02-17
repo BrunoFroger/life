@@ -49,8 +49,16 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     strcpy(this->nom, nom);
     strcpy(this->prenom, prenom);
     this->status=CELIBATAIRE;
-    this->mere=pere;
-    this->pere=NULL;
+    this->pere=pere;
+    if (pere != NULL){
+        this->mere = pere->conjoint;
+        pere->addEnfant(this);
+        if (this->mere != NULL){
+            mere->addEnfant(this);
+        }
+    } else {
+        this->mere=NULL;
+    }
     this->conjoint=NULL;
     for (int i = 0 ; i < MAX_ENFANTS ; i++){
         this->enfants[i]=NULL;
@@ -65,7 +73,7 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     this->compteBancaire->credite(100);
     this->commandeEnCours=false;
     for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
-        listeProduitsHumain[i] = NULL;
+        mesProduits[i] = NULL;
     }
 }
 
@@ -167,6 +175,17 @@ bool Humain::estSalarie(void){
 
 //-------------------------------------------
 //
+//          Humain::setEmployeur
+//
+//-------------------------------------------
+void Humain::setEmployeur(Entreprise *ptrEntreprise){
+    if (ptrEntreprise != NULL){
+        this->employeur = ptrEntreprise;
+    }
+}
+
+//-------------------------------------------
+//
 //          Humain::displayInfos
 //
 //-------------------------------------------
@@ -233,17 +252,14 @@ void Humain::descendance(){
 void Humain::descendance(int level){
     if (level == 0){
         printf("-----------------------------\n");
-        printf(" debut descendance de %s %s", this->nom, this->prenom);    
+        printf(" debut descendance de %s (%c-%d)", this->getNomComplet(), this->getGenreTexte()[0], this->getAge());    
         if (this->conjoint != NULL){
-        printf(" avec %s\n", this->conjoint->nom);
+        printf(" avec %s (%c-%d)\n", this->conjoint->getNomComplet(), this->conjoint->getGenreTexte()[0], this->conjoint->getAge());
         } else {
             printf("\n");
         }
     }
-    //printf("descendance de %s (level = %d)", this->nom, level);
-    //displayInfos();
     char tabs[100];
-    //tabs[0]='*';
     tabs[0]='\0';
     for (int i = 0 ; i < level * 4 ; i++){
         tabs[i]=' ';
@@ -252,16 +268,18 @@ void Humain::descendance(int level){
     if (this->nbEnfants != 0){
         for (int i = 0 ; i < nbEnfants ; i++){
             if (this->enfants[i] != NULL){
-                printf("%s %s %s(%c)", tabs, this->enfants[i]->nom, this->enfants[i]->prenom, this->enfants[i]->getGenreTexte()[0]);
+                printf("%s %s(%c-%d)", tabs, this->enfants[i]->getNomComplet(), this->enfants[i]->getGenreTexte()[0], this->enfants[i]->getAge());
                 if (this->enfants[i]->conjoint != NULL){
-                    printf(" en couple avec %s(%c)", this->enfants[i]->conjoint->nom, this->enfants[i]->conjoint->getGenreTexte()[0]);
+                    printf(" en couple avec %s(%c-%d)", this->enfants[i]->conjoint->getNomComplet(), this->enfants[i]->conjoint->getGenreTexte()[0], this->enfants[i]->getAge());
                 }
                 printf("\n");
                 this->enfants[i]->descendance(level + 1);            }
         }
+    } else {
+        printf("%s pas d'enfants\n", tabs);
     }
     if (level == 0){
-        printf(" fin descendance de %s\n", this->nom);
+        printf(" fin descendance de %s\n", this->getNomComplet());
         printf("-----------------------------\n");
     }
 }
@@ -298,12 +316,11 @@ int Humain::getAge(void){
 //          Humain::getEmployeur
 //
 //-------------------------------------------
-char *Humain::getEmployeur(void){
+Entreprise *Humain::getEmployeur(void){
     if (this->employeur != NULL){
-        return this->employeur->getNom();
+        return this->employeur;
     }
-    strcpy(tmpString,"");
-    return tmpString;
+    return NULL;
 }
 
 //-------------------------------------------
@@ -505,6 +522,7 @@ void Humain::deces(void){
 //
 //-------------------------------------------
 void Humain::testMariage(void){
+    //printf("Humain::testMariage => debut\n");
     // test candidats au mariage
     // recherche d'un homme celibataire ou veuf
     Humain *ptrHumain = NULL;
@@ -544,6 +562,7 @@ void Humain::testMariage(void){
 //
 //-------------------------------------------
 void Humain::testNaissance(void){
+    //printf("Humain::testNaissance => debut\n");
     // test generation d'une naissance
     Humain *ptrHumain = NULL;
     if (this->getGenreTexte()[0] == 'H'){
@@ -588,18 +607,21 @@ void Humain::testNaissance(void){
 //
 //-------------------------------------------
 void Humain::achats(void){
+    //printf("Humain::achats => debut\n");
     // genere des cachats en fonction des ressources et des besoins
     produitClient *ptrProduitClient;
     //Produit *ptrProduit;
 
     // on supprime les produits dont la date de validite est dépassée
     for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
-         ptrProduitClient = this->listeProduitsHumain[i];
-         int ageProduit = age - ptrProduitClient->dateAchat;
-         if (ageProduit > ptrProduitClient->duree){
-             printf("Humain::achats => produit périmé -> on le supprime\n");
-             delete ptrProduitClient;
-             this->listeProduitsHumain[i] = NULL;
+         ptrProduitClient = this->mesProduits[i];
+         if (ptrProduitClient != NULL){
+            int ageProduit = age - ptrProduitClient->dateAchat;
+            if (ageProduit > ptrProduitClient->duree){
+                printf("Humain::achats => produit périmé -> on le supprime\n");
+                delete ptrProduitClient;
+                this->mesProduits[i] = NULL;
+            }
          }
     }
 
@@ -616,6 +638,7 @@ void Humain::achats(void){
 //
 //-------------------------------------------
 void Humain::setListeProduitEnManque(){
+    printf("Humain::setListeProduitEnManque => todo\n");
 
 }
 
@@ -693,9 +716,11 @@ void Humain::sauveJson(FILE *fic){
 //
 //-------------------------------------------
 void Humain::vieillir(void){
+    //printf("Humain::vieillir => debut pour\n");
     if (strcmp(this->nom, "dieu") != 0){ // dieu ne vieilli pas => immortel
         if (this->status != MORT){ // on ne fait pas vieillir les morts
             this->age++;
+            //printf("Humain::vieillir => age %s = %d\n", this->getNomComplet(), age);
             int ageRandom;
             int probabilite;
 
@@ -736,6 +761,7 @@ void Humain::vieillir(void){
             //printf("fin enfant genere automatiquement par dieu \n");
         }
     }
+    //printf("Humain::vieillir => fin\n");
 }
 
 //-------------------------------------------
@@ -778,11 +804,29 @@ int Humain::getNumCompte(void){
 
 //-------------------------------------------
 //
+//          Humain::commande
+//
+//-------------------------------------------
+void Humain::commande(Produit *produit, int quantite){
+    //printf("Humain::commande => produit = %s, quantite = %d\n", produit->getNom(), quantite);
+    Commande *ptrCde;
+    if (produit->getPrix() > getSoldeBancaire()){
+        printf("Humain::commande => ERREUR : commande impossble (budget insuffisant\n");
+        return;
+    }
+    ptrCde = new Commande(produit, quantite, this);
+    if (ptrCde->getStatus() == COMMANDE_IMPOSSIBLE){
+        delete ptrCde;
+    }
+}
+
+//-------------------------------------------
+//
 //          Humain::boucleTraitement
 //
 //-------------------------------------------
 void Humain::boucleTraitement(void){
-    printf("Humain::boucleTraitement => debut\n");
+    printf("Humain::boucleTraitement => debut pour %s\n", getNomComplet());
     this->vieillir();
     this->testMariage();
     this->testNaissance();

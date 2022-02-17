@@ -171,7 +171,7 @@ void afficheListeHumains(void){
         char status = ptr->getStatus();
         char employeur[50]="";
         if (ptr->getEmployeur() != NULL){
-            strcpy(employeur, ptr->getEmployeur());
+            strcpy(employeur, ptr->getEmployeur()->getNom());
         }
         char conjoint[50]="";
         if (ptr->getConjoint() != NULL){
@@ -234,13 +234,16 @@ void afficheListeComptesBancaires(void){
 //-------------------------------------------
 void afficheListeEntreprises(void){
     printf("+--------------------------------------+\n");
-    printf("|      Entreprises                     |\n");
+    printf("|      Entreprises     (%3d)           |\n", nbEntreprises);
     printf("+------------------------+-------------+\n");
     printf("|                   nom  |  nb salarie |\n");
     printf("+------------------------+-------------+\n");
-    for (int i = 0 ; i < nbEntreprises ; i++){
-        Entreprise *item = listeEntreprises[i];
-        printf("|   %20s |      %6d |\n", item->getNom(), item->getNbSalaries());
+    Entreprise *item;
+    for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
+        item = listeEntreprises[i];
+        if (item != NULL){
+            printf("|   %20s |      %6d |\n", item->getNom(), item->getNbSalaries());
+        }
     }
     printf("+------------------------+-------------+\n");
 }
@@ -342,6 +345,28 @@ Produit *getProduitById(int id){
             return ptr;
         }
     }
+    return NULL;
+}
+
+//-------------------------------------------
+//
+//          getProduitByNom
+//
+//-------------------------------------------
+Produit *getProduitByNom(char *nom){
+    //printf("tools::getProduitByName => debut (%s) parmi %d produits disponibles\n", nom, nbProduits);
+    Produit *ptr;
+    for (int i = 0 ; i < nbProduits ; i++){
+        ptr = listeProduits[i];
+        if (ptr != NULL){
+            //printf("test produit %s\n", ptr->getNom());
+            if (strcmp(ptr->getNom(),nom) == 0){
+                //printf("=> OK\n");
+                return ptr;
+            }
+        }
+    }
+    //printf("=> KO\n");
     return NULL;
 }
 

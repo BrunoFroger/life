@@ -117,6 +117,8 @@ void displayDatas(void){
         sprintf(string1[numLigne1++], "| nb veufs          |  %5d        |               |", nbveufs);
         sprintf(string1[numLigne1++], "| nb morts          |  %5d        |               |", nbMorts);
         sprintf(string1[numLigne1++], "| nb entreprises    |  %5d        |               |", nbEntreprises);
+        sprintf(string1[numLigne1++], "| nb produits       |  %5d        |               |", nbProduits);
+        sprintf(string1[numLigne1++], "| nb commandes      |  %5d        |               |", nbCommandes);
         sprintf(string1[numLigne1++], "| nb cpt bancaires  |  %5d        |               |", nbComptesBancaires);
         sprintf(string1[numLigne1++], "+-------------------+---------------+---------------+------------+");
         sprintf(string1[numLigne1++], "|        repartition par age                                     |");
@@ -167,17 +169,26 @@ void displayDatas(void){
 
     // affichage des entreprises
     if (display_stat_entreprises){
-        sprintf(string2[numLigne2++], "+----------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      Entreprises                                   |");
-        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+");
-        sprintf(string2[numLigne2++], "|                   nom  |  nb salarie | effectif max|");
-        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+");
-        for (int i = 0 ; i < nbEntreprises ; i++){
-            Entreprise *item = listeEntreprises[i];
-            sprintf(string2[numLigne2++], "|   %20s |      %6d |      %6d |", 
-                    item->getNom(), item->getNbSalaries(), item->getEffectifMax());
+        sprintf(string2[numLigne2++], "+-----------------------------------------------------------------------------+");
+        sprintf(string2[numLigne2++], "|      Entreprises       (%3d)                                                 |", nbEntreprises);
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
+        sprintf(string2[numLigne2++], "|                   nom  |  nb salarie | effectif max|               patron   |");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
+        Entreprise *item;
+        for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
+            item = listeEntreprises[i];
+            if (item != NULL){
+                char patron[50];
+                if (item->getPatron() != NULL){
+                    strcpy(patron, item->getPatron()->getNomComplet());
+                } else {
+                    strcpy(patron, "");
+                }
+                sprintf(string2[numLigne2++], "|   %20s |      %6d |      %6d |   %20s |", 
+                        item->getNom(), item->getNbSalaries(), item->getEffectifMax(), patron);
+            }
         }
-        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+");
+        sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
     }
 
     // affichage des salaries
@@ -187,12 +198,14 @@ void displayDatas(void){
         sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
         sprintf(string1[numLigne1++], "|         entreprise   |                nom   |   fonction | salaire |");
         sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+");
-        for (int i = 0 ; i < nbEntreprises ; i++){
+        for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
             Entreprise *ptrEnt = listeEntreprises[i];
-            for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
-                structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
-                sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
-                    ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
+            if(ptrEnt != NULL){
+                for (int j = 0 ; j < ptrEnt->getNbSalaries() ; j++){
+                    structSalarie *ptrSalarie = ptrEnt->getSalarie(j);
+                    sprintf(string1[numLigne1++], "| %20s | %20s | %10s |   %5d |", ptrEnt->getNom(), ptrSalarie->salarie->getNomComplet(), 
+                        ptrEnt->getStatusString(ptrSalarie->status), ptrSalarie->remuneration);
+                }
             }
         }
         sprintf(string1[numLigne1++], "+----------------------+----------------------+------------+---------+\n");
@@ -203,7 +216,7 @@ void displayDatas(void){
     // affichage des produits
     if (display_stat_produits){
         sprintf(string1[numLigne1++], "+-----------------------------------------------------------------------------+");
-        sprintf(string1[numLigne1++], "|      produits                                                               |");
+        sprintf(string1[numLigne1++], "|      produits          (nb = %5d)                                         |", nbProduits);
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
         sprintf(string1[numLigne1++], "|           entreprise  |       nom du produit  |    prix |  stock  | stk min |");
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
@@ -233,7 +246,7 @@ void displayDatas(void){
     }
     if (display_stat_commandes){
         sprintf(string2[numLigne2++], "+----------------------------------------------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      commandes                                                                                           |");
+        sprintf(string2[numLigne2++], "|      commandes       (nb = %5d)                                                                        |", nbCommandes);
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
         sprintf(string2[numLigne2++], "|  num cde  |           entreprise  |               client  |       nom du produit  |    qte  |     status |");
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
@@ -255,6 +268,33 @@ void displayDatas(void){
     displayBloc();
 }
 
+
+//-------------------------------------------
+//
+//          ResetStats
+//
+//-------------------------------------------
+void resetStats(void){
+    nbHommes=0;
+    nbHommesMorts=0;
+    nbFemmesMortes=0;
+    nbDivorces=0;
+    nbveufs=0;
+    nbMorts=0;
+    nb00_20ans=0;
+    hommes00_20ans=0;
+    femmes00_20ans=0;
+    nb20_40ans=0;
+    hommes20_40ans=0;
+    femmes20_40ans=0;
+    nb40_60ans=0;
+    hommes40_60ans=0;
+    femmes40_60ans=0;
+    nb60_plus=0;
+    hommes60_plus=0;
+    femmes60_plus=0;
+}
+
 //-------------------------------------------
 //
 //          statistiques
@@ -262,6 +302,7 @@ void displayDatas(void){
 //-------------------------------------------
 void statistiques(void){
     Humain *ptr;
+    resetStats();
     if (strlen(nomFichier) > 0){
         sprintf(displayNomFichier, "fichier %s", nomFichier);
     } else {

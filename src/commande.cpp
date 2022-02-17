@@ -26,19 +26,27 @@ Commande::~Commande(void){
 //
 //-------------------------------------------
 Commande::Commande(Produit *produit, int qte, Humain *client){
-    printf("Commande::Commande => creation d'une commande mode standard \n");
+    //printf("Commande::Commande => creation d'une commande mode standard \n");
     this->produit = produit;
     this->client = client;
     this->quantite = qte;
+    this->numero = nbCommandes;
+    this->fabricant=NULL;
+    this->status=COMMANDE_IMPOSSIBLE;
     Entreprise *ptrEntreprise;
     for (int i = 0; i < MAX_ENTREPRISES ; i++){
         ptrEntreprise = listeEntreprises[i];
-        if (ptrEntreprise->isInCatalogue(produit)){
-            this->fabricant = ptrEntreprise;
-            this->status = COMMANDE_EN_COURS;
-            nbCommandes++;
-            return;
-        }
+        if (ptrEntreprise != NULL){
+            if (ptrEntreprise->isInCatalogue(produit)){
+                this->numero = nbCommandes;
+                this->fabricant = ptrEntreprise;
+                this->status = COMMANDE_INITIALISEE;
+                //printf("commande OK\n");
+            }
+        } 
+        listeCommandes[nbCommandes] = this;
+        nbCommandes++;
+        return;
     }
     // on a pas trouvé d'entreprise qui a ce produit en stock
     // il faut creer une entreprise qui fabrique ce produit

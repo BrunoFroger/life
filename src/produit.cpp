@@ -31,6 +31,12 @@ Produit::Produit(char *nom, int type, int producteur_id, int stockInitial, int s
     this->dureeVie = dureeVie;
     this->delaiFabrication = delaiFab;
     this->indiceNecessite = indiceNecessite;
+    Entreprise *ptrEnt;
+    ptrEnt = getEntrepriseById(producteur_id);
+    if (ptrEnt != NULL){
+        ptrEnt->addProduit(this);
+    }
+    listeProduits[nbProduits]=this;
     nbProduits++;
 }
 
@@ -186,4 +192,13 @@ char *Produit::getTypeProd(void){
 //-------------------------------------------
 int Produit::getindiceNecessite(void){
     return indiceNecessite;
+}
+
+//-------------------------------------------
+//
+//          Commande::traitement
+//
+//-------------------------------------------
+void Produit::boucleTraitement(void){
+    printf("Produit::boucleTraitement => boucleTraitement : debut\n");
 }

@@ -66,6 +66,7 @@
             char *getTypeProd(void);
             int getQuantiteAProduire(void);
             int getindiceNecessite(void);
+            void boucleTraitement(void);
 
         private:
             int id;

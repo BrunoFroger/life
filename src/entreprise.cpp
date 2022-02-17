@@ -57,6 +57,7 @@ Entreprise::Entreprise(char *datas){
     this->compteBancaire->credite(10000);
     listeEntreprises[nbEntreprises] = this;
     this->effectifMax = dataEffectifMax;
+    printf("Entreprise::Entreprise => entreprise %s cree ligne datas (id=%d)\n", this->nom, this->id);
     nbEntreprises++;
 }
 
@@ -120,6 +121,7 @@ Entreprise::Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax)
     listeEntreprises[nbEntreprises] = this;
     this->effectifMax = effectifMax;
     nbEntreprises++;
+    printf("Entreprise::Entreprise => entreprise %s cree avec liste de donnes (id=%d)\n", this->nom, this->id);
 }
 
 //-------------------------------------------
@@ -193,41 +195,66 @@ char *Entreprise::getStatusString(int status){
 //
 //-------------------------------------------
 void Entreprise::embauche(Humain *personne, int status){
+    if (personne != NULL){
+        for (int i = 0 ; i < MAX_SALARIE ; i++){
+            structSalarie *ptrSalarie = &listeSalarie[i];
+            if (ptrSalarie->salarie == NULL){
+                switch(status){
+                    case EMPLOYE:
+                        ptrSalarie->remuneration = SALAIRE_DEBUT_EMPLOYE;
+                        ptrSalarie->productivite = PRODUCTIVITE_EMPLOYE;
+                        break;
+                    case EMPLSUPP:
+                        ptrSalarie->remuneration = SALAIRE_DEBUT_EMPLSUPP;
+                        ptrSalarie->productivite = PRODUCTIVITE_EMPLSUPP;
+                        break;
+                    case CADRE:
+                        ptrSalarie->remuneration = SALAIRE_DEBUT_CADRE;
+                        ptrSalarie->productivite = PRODUCTIVITE_CADRE;
+                        break;
+                    case PATRON:
+                        ptrSalarie->remuneration = SALAIRE_DEBUT_PATRON;
+                        ptrSalarie->productivite = PRODUCTIVITE_PATRON;
+                        this->patron=personne;
+                        break;
+                    default:
+                        printf("Entreprise::embauche => embauche : Status %d incorrect pour %s\n", status, personne->getNomComplet());
+                        return;
+                        break;
+                }
+                ptrSalarie->salarie = personne;
+                ptrSalarie->status = status;
+                ptrSalarie->derniereAugmentation = 0;
+                printf("Entreprise::embauche => Creation d'un salarie \"%s\" dans l'entreprise \"%s\" avec un status de %s en position %d\n", 
+                    ptrSalarie->salarie->getNomComplet(), this->nom, getStatusString(ptrSalarie->status), i);
+                nbSalaries++;
+                personne->setEmployeur(this);
+                //listeSalaries();
+                return;
+            }
+        }
+    }
+}
+
+//-------------------------------------------
+//
+//          Entreprise::embauche
+//
+//-------------------------------------------
+void Entreprise::supprimeSalarie(Humain *personne){
     for (int i = 0 ; i < MAX_SALARIE ; i++){
         structSalarie *ptrSalarie = &listeSalarie[i];
-        if (ptrSalarie->salarie == NULL){
-            switch(status){
-                case EMPLOYE:
-                    ptrSalarie->remuneration = SALAIRE_DEBUT_EMPLOYE;
-                    ptrSalarie->productivite = PRODUCTIVITE_EMPLOYE;
-                    break;
-                case EMPLSUPP:
-                    ptrSalarie->remuneration = SALAIRE_DEBUT_EMPLSUPP;
-                    ptrSalarie->productivite = PRODUCTIVITE_EMPLSUPP;
-                    break;
-                case CADRE:
-                    ptrSalarie->remuneration = SALAIRE_DEBUT_CADRE;
-                    ptrSalarie->productivite = PRODUCTIVITE_CADRE;
-                    break;
-                case PATRON:
-                    ptrSalarie->remuneration = SALAIRE_DEBUT_PATRON;
-                    ptrSalarie->productivite = PRODUCTIVITE_PATRON;
-                    break;
-                default:
-                    printf("Entreprise::embauche => embauche : Status %d incorrect pour %s\n", status, personne->getNomComplet());
-                    return;
-                    break;
-            }
-            ptrSalarie->salarie = personne;
-            ptrSalarie->status = status;
-            ptrSalarie->derniereAugmentation = 0;
-            printf("Entreprise::embauche => Creation d'un salarie \"%s\" dans l'entreprise \"%s\" avec un status de %s en position %d\n", 
-                ptrSalarie->salarie->getNomComplet(), this->nom, getStatusString(ptrSalarie->status), i);
+        if (ptrSalarie->salarie == personne){
+            ptrSalarie->salarie = NULL;
+            ptrSalarie->status = 0;
+            printf("Entreprise::embauche => suppression d'un salarie \"%s\" de l'entreprise \"%s\" \n", 
+                ptrSalarie->salarie->getNomComplet(), this->nom);
             nbSalaries++;
             //listeSalaries();
             return;
         }
     }
+    printf("Entreprise::supprimeSalarie => le salarie(%s) ne travaille pas dans l'entreprise %s\n", personne->getNomComplet(), this->nom);
 }
 
 //-------------------------------------------
@@ -337,7 +364,7 @@ void Entreprise::production(void){
 //-------------------------------------------
 void Entreprise::listeSalaries(void){
     printf("+---------------------------------------------+\n");
-    printf("|       liste des salaries de %15s |\n", this->nom);
+    printf("| salaries de %15s (%20s)|\n", this->nom, this->patron->getNomComplet());
     printf("+----------------------+------------+---------+\n");
     printf("|                nom   |   fonction | salaire |\n");
     printf("+----------------------+------------+---------+\n");
@@ -492,12 +519,14 @@ void Entreprise::gereRecrutement(int typeRecrutement){
 //
 //-------------------------------------------
 bool Entreprise::isInCatalogue(Produit *produit){
-    printf("Entreprise::isInCatalogue => debut tests si %s au catalogue\n", produit->getNom());
+    //printf("Entreprise::isInCatalogue => debut tests si %s au catalogue de %s\n", produit->getNom(), this->nom);
     Produit *ptrProduit;
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
         ptrProduit = listeProduit[i];
-        if (ptrProduit == produit){
-            return true;
+        if (ptrProduit != NULL){
+            if (strcmp(ptrProduit->getNom(), produit->getNom()) == 0){
+                return true;
+            }
         }
     }
     return false;
@@ -582,7 +611,6 @@ int Entreprise::getEffectifMax(void){
     return this->effectifMax;
 }
 
-
 //-------------------------------------------
 //
 //          Entreprise::getId
@@ -594,10 +622,46 @@ int Entreprise::getId(void){
 
 //-------------------------------------------
 //
+//          Entreprise::getPatron
+//
+//-------------------------------------------
+Humain *Entreprise::getPatron(void){
+    return this->patron;
+}
+
+//-------------------------------------------
+//
+//          Entreprise::checkPatron
+//
+//-------------------------------------------
+void Entreprise::checkPatron(void){
+    if (this->patron == NULL){
+        printf("Entreprise::checkPatron => pas de patron pour %s\n", this->nom);
+        Humain *ptrHumain;
+        for (int i = 0 ; i < MAX_HUMAINS ; i++){
+            ptrHumain = listeHumains[i];
+            if (ptrHumain != NULL){
+                if (! ptrHumain->estSalarie()){
+                    printf("Entreprise::checkPatron => %s ne travaille pas on peut le recruter\n", ptrHumain->getNomComplet());
+                    // cette personne ne travaille pas, elle peut devenir le patron de cette entreprise
+                    this->embauche(ptrHumain, PATRON);
+                    return;
+                }
+            }
+        }
+    } else {
+        printf("Entreprise::checkPatron => %s a deja un patron\n", this->nom);
+    }
+}
+
+//-------------------------------------------
+//
 //          Entreprise::boucleTraitement
 //
 //-------------------------------------------
 void Entreprise::boucleTraitement(void){
-    printf("Entreprise::boucleTraitement => debut\n");
+    printf("Entreprise::boucleTraitement =>-------------------------------------------------\n");
+    printf("Entreprise::boucleTraitement => debut %s (%d)\n", this->nom, this->id);
+    checkPatron();
     printf("Entreprise::boucleTraitement => fin\n");
 }

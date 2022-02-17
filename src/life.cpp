@@ -279,7 +279,7 @@ void afficheMenu(void){
     printf("  f : liste des entreprises\n");
     printf("  g : liste des produits\n");
     //printf("  h : liste des commandes en cours\n");
-    printf("  i : liste des salaries d'une entreprise\n");
+    printf("  i : liste des salaries des entreprises\n");
     printf("  m : menu On/Off %d\n", menuOnOff);
     printf("  r : reset datas et chargement population par defaut\n");
     printf("  s : sauvegarde des donnees sur disque\n");
@@ -367,7 +367,7 @@ int main(int argc, char **argv)
         //if (car == 10) car = getchar(); // suppression du retour chariot
         switch(car){
             case '1': // descendance personne
-                //dieu->descendance();
+                dieu->descendance();
                 break;
             case '2': // infos sur une personne 
                 printf("nom de la personne : ");
@@ -518,7 +518,7 @@ int main(int argc, char **argv)
             /*case 'h' : // affiche liste des produits disponibles
                 afficheListeCommandes();
                 break;*/
-            case 'i' : // affiche liste des salarie d'une entreprise
+            case 'i' : // affiche liste des salarie des entreprises
                 Entreprise *ptrEnt;
                 for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
                     ptrEnt = listeEntreprises[i];
@@ -531,7 +531,7 @@ int main(int argc, char **argv)
                 menuOnOff = !menuOnOff;
                 break;
             case 'q': // quitter
-                if (! dataSauvegardees){
+                /*if (! dataSauvegardees){
                     printf("les données n'ont pas étées sauvegardées ; voulez vous les sauver [OUI/non] ? ");
                     fflush(stdout);
                     fflush(stdin);
@@ -545,7 +545,7 @@ int main(int argc, char **argv)
                     printf("on veut sauver le fichier (printf a supprimer)\n");
                     //sauveFichier();
                     dataSauvegardees=true;
-                }
+                }*/
                 fin=true;
                 break;
             case 'r': // reset datas et chargement population par defaut

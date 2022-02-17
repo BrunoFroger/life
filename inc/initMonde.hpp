@@ -16,5 +16,6 @@
     #define INIT_NB_HUMAINS 24
     
     extern void initMonde(Humain*dieu);
+    extern void resetMonde(void);
 
 #endif

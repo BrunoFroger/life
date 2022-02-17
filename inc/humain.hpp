@@ -66,12 +66,14 @@
             bool addEnfant(Humain *enfant);
             void vieillir(void);
             int getSoldeBancaire(void);
-            char *getEmployeur(void);
+            Entreprise *getEmployeur(void);
             bool estSalarie(void);
             bool credite(int montant);
             bool commandeEnCours;
             int getNumCompte();
             bool debite(int montant);
+            void commande(Produit *produit, int quantite);
+            void setEmployeur(Entreprise *ptrEntreprise);
 
         private :
             int id;         // id unique
@@ -93,7 +95,7 @@
             void testMariage(void);
             void testNaissance(void);
             void achats(void);
-            produitClient *listeProduitsHumain[MAX_ACHAT_CLIENT];
+            produitClient *mesProduits[MAX_ACHAT_CLIENT];
             void setListeProduitEnManque(void);
             Produit *listeProduitsEnManque[MAX_ACHAT_CLIENT];
     };

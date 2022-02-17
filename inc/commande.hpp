@@ -11,6 +11,7 @@
 #ifndef __COMMANDE__
 #define __COMMANDE__
 
+    #define COMMANDE_IMPOSSIBLE     -1
     #define COMMANDE_INITIALISEE    0
     #define COMMANDE_EN_COURS       1
     #define COMMANDE_DISPONIBLE     2

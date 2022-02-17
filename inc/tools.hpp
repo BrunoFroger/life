@@ -32,6 +32,7 @@
     extern Entreprise *getEntrepriseById(int id);
     extern Humain *getHumainById(int id);
     extern Produit *getProduitById(int id);
+    extern Produit *getProduitByNom(char *nom);
     extern Commande *getCommandeById(int id);
     
 #endif

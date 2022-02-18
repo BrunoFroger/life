@@ -149,6 +149,7 @@ void displayDatas(void){
         sprintf(string2[numLigne2++], "| aff liste auto   | %7s |   %c |",  getstringBoolean(listeAuto), 'a');
         sprintf(string2[numLigne2++], "+------------------+---------+-----+");
     }
+    
     // affichage des comptes bancaires
     if (display_stat_cptBanque){
         sprintf(string3[numLigne3++], "+-------------------------------------------+");
@@ -246,6 +247,8 @@ void displayDatas(void){
         }
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
     }
+
+    // affichage des commandes
     if (display_stat_commandes){
         sprintf(string2[numLigne2++], "+----------------------------------------------------------------------------------------------------------+");
         sprintf(string2[numLigne2++], "|      commandes       (nb = %5d)                                                                        |", nbCommandes);

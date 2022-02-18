@@ -15,6 +15,8 @@
     #define FEMME 2
     #define INCONNU 3
 
+    #define POINTS_DE_VIE_INITIAL   100
+
     #define MAX_ENFANTS 15
     #define MAX_ACHAT_CLIENT    250
 
@@ -74,6 +76,7 @@
             bool debite(int montant);
             void commande(Produit *produit, int quantite);
             void setEmployeur(Entreprise *ptrEntreprise);
+            int getPointsDeVie(void);
 
         private :
             int id;         // id unique
@@ -84,6 +87,7 @@
             char nom[50];
             char prenom[50];
             int status;     // celibataire, marie, veuf, mort, ...
+            int pointsDeVie;
             Humain *conjoint;
             Humain *pere;
             Humain *mere;

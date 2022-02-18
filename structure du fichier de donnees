@@ -1,7 +1,6 @@
 structure du fichier de donnees
 
 Humain :
-    nom
     id
     prenom
     nom
@@ -9,6 +8,11 @@ Humain :
     age
     nbEnfants
     status
+    pointsDeVie
+    idConjoint
+    idPere
+    idMere
+    [idEnfant] liste de tous les enfants
 
 Entreprise : 
     id

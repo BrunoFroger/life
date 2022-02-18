@@ -9,7 +9,6 @@ TODO
 - creer une entreprise si capacite de production trop faible
 - nommer un parton dans une entreprise quand le patron meurre
 - en cas de deces, supprimer la personne de :
-    - salarie
     - humains
     - voir si pas patron d'une entreprise
 

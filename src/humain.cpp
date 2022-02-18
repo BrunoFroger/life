@@ -71,6 +71,7 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     this->compteBancaire = new CompteBancaire(this->getNomComplet());
     this->compteBancaire->credite(100);
     this->commandeEnCours=false;
+    this->pointsDeVie = POINTS_DE_VIE_INITIAL;
     for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
         mesProduits[i] = NULL;
     }
@@ -111,11 +112,11 @@ void Humain::restore(char *datas){
     Humain *ptr;
     tmp[0] = '\0';
     char datas_prenom[50], datas_nom[50];
-    int datas_id, datas_genre, datas_age, datas_status, datas_idPere, datas_idMere, datas_idConjoint, datas_nbEnfants;
+    int datas_id, datas_genre, datas_age, datas_status, datas_pointsdevie, datas_idPere, datas_idMere, datas_idConjoint, datas_nbEnfants;
 
-    sscanf(datas, "humain %d %s %s %d %d %d %d %d %d %d", 
+    sscanf(datas, "humain %d %s %s %d %d %d %d %d %d %d %d", 
             &datas_id, datas_prenom, datas_nom, &datas_genre, &datas_age, &datas_nbEnfants, 
-            &datas_status, &datas_idConjoint, &datas_idPere, &datas_idMere);
+            &datas_status, &datas_pointsdevie, &datas_idConjoint, &datas_idPere, &datas_idMere);
     //printf("Humain::restore => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, idConjoint=%d, idPere=%d, idMere=%d, nbEnfants=%d\n", 
     //        datas_id, datas_prenom, datas_nom, datas_genre, datas_age, datas_status, datas_idConjoint, datas_idPere, datas_idMere, datas_nbEnfants);
     this->nbEnfants = datas_nbEnfants;
@@ -505,13 +506,16 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
 //-------------------------------------------
 void Humain::deces(void){
     //printf("mort de %s\n", this->nom);
-    this->status=MORT;
     if (this->conjoint != nullptr){
         //printf("le conjoint %s devient veuf\n", this->conjoint->nom);
         if (this->conjoint->status != MORT){
             this->conjoint->status = VEUF;
         }
     }
+    if (this->estSalarie()){
+        this->employeur->supprimeSalarie(this);
+    }
+    this->status=MORT;
 }
 
 //-------------------------------------------
@@ -657,7 +661,8 @@ void Humain::sauve(FILE *fic){
     if (this->conjoint == NULL) thisConjoint = -1;
     else thisConjoint = this->conjoint->getId();
     // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
-    sprintf(tmp, "humain %d %s %s %d %d %d %d %d", this->id, this->prenom, this->nom, this->genre, this->age, this->nbEnfants, this->status, thisPere);
+    sprintf(tmp, "humain %d %s %s %d %d %d %d %d", this->id, this->prenom, this->nom, this->genre, 
+            this->age, this->nbEnfants, this->status, this->pointsDeVie);
     //printf("tmp = %s\n", tmp);
     sprintf(ligne, "%s %d %d %d ", tmp, thisConjoint, thisPere, thisMere);
     //printf("ligne = %s\n", ligne);
@@ -694,6 +699,7 @@ void Humain::sauveJson(FILE *fic){
     fprintf(fic, "\"age\": %d ,", this->age);
     fprintf(fic, "\"nbEnfants\": %d ,", this->nbEnfants);
     fprintf(fic, "\"status\": %d ,", this->status);
+    fprintf(fic, "\"pointsDeVie\": %d ,", this->pointsDeVie);
     fprintf(fic, "\"idConjoint\": %d ,", thisConjoint);
     fprintf(fic, "\"idPere\": %d ,", thisPere);
     fprintf(fic, "\"idMere\": %d ,", thisMere);
@@ -718,6 +724,7 @@ void Humain::vieillir(void){
     if (strcmp(this->nom, "dieu") != 0){ // dieu ne vieilli pas => immortel
         if (this->status != MORT){ // on ne fait pas vieillir les morts
             this->age++;
+            this->pointsDeVie--;
             //printf("Humain::vieillir => age %s = %d\n", this->getNomComplet(), age);
             int ageRandom;
             int probabilite;
@@ -830,4 +837,13 @@ void Humain::boucleTraitement(void){
     this->testNaissance();
     this->achats();
     //printf("Humain::boucleTraitement => fin\n");
+}
+
+//-------------------------------------------
+//
+//          Humain::getNumComp
+//
+//-------------------------------------------
+int Humain::getPointsDeVie(void){
+    return this->pointsDeVie;
 }

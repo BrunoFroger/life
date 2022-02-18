@@ -14,8 +14,10 @@
     #define COMMANDE_IMPOSSIBLE     -1
     #define COMMANDE_INITIALISEE    0
     #define COMMANDE_EN_COURS       1
-    #define COMMANDE_DISPONIBLE     2
-    #define COMMANDE_LIVREE         3
+    #define COMMANDE_EN_ATTENTE     2
+    #define COMMANDE_DISPONIBLE     3
+    #define COMMANDE_LIVREE         4
+    #define COMMANDE_SOLDEE         5
 
     #include "variables.hpp"
     //#include "entreprise.hpp"
@@ -37,6 +39,7 @@
             void sauve(FILE *fichier);
             void sauveJson(FILE *fic);
             int getNumero();
+            void changeStatus(int nouveauStatus);
 
         private:
             int numero;

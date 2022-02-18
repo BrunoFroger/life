@@ -67,6 +67,9 @@
             int getQuantiteAProduire(void);
             int getindiceNecessite(void);
             void boucleTraitement(void);
+            void miseAJourStock(int quantite);
+            int getCoutProduction(void);
+            int getNbPointsDeVie(void);
 
         private:
             int id;
@@ -80,6 +83,7 @@
             int delaiFabrication;
             int dureeVie;
             int indiceNecessite;        // 0 indispensable puis increment si moins indispensable
+            int nbPointsDeVie;
     };
 
 #endif

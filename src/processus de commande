@@ -1,0 +1,40 @@
+processus de commande
+
+Humain : cree commande
+    appel constructeur de commande
+    si COMMANDE_IMPOSSIBLE detruit la commande
+    sinon stocke commande dans listeCommandes
+
+Commande constructeur  
+    si une entreprise fabrique ce produit met status a COMMANDE_INITIALISEE
+    sinon met status a COMMANDE_IMPOSSIBLE
+
+Commande : boucle de traitement 
+    case COMMANDE_INITIALISEE : verifie strock du produit
+        si stock suffisant
+            passe status en COMMANDE_EN_COURS
+
+Humain : boucle de traitement
+    case COMMANDE_DISPONIBLE : 
+        si solde suffisant
+            recupere les points de vie associe au produisant
+            debite le compte du prix du produit
+            passe status en COMMANDE_SOLDEE
+    case COMMANDE_IMPOSSIBLE
+        supprime commande de listeCommandes
+        delete commande
+
+Entreprise : boucle de gestion des commandes
+     case COMMANDE_EN_COURS
+        si stock suffisant 
+            mise a jour du stcok du produit
+            status = COMMANDE_LIVREE
+        sinon 
+            status = COMMANDE_EN_ATTENTE
+     case COMMANDE_EN_ATTENTE
+        si stock suffisant 
+            status = COMMANDE_LIVREE
+     case COMMANDE_SOLDEE
+        credite le compte du prix du produit
+        supprime commande de listeCommandes
+        delete commande

@@ -102,6 +102,7 @@
             produitClient *mesProduits[MAX_ACHAT_CLIENT];
             void setListeProduitEnManque(void);
             Produit *listeProduitsEnManque[MAX_ACHAT_CLIENT];
+            void gereCommandesEnCours(void);
     };
 
 #endif

@@ -114,36 +114,13 @@ void Commande::boucleTraitement(void){
             //printf("Commande::boucleTraitement => boucleTraitement : commande de %s initialisee\n", this->produit->getNom());
             // recherche d'une entreprise capable de founir ce produit
             // boucle sur les entreprises
-            Entreprise *ptrEntreprise;
-            int i;
-            for (i = 0 ; i < MAX_ENTREPRISES ; i++){
-                ptrEntreprise = listeEntreprises[i];
-                // boucle sur les produits de cette entreprise
-                if (ptrEntreprise->produitEnStock(this->produit)){
-                    // le produit est en stock, on accepte la commande
-                    this->status = COMMANDE_EN_COURS;
-                    break;
-                }
+            if (this->getProduit()->getStock() > this->quantite){
+                this->status = COMMANDE_EN_COURS;
             }
-            if (i == MAX_ENTREPRISES){
-                printf("Commande::boucleTraitement => aucune entreprise trouvée pour ce produit\n");
-                printf("... TODO .... creer une entreprise\n");
-            }
-            break;
-        case COMMANDE_EN_COURS:
-            printf("Commande::boucleTraitement => boucleTraitement : commande en cours\n");
-            printf(" ..... TODO .....\n");
-            break;
-        case COMMANDE_DISPONIBLE:
-            printf("Commande::boucleTraitement => boucleTraitement : commande disponible\n");
-            printf(" ..... TODO .....\n");
-            break;
-        case COMMANDE_LIVREE:
-            printf("Commande::boucleTraitement => boucleTraitement : commande livree\n");
-            printf(" ..... TODO .....\n");
             break;
         default:
-            printf("Commande::boucleTraitement => ERREUR : status incorrect %d\n", this->status);
+            //printf("Commande::boucleTraitement => ERREUR : status incorrect %d\n", this->status);
+            break;
     }
 }
 
@@ -160,8 +137,8 @@ char *Commande::getStatusString(void){
         case COMMANDE_EN_COURS:
             strcpy(tmpString, "EN COURS");
             break;
-        case COMMANDE_DISPONIBLE:
-            strcpy(tmpString, "DISPO");
+        case COMMANDE_EN_ATTENTE:
+            strcpy(tmpString, "EN ATTENTE");
             break;
         case COMMANDE_LIVREE:
             strcpy(tmpString, "LIVREE");
@@ -242,7 +219,7 @@ void Commande::sauve(FILE *fichier){
 //
 //-------------------------------------------
 void Commande::sauveJson(FILE *fic){
-    //printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    //printf("Commande::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
     int id_client, id_fabricant, id_produit;
     id_client = this->client->getId();
     id_fabricant = this->fabricant->getId();
@@ -256,4 +233,14 @@ void Commande::sauveJson(FILE *fic){
     fprintf(fic, " },");
     fprintf(fic, "\n");
     fflush(fic);
+}
+
+//-------------------------------------------
+//
+//          Commande::changeStatus
+//
+//-------------------------------------------
+void Commande::changeStatus(int nouveauStatus){
+    printf("Commande::changeStatus => nouveau status = %s\n", getStatusString());
+    this->status = nouveauStatus;
 }

@@ -11,8 +11,6 @@
 #include "../inc/statistiques.hpp"
 #include "../inc/tools.hpp"
 
-int lastIdProduit=0;
-
 //-------------------------------------------
 //
 //          Produit::Produit
@@ -20,7 +18,7 @@ int lastIdProduit=0;
 //-------------------------------------------
 Produit::Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication, int dureeVie, int delaiFab, int indiceNecessite){
     //printf("Produit::Produit => creation du produit %d\n", nbProduits);
-    this->id = lastIdProduit++;
+    this->id = nbProduits;
     strcpy(this->nom, nom);
     this->type = type;
     this->producteurId = producteur_id;
@@ -109,10 +107,28 @@ int Produit::getProducteurId(void){
 //
 //-------------------------------------------
 int Produit::getQuantiteAProduire(void){
-    if (stockMini < stock){
+    if (stockMini > stock){
         return (stockMini - stock);
     }
     return 0;
+}
+
+//-------------------------------------------
+//
+//          Produit::getNbPointsDeVie
+//
+//-------------------------------------------
+int Produit::getNbPointsDeVie(void){
+    return nbPointsDeVie;
+}
+
+//-------------------------------------------
+//
+//          Produit::getCoutProduction
+//
+//-------------------------------------------
+int Produit::getCoutProduction(void){
+    return coutFabrication;
 }
 
 //-------------------------------------------
@@ -200,5 +216,15 @@ int Produit::getindiceNecessite(void){
 //
 //-------------------------------------------
 void Produit::boucleTraitement(void){
-    printf("Produit::boucleTraitement => boucleTraitement : debut\n");
+    //printf("Produit::boucleTraitement => boucleTraitement %s : debut\n", this->nom);
+}
+
+//-------------------------------------------
+//
+//          Commande::miseAJourStock
+//
+//-------------------------------------------
+void Produit::miseAJourStock(int quantite){
+    printf("Produit::miseAJourStock => modifie le stock de %d\n", quantite);
+    this->stock += quantite;
 }

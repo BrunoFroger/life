@@ -215,7 +215,6 @@ void displayDatas(void){
     }
     displayBloc();
 
-
     // affichage des produits
     if (display_stat_produits){
         sprintf(string1[numLigne1++], "+-----------------------------------------------------------------------------+");
@@ -223,21 +222,9 @@ void displayDatas(void){
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
         sprintf(string1[numLigne1++], "|           entreprise  |       nom du produit  |    prix |  stock  | stk min |");
         sprintf(string1[numLigne1++], "+-----------------------+-----------------------+---------+---------+---------+");
-        /*
-        for (int i = 0 ; i < nbEntreprises ; i++){
-            Entreprise *ptrEnt = listeEntreprises[i];
-            structProduit *ptrProduit;
-            int j=0;
-            ptrProduit = ptrEnt->getProduit(j++);
-            while (ptrProduit != NULL){
-                sprintf(string1[numLigne1++], "|  %20s |  %20s |  %6d |  %6d |  %6d |", ptrEnt->getNom(), 
-                    ptrProduit->nom, ptrProduit->prix, ptrProduit->stock, ptrProduit->stockMini);
-                ptrProduit = ptrEnt->getProduit(j++);
-            }
-        }*/
         Produit *ptrProduit;
         Entreprise *ptrEntreprise;
-        for (int i = 0 ; i < MAX_PRODUITS ; i++){
+        for (int i = 0 ; i < MAX_PRODUITS -1 ; i++){
             ptrProduit = listeProduits[i];
             if (ptrProduit != NULL){
                 ptrEntreprise = getEntrepriseById(ptrProduit->getProducteurId());
@@ -262,10 +249,11 @@ void displayDatas(void){
             ptrCommande = listeCommandes[i];
             //printf("ptrCommande initialise\n");
             if (ptrCommande != NULL){
-                //printf("ptrCommande != null\n");
+                //printf("ptrCommande %d != null\n", i);
                 sprintf(string2[numLigne2++], "|  %5d    |  %20s |  %20s |  %20s |  %6d | %10s |", ptrCommande->getNumero(), ptrCommande->getFabricant()->getNom(), 
                     ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), 
                     ptrCommande->getQuantite(), ptrCommande->getStatusString());
+                //printf("ligne %3d = %s\n", i, string2[numLigne2-1]);
             }
         }
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");

@@ -19,18 +19,28 @@
 //-------------------------------------------
 void evolution(void){
 
+    nbJours++;
+
+    printf("evolution ===================\n");
     printf("evolution ==> debut \n");
+    printf("evolution ===================\n");
     Humain *ptrIndividu;
     Entreprise *ptrEnt;
     //Commande *ptrCommande;
     int i;
 
-    for (i = 0 ; i < MAX_HUMAINS ; i++){
+    printf("evolution ----------------------------------\n");
+    printf("evolution ==> boucle sur les humains \n");
+    printf("evolution ----------------------------------\n");
+    for (i = 1 ; i < MAX_HUMAINS ; i++){
         if (listeHumains[i] != NULL){
             listeHumains[i]->boucleTraitement();
         }
     }
 
+    printf("evolution ----------------------------------\n");
+    printf("evolution ==> boucle sur les entreprises \n");
+    printf("evolution ----------------------------------\n");
     for (i = 0 ; i < MAX_ENTREPRISES ; i++){
         if (listeEntreprises[i] != NULL){
             //printf("evolution => lancement du traitement de %s\n", listeEntreprises[i]->getNom());
@@ -38,12 +48,18 @@ void evolution(void){
         }
     }
 
+    printf("evolution ----------------------------------\n");
+    printf("evolution ==> boucle sur les produits \n");
+    printf("evolution ----------------------------------\n");
     for (i = 0 ; i < MAX_COMMANDES ; i++){
         if (listeCommandes[i] != NULL){
             listeCommandes[i]->boucleTraitement();
         }
     }
 
+    printf("evolution ----------------------------------\n");
+    printf("evolution ==> boucle sur les commandes \n");
+    printf("evolution ----------------------------------\n");
     for (i = 0 ; i < MAX_PRODUITS ; i++){
         if (listeProduits[i] != NULL){
             listeProduits[i]->boucleTraitement();

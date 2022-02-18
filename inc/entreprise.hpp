@@ -40,7 +40,7 @@
     #define PRODUCTIVITE_EMPLOYE    10
     #define PRODUCTIVITE_EMPLSUPP   15
     #define PRODUCTIVITE_CADRE      3
-    #define PRODUCTIVITE_PATRON     1
+    #define PRODUCTIVITE_PATRON     0
 
     class Humain;
     class CompteBancaire;
@@ -91,7 +91,7 @@
             int getNbSalaries(void);
             int getId(void);
             void gereCommandes(void);
-            void gereRecrutement(int typeRecrutement);
+            void gereRecrutement(void);
             bool isInCatalogue(Produit *produit);
             //structProduit *getProduit(int index);
             bool credite(int montant);
@@ -105,6 +105,7 @@
             bool produitEnStock(Produit *produit);
             void boucleTraitement(void);
             Humain *getPatron(void);
+            void traiteSalaires(void);
             
 
         private:
@@ -114,6 +115,7 @@
             int typeProduction;
             int nbSalaries;
             int nbEmployes;
+            int nbEmployeSup;
             int nbCadres;
             int effectifMax;
             Produit *listeProduit[MAX_PRODUITS];

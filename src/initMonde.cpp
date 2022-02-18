@@ -43,6 +43,7 @@ void resetMonde(void){
         listeComptesBancaires[i] = NULL;
     }
     nbComptesBancaires=0;
+    printf("resetMonde OK \n");
 }
 
 //-------------------------------------------
@@ -54,23 +55,24 @@ void initMonde(Humain *dieu){
 
     int i =0;
 
-    // reset des tableau 
-    resetMonde();
-
+    printf("initMonde =>==================================\n");
+    printf("initMonde => debut generation du monde initial\n");
+    printf("initMonde =>==================================\n");
     // creation des humains
     enfantDieu enfant;
-    //printf("initMonde => generation des premiers humains\n");
+    printf("initMonde => generation des premiers humains\n");
     // creation des personnes directement issues de dieu
     for (i = 0 ; i < INIT_NB_HUMAINS ; i++){
         enfant = getRandomEnfant(getRandom(20) + 20); // creation d'adultes entre 20 et 40 ans
         new Humain(dieu, enfant.genre, enfant.nom, enfant.prenom, enfant.age);
     }
 
-    //printf("initMonde => mariage d'une partie de la population\n");
+    printf("initMonde => mariage d'une partie de la population\n");
     // creation des couples 1/3 celibataires ; 2/3 de maries
     int nbCouples = 0;
-    Humain *ptrHomme, *ptrFemme, *ptrHumain;
-    for (int i = 0 ; i < INIT_NB_HUMAINS ; i++){
+    Humain *ptrHomme, *ptrFemme;
+    Humain *ptrHumain;
+    for (int i = 1 ; i < INIT_NB_HUMAINS ; i++){
         ptrHomme = listeHumains[i];
         if ( (ptrHomme->getGenreTexte()[0] == 'H') && (ptrHomme->getStatus() == 'C') ){
             //printf("homme disponible : %s,  genre = %c, status = %c\n", ptrHomme->getNomComplet(), ptrHomme->getGenreTexte()[0], ptrHomme->getStatus());
@@ -89,9 +91,9 @@ void initMonde(Humain *dieu){
         if (nbCouples >= (INIT_NB_HUMAINS / 3)) break;
     }
 
-    //printf("initMonde => generation des enfants\n");
+    printf("initMonde => generation des enfants\n");
     // creation des enfants entre 1 et 3 enfnats par couples
-    for (int i = 0 ; i < INIT_NB_HUMAINS ; i++){
+    for (int i = 1 ; i < INIT_NB_HUMAINS ; i++){
         ptrHomme = listeHumains[i];
         if ( (ptrHomme->getGenreTexte()[0] == 'H') && (ptrHomme->getStatus() == 'M') ) {
             ptrHomme = listeHumains[i];
@@ -110,6 +112,7 @@ void initMonde(Humain *dieu){
     }
 
     // creation des entreprises initiales
+    printf("initMonde => generation des entreprises\n");
     Entreprise *epicerie;
     Entreprise *garage, *vetements, *electroMenager;
     Entreprise *entrepreneur;
@@ -121,6 +124,7 @@ void initMonde(Humain *dieu){
     entrepreneur = new Entreprise((char *)"entrepreneur", PRODUIT_MAISON, NULL, 50);
 
     // creation des produits de base
+    printf("initMonde => generation des produits\n");
     //Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication, int dureeVie, int delaiFab, int indiceNecessite);
     
     new Produit((char *)"viande", P_ALI_VIANDE, epicerie->getId(), 10, 5, 10, 4, 7, 1, 0);
@@ -150,8 +154,10 @@ void initMonde(Humain *dieu){
     //afficheListeProduits();
 
     // creation des commandes initiales
+    
+    printf("initMonde => generation des commandes\n");
     Produit *ptrProduit;
-    for (int i = 0 ; i < nbHumains ; i++){
+    for (int i = 1 ; i < nbHumains ; i++){
         ptrHumain = listeHumains[i];
         //printf("initMonde : creation commandes pour %s\n", ptrHumain->getNomComplet());
         ptrProduit = getProduitByNom((char *)"viande");
@@ -165,4 +171,7 @@ void initMonde(Humain *dieu){
 
     // affichage des statistiques 
     //statistiques();
+    printf("initMonde =>==================================\n");
+    printf("initMonde => fin generation du monde initial\n");
+    printf("initMonde =>==================================\n");
 }

@@ -12,6 +12,7 @@ CompteBancaire *listeComptesBancaires[MAX_COMPTES_BANCAIRES];
 Commande *listeCommandes[MAX_COMMANDES];
 Produit *listeProduits[MAX_PRODUITS];
 
+int nbJours=0;
 int nbHumains=0;
 bool vivantsSeulement=true;
 int nbEntreprises=0;

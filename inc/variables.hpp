@@ -31,7 +31,8 @@
     #define PROBA_NAISSANCE     2
 
     #define MAX_COMPTES_BANCAIRES MAX_ENTREPRISES+MAX_HUMAINS
-    //typedef Humain *ptrHumain;
+    
+    extern int nbJours;
     extern Humain *listeHumains[];
     extern Entreprise *listeEntreprises[];
     extern CompteBancaire *listeComptesBancaires[];

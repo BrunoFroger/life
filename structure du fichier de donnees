@@ -30,6 +30,7 @@ produits :
     stock
     stockMini
     coutFabrication
+    pointsDeVie
 
 Salarie :
     id

@@ -181,6 +181,11 @@ bool Humain::estSalarie(void){
 //-------------------------------------------
 void Humain::setEmployeur(Entreprise *ptrEntreprise){
     this->employeur = ptrEntreprise;
+    if (ptrEntreprise == NULL){
+        printf("Humain::setEmployeur => %s a été supprime de son entreprise\n", this->getNomComplet());
+    } else {
+        printf("Humain::setEmployeur => %s a été embauché par %s\n", this->getNomComplet(), ptrEntreprise->getNom());
+    }
 }
 
 //-------------------------------------------
@@ -505,17 +510,33 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
 //
 //-------------------------------------------
 void Humain::deces(void){
-    //printf("mort de %s\n", this->nom);
-    if (this->conjoint != nullptr){
+    printf("Humain::deces => mort de %s à l'age de %d\n", this->getNomComplet(), this->age);
+    if (this->conjoint != NULL){
         //printf("le conjoint %s devient veuf\n", this->conjoint->nom);
         if (this->conjoint->status != MORT){
             this->conjoint->status = VEUF;
         }
     }
+    printf("Humain::deces => check si salarie\n");
     if (this->estSalarie()){
         this->employeur->supprimeSalarie(this);
+        printf("Humain::deces => %s supprimé de son entreprise\n", getNomComplet());
+    }
+    printf("Humain::deces => check si commandes en cours\n");
+    Commande *ptrCde;
+    // suppression des commandes en cours pour cet humain
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        ptrCde = listeCommandes[i];
+        if (ptrCde != NULL){
+            if ( ptrCde->getClient() == this){
+                printf("Humain::deces => commande %d supprimé \n", ptrCde->getNumero());
+                ptrCde = NULL;        
+                break;
+            }
+        }
     }
     this->status=MORT;
+    printf("Humain::deces => fin\n");
 }
 
 //-------------------------------------------
@@ -533,7 +554,7 @@ void Humain::testMariage(void){
             // candidat potentiel au mariage
             //printf("%s est candidat au mariage\n", this->nom);
             // recherche partenaire
-            for (int j = 0 ; j < nbHumains ; j++){
+            for (int j = 1 ; j < nbHumains ; j++){
                 ptrHumain = listeHumains[j];
                 if ((ptrHumain->getGenreTexte()[0] == 'F') && (ptrHumain->getAge() >= AGE_DEBUT_MARIAGE)){
                     if ((ptrHumain->getStatus() == 'C') || (ptrHumain->getStatus() == 'V')){
@@ -640,7 +661,7 @@ void Humain::achats(void){
 //
 //-------------------------------------------
 void Humain::setListeProduitEnManque(){
-    printf("Humain::setListeProduitEnManque => todo\n");
+    //printf("Humain::setListeProduitEnManque => todo\n");
 
 }
 
@@ -813,7 +834,7 @@ int Humain::getNumCompte(void){
 //
 //-------------------------------------------
 void Humain::commande(Produit *produit, int quantite){
-    //printf("Humain::commande => produit = %s, quantite = %d\n", produit->getNom(), quantite);
+    printf("Humain:: %s commande => produit = %s, quantite = %d\n", getNomComplet(), produit->getNom(), quantite);
     Commande *ptrCde;
     if (produit->getPrix() > getSoldeBancaire()){
         printf("Humain::commande => ERREUR : commande impossble (budget insuffisant\n");
@@ -822,6 +843,48 @@ void Humain::commande(Produit *produit, int quantite){
     ptrCde = new Commande(produit, quantite, this);
     if (ptrCde->getStatus() == COMMANDE_IMPOSSIBLE){
         delete ptrCde;
+    }
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        if (listeCommandes[i] == NULL){
+            listeCommandes[i] = ptrCde;
+            break;
+        }
+    }
+}
+
+//-------------------------------------------
+//
+//          Humain::gereCommandeEnCours
+//
+//-------------------------------------------
+void Humain::gereCommandesEnCours(){
+    //printf("Humain::gereCommandeEnCours => debut \n");
+    Commande *ptrCde;
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        ptrCde = listeCommandes[i];
+        if (ptrCde != NULL){
+            if (ptrCde->getClient() == this){
+                switch (ptrCde->getStatus()){
+                    case COMMANDE_DISPONIBLE:
+                        printf("Humain::gereCommandeEnCours => status = COMMANDE DISPONIBLE \n");
+                        // recuperation du nombre de points de vie du produit 
+                        if (this->getSoldeBancaire() > ptrCde->getProduit()->getPrix()){
+                            this->debite(ptrCde->getProduit()->getPrix());
+                            ptrCde->changeStatus(COMMANDE_SOLDEE);
+                            pointsDeVie += ptrCde->getProduit()->getNbPointsDeVie();
+                        }
+                        break;
+                    case COMMANDE_IMPOSSIBLE:
+                        printf("Humain::gereCommandeEnCours => status = COMMANDE IMPOSSIBLE \n");
+                        listeCommandes[i] = NULL;
+                        delete ptrCde;
+                        break;
+                    default:
+                        // rien a faire
+                        break;
+                }
+            }
+        }
     }
 }
 
@@ -836,6 +899,7 @@ void Humain::boucleTraitement(void){
     this->testMariage();
     this->testNaissance();
     this->achats();
+    this->gereCommandesEnCours();
     //printf("Humain::boucleTraitement => fin\n");
 }
 

@@ -5,8 +5,6 @@
 //-----------------------------------
 
 #include "../inc/initMonde.hpp"
-#include "../inc/tools.hpp"
-#include "../inc/statistiques.hpp"
 
 //-------------------------------------------
 //
@@ -151,23 +149,21 @@ void initMonde(Humain *dieu){
 
     new Produit((char *)"maison", P_MAI_MAISON, entrepreneur->getId(), 0, 0, 200000, 100000, 400000, 300, 200);
     new Produit((char *)"appart_etudiant", P_MAI_APPART, entrepreneur->getId(), 0, 0, 20000, 10000, 400000, 300, 1000);
-    //afficheListeProduits();
+    afficheListeProduits();
 
     // creation des commandes initiales
     
     printf("initMonde => generation des commandes\n");
-    Produit *ptrProduit;
+    Produit *ptrProduitViande = getProduitByNom((char *)"viande");;
+    Produit *ptrProduitLegume = getProduitByNom((char *)"legume");
+    Produit *ptrProduitBoisson = getProduitByNom((char *)"boisson");
     for (int i = 1 ; i < nbHumains ; i++){
         ptrHumain = listeHumains[i];
-        //printf("initMonde : creation commandes pour %s\n", ptrHumain->getNomComplet());
-        ptrProduit = getProduitByNom((char *)"viande");
-        if (ptrProduit != NULL) {
-            ptrHumain->commande(ptrProduit, 1);
-        } else {
-            printf("impossible de commander viande\n");
-        }
+        ptrHumain->commande(ptrProduitViande, 1);
+        ptrHumain->commande(ptrProduitLegume, 1);
+        ptrHumain->commande(ptrProduitBoisson, 1);
     }
-    //afficheListeEntreprises();
+    afficheListeCommandes();
 
     // affichage des statistiques 
     //statistiques();

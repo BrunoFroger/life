@@ -28,3 +28,12 @@ char tmpString1[50];
 bool listeAuto=false;
 bool statAuto=false;
 bool menuOnOff=false;
+
+
+bool debugHumain=false;
+bool debugCommande=false;
+bool debugEntreprise=false;
+bool debugProduit=false;
+bool debugStats=false;
+bool debugCptBancaire=false;
+bool debugTools=false;

@@ -8,12 +8,6 @@
 #include <iostream>
 
 #include "../inc/humain.hpp"
-#include "../inc/variables.hpp"
-#include "../inc/statistiques.hpp"
-#include "../inc/tools.hpp"
-#include "../inc/compteBancaire.hpp"
-
-
 
 //-------------------------------------------
 //
@@ -66,7 +60,7 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     nbHumains++;
     listeHumains[nbHumains] = NULL;
     //displayInfos();
-    //printf("fin creation humain %s\n", nom);
+    //if (debugHumain) printf("fin creation humain %s\n", nom);
     this->employeur=NULL;
     this->compteBancaire = new CompteBancaire(this->getNomComplet());
     this->compteBancaire->credite(100);
@@ -75,7 +69,7 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
     for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
         mesProduits[i] = NULL;
     }
-    printf("Humain::Humain => humain cree : %s en position %d\n", this->getNomComplet(), nbHumains);
+    if (debugHumain) printf("Humain::Humain => humain cree : %s en position %d\n", this->getNomComplet(), nbHumains);
 }
 
 //-------------------------------------------
@@ -84,13 +78,13 @@ Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
 //
 //-------------------------------------------
 Humain::Humain(char *datas){
-    //printf("Humain::Humain => initialisation partielle d'un humain a partir d'une ligne <%s>\n", datas);
+    //if (debugHumain) printf("Humain::Humain => initialisation partielle d'un humain a partir d'une ligne <%s>\n", datas);
     char tmp[50];
     int id, genre, age;
     char prenom[50], nom [50];
     tmp[0] = '\0';
     sscanf(datas, "humain %d %s %s %d %d", &id, prenom, nom, &genre, &age);
-    //printf("Humain::Humain => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d\n", id, prenom, nom, genre, age);
+    //if (debugHumain) printf("Humain::Humain => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d\n", id, prenom, nom, genre, age);
     if (this->id != id){
         printf("Humain::Humain => ERREUR : l'id de la ligne <%s> ne correspond pas a celui de cet humain (%d)\n", datas, this->id);
     }
@@ -107,7 +101,7 @@ Humain::Humain(char *datas){
 //
 //-------------------------------------------
 void Humain::restore(char *datas){
-    //printf("Humain::restore => restauration des donnees d'un humain a partir d'une ligne <%s>", datas);
+    //if (debugHumain) printf("Humain::restore => restauration des donnees d'un humain a partir d'une ligne <%s>", datas);
     char tmp[50];
     Humain *ptr;
     tmp[0] = '\0';
@@ -117,12 +111,12 @@ void Humain::restore(char *datas){
     sscanf(datas, "humain %d %s %s %d %d %d %d %d %d %d %d", 
             &datas_id, datas_prenom, datas_nom, &datas_genre, &datas_age, &datas_nbEnfants, 
             &datas_status, &datas_pointsdevie, &datas_idConjoint, &datas_idPere, &datas_idMere);
-    //printf("Humain::restore => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, idConjoint=%d, idPere=%d, idMere=%d, nbEnfants=%d\n", 
+    //if (debugHumain) printf("Humain::restore => données récupereees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, idConjoint=%d, idPere=%d, idMere=%d, nbEnfants=%d\n", 
     //        datas_id, datas_prenom, datas_nom, datas_genre, datas_age, datas_status, datas_idConjoint, datas_idPere, datas_idMere, datas_nbEnfants);
     this->nbEnfants = datas_nbEnfants;
     this->status = datas_status;
     this->id = datas_id;
-    //printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
+    //if (debugHumain) printf("Humain::restore => données enregistrees : id=%d, prenom=%s, nom=%s, genre=%d, age=%d, status=%d, nbEnfants=%d\n", 
     //        this->id, this->prenom, this->nom, this->genre, this->age, this->status, this->nbEnfants);
     for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
@@ -149,7 +143,7 @@ void Humain::restore(char *datas){
             }
         }
     }
-    //printf("Humain::restore =>  fin\n");
+    //if (debugHumain) printf("Humain::restore =>  fin\n");
 
 }
 
@@ -182,9 +176,9 @@ bool Humain::estSalarie(void){
 void Humain::setEmployeur(Entreprise *ptrEntreprise){
     this->employeur = ptrEntreprise;
     if (ptrEntreprise == NULL){
-        printf("Humain::setEmployeur => %s a été supprime de son entreprise\n", this->getNomComplet());
+        if (debugHumain) printf("Humain::setEmployeur => %s a été supprime de son entreprise\n", this->getNomComplet());
     } else {
-        printf("Humain::setEmployeur => %s a été embauché par %s\n", this->getNomComplet(), ptrEntreprise->getNom());
+        if (debugHumain) printf("Humain::setEmployeur => %s a été embauché par %s\n", this->getNomComplet(), ptrEntreprise->getNom());
     }
 }
 
@@ -194,32 +188,33 @@ void Humain::setEmployeur(Entreprise *ptrEntreprise){
 //
 //-------------------------------------------
 void Humain::displayInfos(void){
-    printf("\n-------------------------\n");
-    printf(" infos Humain\n");
-    printf(" genre   = %s\n", this->genreTexte);
-    printf(" nom     = %s\n", this->nom);
-    printf(" prenom  = %s\n", this->prenom);
-    printf(" age     = %d\n", this->age);
-    printf(" status  = %d\n", this->status);
-    printf(" enfants = %d\n", this->nbEnfants);
+    debugHumain = true;
+    if (debugHumain) printf("\n-------------------------\n");
+    if (debugHumain) printf(" infos Humain\n");
+    if (debugHumain) printf(" genre   = %s\n", this->genreTexte);
+    if (debugHumain) printf(" nom     = %s\n", this->nom);
+    if (debugHumain) printf(" prenom  = %s\n", this->prenom);
+    if (debugHumain) printf(" age     = %d\n", this->age);
+    if (debugHumain) printf(" status  = %d\n", this->status);
+    if (debugHumain) printf(" enfants = %d\n", this->nbEnfants);
     if (this->status == MARIE){
-        printf(" conjoint = %s\n", this->conjoint->nom);
+       if (debugHumain) printf(" conjoint = %s\n", this->conjoint->nom);
     }
     if (this->pere != NULL){
-        printf(" pere = %s\n", this->pere->nom);
+        if (debugHumain) printf(" pere = %s\n", this->pere->nom);
     }
     if (this->mere != NULL){
-        printf(" mere = %s\n", this->mere->nom);
+        if (debugHumain) printf(" mere = %s\n", this->mere->nom);
     }
     if (this->nbEnfants != 0){
-        printf(" enfants \n");
+        if (debugHumain) printf(" enfants \n");
         for (int i = 0 ; i < this->nbEnfants ; i++){
             if (this->enfants[i] != NULL){
-                printf("     %d : %s\n", i, this->enfants[i]->nom);
+                if (debugHumain) printf("     %d : %s\n", i, this->enfants[i]->nom);
             }
         }
     }
-    printf("-------------------------\n\n");
+    if (debugHumain) printf("-------------------------\n\n");
 }
 
 //-------------------------------------------
@@ -236,7 +231,7 @@ void Humain::mariage(Humain *conjoint){
     this->status=MARIE;
     this->conjoint->conjoint=this;
     this->conjoint->status=MARIE;
-    printf("Humain::mariage => declaration mariage de %s avec %s\n", homme, femme);
+    if (debugHumain) printf("Humain::mariage => declaration mariage de %s avec %s\n", homme, femme);
 }
 
 //-------------------------------------------
@@ -255,10 +250,10 @@ void Humain::descendance(){
 //-------------------------------------------
 void Humain::descendance(int level){
     if (level == 0){
-        printf("-----------------------------\n");
-        printf(" debut descendance de %s (%c-%d)", this->getNomComplet(), this->getGenreTexte()[0], this->getAge());    
+        if (debugHumain) printf("-----------------------------\n");
+        if (debugHumain) printf(" debut descendance de %s (%c-%d)", this->getNomComplet(), this->getGenreTexte()[0], this->getAge());    
         if (this->conjoint != NULL){
-        printf(" avec %s (%c-%d)\n", this->conjoint->getNomComplet(), this->conjoint->getGenreTexte()[0], this->conjoint->getAge());
+            if (debugHumain) printf(" avec %s (%c-%d)\n", this->conjoint->getNomComplet(), this->conjoint->getGenreTexte()[0], this->conjoint->getAge());
         } else {
             printf("\n");
         }
@@ -272,19 +267,19 @@ void Humain::descendance(int level){
     if (this->nbEnfants != 0){
         for (int i = 0 ; i < nbEnfants ; i++){
             if (this->enfants[i] != NULL){
-                printf("%s %s(%c-%d)", tabs, this->enfants[i]->getNomComplet(), this->enfants[i]->getGenreTexte()[0], this->enfants[i]->getAge());
+                if (debugHumain) printf("%s %s(%c-%d)", tabs, this->enfants[i]->getNomComplet(), this->enfants[i]->getGenreTexte()[0], this->enfants[i]->getAge());
                 if (this->enfants[i]->conjoint != NULL){
-                    printf(" en couple avec %s(%c-%d)", this->enfants[i]->conjoint->getNomComplet(), this->enfants[i]->conjoint->getGenreTexte()[0], this->enfants[i]->getAge());
+                    if (debugHumain) printf(" en couple avec %s(%c-%d)", this->enfants[i]->conjoint->getNomComplet(), this->enfants[i]->conjoint->getGenreTexte()[0], this->enfants[i]->getAge());
                 }
-                printf("\n");
+                if (debugHumain) printf("\n");
                 this->enfants[i]->descendance(level + 1);            }
         }
     } else {
-        printf("%s pas d'enfants\n", tabs);
+        if (debugHumain) printf("%s pas d'enfants\n", tabs);
     }
     if (level == 0){
-        printf(" fin descendance de %s\n", this->getNomComplet());
-        printf("-----------------------------\n");
+        if (debugHumain) printf(" fin descendance de %s\n", this->getNomComplet());
+        if (debugHumain) printf("-----------------------------\n");
     }
 }
 
@@ -445,10 +440,10 @@ char Humain::getStatus(void){
 //-------------------------------------------
 bool Humain::addEnfant(Humain *enfant){
     if (this->nbEnfants < MAX_ENFANTS){
-        //printf("on ajoute l'enfant %s a %s\n", enfant->nom, this-> nom);
+        //if (debugHumain) printf("on ajoute l'enfant %s a %s\n", enfant->nom, this-> nom);
         this->enfants[this->nbEnfants]=enfant;
         this->nbEnfants++;
-        //printf("%s a maintenant %d enfants\n", this->nom, this->nbEnfants);
+        //if (debugHumain) printf("%s a maintenant %d enfants\n", this->nom, this->nbEnfants);
         return true;
     }
     return false;
@@ -460,47 +455,46 @@ bool Humain::addEnfant(Humain *enfant){
 //
 //-------------------------------------------
 Humain *Humain::naissance(int genre, char *nom, char *prenom){
-    printf("Humain::naissance => %s donne naissance à %s\n", this->getNomComplet(), prenom);
+    if (debugHumain) printf("Humain::naissance => %s donne naissance à %s\n", this->getNomComplet(), prenom);
     if (this->nbEnfants >= MAX_ENFANTS){
         if (strcmp(this->getNom(), "dieu") != 0){
-            printf("ERREUR : %s a atteint le nombre maximal d'enfants (%d)\n", this->getNomComplet(), MAX_ENFANTS);
+            if (debugHumain) printf("ERREUR : %s a atteint le nombre maximal d'enfants (%d)\n", this->getNomComplet(), MAX_ENFANTS);
             return NULL;
         }
     } 
-    //printf(" max enfants pas atteint, on continue\n");
-    //printf("on initialise l'enfant %d\n", nbEnfants);
+    //if (debugHumain) printf(" max enfants pas atteint, on continue\n");
+    //if (debugHumain) printf("on initialise l'enfant %d\n", nbEnfants);
     try{
         Humain *ptr;
-        ptr = ::new Humain(0, genre, nom, prenom, 0);
-        //if (strcmp(this->nom,"dieu") !=0){
-            this->addEnfant(ptr);
-        //}
+        ptr = new Humain(0, genre, nom, prenom, 0);
+        this->addEnfant(ptr);
+
         if (this->conjoint != NULL){
             this->conjoint->addEnfant(ptr);
         }
-        //printf("initialisation des parents\n");
+        //if (debugHumain) printf("initialisation des parents\n");
         if (this->genre == HOMME){
             //printf("le pere declare\n");
             ptr->pere=this;
             ptr->mere=this->conjoint;
         } else {
-            //printf("la mere declare (%s)\n", this->nom);
+            //if (debugHumain) printf("la mere declare (%s)\n", this->nom);
             ptr->pere=this->conjoint;
             ptr->mere=this;
         }
         if (ptr->pere != NULL){
-            //printf("pere : %s\n", ptr->pere->nom);
+            //if (debugHumain) printf("pere : %s\n", ptr->pere->nom);
         }
         if (ptr->mere != NULL){
-            //printf("mere : %s\n", ptr->mere->nom);
+            //if (debugHumain) printf("mere : %s\n", ptr->mere->nom);
         }
         //ptr->displayInfos();
-        //printf(" declaration de naissance de %s => OK\n", nom);
+        //if (debugHumain) printf(" declaration de naissance de %s => OK\n", nom);
         return ptr;
     } catch(...){
         printf("ERREUR => impossible de creer un enfant\n");
     }
-    printf("Humain::naissance => naissance de %s=> KO\n", this->getNomComplet());
+    if (debugHumain) printf("Humain::naissance => naissance de %s=> KO\n", this->getNomComplet());
     return NULL;
 }
 
@@ -510,33 +504,35 @@ Humain *Humain::naissance(int genre, char *nom, char *prenom){
 //
 //-------------------------------------------
 void Humain::deces(void){
-    printf("Humain::deces => mort de %s à l'age de %d\n", this->getNomComplet(), this->age);
+    //debugHumain = true;
+    if (debugHumain) printf("Humain::deces => mort de %s à l'age de %d\n", this->getNomComplet(), this->age);
     if (this->conjoint != NULL){
         //printf("le conjoint %s devient veuf\n", this->conjoint->nom);
         if (this->conjoint->status != MORT){
             this->conjoint->status = VEUF;
         }
     }
-    printf("Humain::deces => check si salarie\n");
+    if (debugHumain) printf("Humain::deces => check si salarie\n");
     if (this->estSalarie()){
         this->employeur->supprimeSalarie(this);
-        printf("Humain::deces => %s supprimé de son entreprise\n", getNomComplet());
+        if (debugHumain) printf("Humain::deces => %s supprimé de son entreprise\n", getNomComplet());
     }
-    printf("Humain::deces => check si commandes en cours\n");
+    if (debugHumain) printf("Humain::deces => check si commandes en cours\n");
     Commande *ptrCde;
     // suppression des commandes en cours pour cet humain
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         ptrCde = listeCommandes[i];
         if (ptrCde != NULL){
             if ( ptrCde->getClient() == this){
-                printf("Humain::deces => commande %d supprimé \n", ptrCde->getNumero());
+                if (debugHumain) printf("Humain::deces => commande %d supprimé \n", ptrCde->getNumero());
                 ptrCde = NULL;        
                 break;
             }
         }
     }
     this->status=MORT;
-    printf("Humain::deces => fin\n");
+    if (debugHumain) printf("Humain::deces => fin\n");
+    //debugHumain = false;
 }
 
 //-------------------------------------------
@@ -545,31 +541,31 @@ void Humain::deces(void){
 //
 //-------------------------------------------
 void Humain::testMariage(void){
-    //printf("Humain::testMariage => debut\n");
+    //if (debugHumain) printf("Humain::testMariage => debut\n");
     // test candidats au mariage
     // recherche d'un homme celibataire ou veuf
     Humain *ptrHumain = NULL;
     if ((this->getGenreTexte()[0] == 'H') && (this->getAge() >= AGE_DEBUT_MARIAGE)){
         if ((this->getStatus() == 'C') || (this->getStatus() == 'V')){
             // candidat potentiel au mariage
-            //printf("%s est candidat au mariage\n", this->nom);
+            //if (debugHumain) printf("%s est candidat au mariage\n", this->nom);
             // recherche partenaire
             for (int j = 1 ; j < nbHumains ; j++){
                 ptrHumain = listeHumains[j];
                 if ((ptrHumain->getGenreTexte()[0] == 'F') && (ptrHumain->getAge() >= AGE_DEBUT_MARIAGE)){
                     if ((ptrHumain->getStatus() == 'C') || (ptrHumain->getStatus() == 'V')){
                         // candidate potentielle au mariage
-                        //printf("%s est candidate au mariage\n", ptr1->nom);
+                        //if (debugHumain) printf("%s est candidate au mariage\n", ptr1->nom);
                         int differenceAge = abs(this->getAge() - ptrHumain->getAge());
                         if (differenceAge > DIFF_AGE_MARIAGE){
-                            //printf("mariage impossible a cause de la difference d'age\n");
+                            //if (debugHumain) printf("mariage impossible a cause de la difference d'age\n");
                         } else {
                             if ((rand() % PROBA_MARIAGE) == 0){
                                 // 1 chance sur n qu'elle accepte
                                 ptrHumain->mariage(this);
                                 return;
                             }else {
-                                //printf("mariage refuse\n");
+                                //if (debugHumain) printf("mariage refuse\n");
                             }
                         }
                     }
@@ -585,34 +581,34 @@ void Humain::testMariage(void){
 //
 //-------------------------------------------
 void Humain::testNaissance(void){
-    //printf("Humain::testNaissance => debut\n");
+    //if (debugHumain) printf("Humain::testNaissance => debut\n");
     // test generation d'une naissance
     Humain *ptrHumain = NULL;
     if (this->getGenreTexte()[0] == 'H'){
         if (this->conjoint != NULL){
             ptrHumain = this->conjoint;
-            //printf("teste compatibilite naissance entre %s et %s\n", this->getNomComplet(), ptr1->getNomComplet());
+            //if (debugHumain) printf("teste compatibilite naissance entre %s et %s\n", this->getNomComplet(), ptr1->getNomComplet());
             if ((this->getAge() > AGE_DEBUT_NAISSANCE) && (ptrHumain->getAge() > AGE_DEBUT_NAISSANCE)){
-                //printf("Les deux parents ont + 25 ans\n");
+                //if (debugHumain) printf("Les deux parents ont + 25 ans\n");
                 if ((this->getAge() < AGE_FIN_NAISSANCE) && (ptrHumain->getAge() < AGE_FIN_NAISSANCE)){
-                    //printf("Les deux parents ont - 40 ans\n");
-                    //printf("%s et %s sont les futurs parents\n", this->getNomComplet(), ptr1->getNomComplet());
+                    //if (debugHumain) printf("Les deux parents ont - 40 ans\n");
+                    //if (debugHumain) printf("%s et %s sont les futurs parents\n", this->getNomComplet(), ptr1->getNomComplet());
                     char newPrenom[25];
                     int genreEnfant = getRandomGenre();
                     switch (genreEnfant){
                         case HOMME:
-                            //printf("%s et %s ont un fils\n", this->getNomComplet(), ptr1->getNomComplet());
+                            //if (debugHumain) printf("%s et %s ont un fils\n", this->getNomComplet(), ptr1->getNomComplet());
                             strcpy(newPrenom,getPrenomMasculin());
                             break;
                         case FEMME:
-                            //printf("%s et %s ont une fille\n", this->getNomComplet(), ptr1->getNomComplet());
+                            //if (debugHumain) printf("%s et %s ont une fille\n", this->getNomComplet(), ptr1->getNomComplet());
                             strcpy(newPrenom,getPrenomFeminin());
                             break;
                         default:
                             printf("ERREUR : genre de l'enfant inconuu (%d)\n", genreEnfant);
                             break;
                     }
-                    //printf("prenom de l'enfant : ");
+                    //if (debugHumain) printf("prenom de l'enfant : ");
                     //scanf("%s", saisie);
                     if ((rand() % 5) == 0){ // 1 chance sur 5 d'avoir un enfant cette annee
                         this->naissance(genreEnfant, this->nom, newPrenom);
@@ -630,10 +626,9 @@ void Humain::testNaissance(void){
 //
 //-------------------------------------------
 void Humain::achats(void){
-    //printf("Humain::achats => debut\n");
+    //if (debugHumain) printf("Humain::achats => debut\n");
     // genere des cachats en fonction des ressources et des besoins
     produitClient *ptrProduitClient;
-    //Produit *ptrProduit;
 
     // on supprime les produits dont la date de validite est dépassée
     for (int i = 0 ; i < MAX_ACHAT_CLIENT ; i++){
@@ -641,7 +636,7 @@ void Humain::achats(void){
          if (ptrProduitClient != NULL){
             int ageProduit = age - ptrProduitClient->dateAchat;
             if (ageProduit > ptrProduitClient->duree){
-                printf("Humain::achats => produit périmé -> on le supprime\n");
+                if (debugHumain) printf("Humain::achats => produit périmé -> on le supprime\n");
                 delete ptrProduitClient;
                 this->mesProduits[i] = NULL;
             }
@@ -661,7 +656,7 @@ void Humain::achats(void){
 //
 //-------------------------------------------
 void Humain::setListeProduitEnManque(){
-    //printf("Humain::setListeProduitEnManque => todo\n");
+    //if (debugHumain) printf("Humain::setListeProduitEnManque => todo\n");
 
 }
 
@@ -671,7 +666,7 @@ void Humain::setListeProduitEnManque(){
 //
 //-------------------------------------------
 void Humain::sauve(FILE *fic){
-    //printf("Humain::sauve => Sauvegarde de %s\n", this->getNomComplet());
+    //if (debugHumain) printf("Humain::sauve => Sauvegarde de %s\n", this->getNomComplet());
     char ligne[500];
     char tmp[500];
     int thisPere, thisMere, thisConjoint;
@@ -684,17 +679,17 @@ void Humain::sauve(FILE *fic){
     // nom; genre; age ; nbEnfants; status, conjoint(nom), pere(nom), mere(nom), liste enfants(nom), ...
     sprintf(tmp, "humain %d %s %s %d %d %d %d %d", this->id, this->prenom, this->nom, this->genre, 
             this->age, this->nbEnfants, this->status, this->pointsDeVie);
-    //printf("tmp = %s\n", tmp);
+    //if (debugHumain) printf("tmp = %s\n", tmp);
     sprintf(ligne, "%s %d %d %d ", tmp, thisConjoint, thisPere, thisMere);
-    //printf("ligne = %s\n", ligne);
-    //printf("sauvegarde de %d enfants\n", nbEnfants);
+    //if (debugHumain) printf("ligne = %s\n", ligne);
+    //if (debugHumain) printf("sauvegarde de %d enfants\n", nbEnfants);
     for (int j = 0 ; j < nbEnfants ; j++){
         //printf("sauvegarde de l'enfant %d\n", j);
         sprintf(tmp,"%d ", this->enfants[j]->getId());
         strcat(ligne, tmp);
     }
     strcat(ligne, "\n");
-    //printf("Humain::sauve => Ligne a sauvegarder : %s\n", ligne);
+    //if (debugHumain) printf("Humain::sauve => Ligne a sauvegarder : %s\n", ligne);
     fputs(ligne, fic);
     fflush(fic);
 }
@@ -705,7 +700,7 @@ void Humain::sauve(FILE *fic){
 //
 //-------------------------------------------
 void Humain::sauveJson(FILE *fic){
-    //printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    //if (debugHumain) printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
     int thisPere, thisMere, thisConjoint;
     if (this->pere == NULL) thisPere = -1;
     else thisPere = this->pere->getId();
@@ -726,7 +721,7 @@ void Humain::sauveJson(FILE *fic){
     fprintf(fic, "\"idMere\": %d ,", thisMere);
     fprintf(fic, "\"enfants\": [ ");
     for (int j = 0 ; j < nbEnfants ; j++){
-        //printf("sauvegarde de l'enfant %d\n", j);
+        //if (debugHumain) printf("sauvegarde de l'enfant %d\n", j);
         fprintf(fic, "      {\"id\": %d},", this->enfants[j]->getId());
     }
     fprintf(fic, " ]");
@@ -741,18 +736,18 @@ void Humain::sauveJson(FILE *fic){
 //
 //-------------------------------------------
 void Humain::vieillir(void){
-    //printf("Humain::vieillir => debut pour\n");
+    //if (debugHumain) printf("Humain::vieillir => debut pour\n");
     if (strcmp(this->nom, "dieu") != 0){ // dieu ne vieilli pas => immortel
         if (this->status != MORT){ // on ne fait pas vieillir les morts
             this->age++;
             this->pointsDeVie--;
-            //printf("Humain::vieillir => age %s = %d\n", this->getNomComplet(), age);
+            //if (debugHumain) printf("Humain::vieillir => age %s = %d\n", this->getNomComplet(), age);
             int ageRandom;
             int probabilite;
 
             // test mort de vieillesse 60 + random(40)
             ageRandom = 60 + getRandom(40);
-            //printf("age de deces pour %s : %d\n",this->nom, ageRandom);
+            //if (debugHumain) printf("age de deces pour %s : %d\n",this->nom, ageRandom);
             if (this->age >= ageRandom){
                 printf("*************************************\n");
                 printf("%s mort de vieillesse\n", this->getNomComplet());
@@ -782,12 +777,12 @@ void Humain::vieillir(void){
         // dieu genere des naissance s'il n'y pas assez d'humains
         if(getNbVivants() < 15){
             enfantDieu child = getRandomEnfant();
-            printf("enfant genere automatiquement par dieu (%s %s,%d)\n", child.nom, child.prenom, child.genre);
+            if (debugHumain) printf("Humain::vieillir => enfant genere automatiquement par dieu (%s %s,%d)\n", child.nom, child.prenom, child.genre);
             this->naissance(child.genre, child.nom, child.prenom);
             //printf("fin enfant genere automatiquement par dieu \n");
         }
     }
-    //printf("Humain::vieillir => fin\n");
+    //if (debugHumain) printf("Humain::vieillir => fin\n");
 }
 
 //-------------------------------------------
@@ -797,7 +792,7 @@ void Humain::vieillir(void){
 //-------------------------------------------
 bool Humain::credite(int montant){
     if (montant < 0){
-        printf("ERREUR : debit impossible\n");
+        printf("ERREUR : credit de somme negative interdit\n");
         return false;
     }
     this->compteBancaire->credite(montant);
@@ -834,10 +829,11 @@ int Humain::getNumCompte(void){
 //
 //-------------------------------------------
 void Humain::commande(Produit *produit, int quantite){
-    printf("Humain:: %s commande => produit = %s, quantite = %d\n", getNomComplet(), produit->getNom(), quantite);
+    debugHumain=true;
+    if (debugHumain) printf("Humain::commande(1) => %s commande produit = %s, quantite = %d\n", getNomComplet(), produit->getNom(), quantite);
     Commande *ptrCde;
     if (produit->getPrix() > getSoldeBancaire()){
-        printf("Humain::commande => ERREUR : commande impossble (budget insuffisant\n");
+        if (debugHumain) printf("Humain::commande => ERREUR : commande impossble (budget insuffisant\n");
         return;
     }
     ptrCde = new Commande(produit, quantite, this);
@@ -846,10 +842,11 @@ void Humain::commande(Produit *produit, int quantite){
     }
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         if (listeCommandes[i] == NULL){
-            listeCommandes[i] = ptrCde;
+            debugHumain=true;
             break;
         }
     }
+    debugHumain=false;
 }
 
 //-------------------------------------------
@@ -858,7 +855,7 @@ void Humain::commande(Produit *produit, int quantite){
 //
 //-------------------------------------------
 void Humain::gereCommandesEnCours(){
-    //printf("Humain::gereCommandeEnCours => debut \n");
+    //if (debugHumain) if (debugHumain) printf("Humain::gereCommandeEnCours => debut \n");
     Commande *ptrCde;
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         ptrCde = listeCommandes[i];
@@ -866,16 +863,23 @@ void Humain::gereCommandesEnCours(){
             if (ptrCde->getClient() == this){
                 switch (ptrCde->getStatus()){
                     case COMMANDE_DISPONIBLE:
-                        printf("Humain::gereCommandeEnCours => status = COMMANDE DISPONIBLE \n");
+                        if (debugHumain) printf("Humain::gereCommandeEnCours => %s, status = COMMANDE DISPONIBLE %d\n", getNomComplet(), ptrCde->getNumero());
                         // recuperation du nombre de points de vie du produit 
                         if (this->getSoldeBancaire() > ptrCde->getProduit()->getPrix()){
                             this->debite(ptrCde->getProduit()->getPrix());
-                            ptrCde->changeStatus(COMMANDE_SOLDEE);
+                            ptrCde->changeStatus(COMMANDE_LIVREE);
                             pointsDeVie += ptrCde->getProduit()->getNbPointsDeVie();
+                        } else {
+                            if (debugHumain) printf("Humain::gereCommandeEnCours => %s, budget insuffisant pour payer la commande %d\n", getNomComplet(), ptrCde->getNumero());
                         }
                         break;
                     case COMMANDE_IMPOSSIBLE:
-                        printf("Humain::gereCommandeEnCours => status = COMMANDE IMPOSSIBLE \n");
+                        if (debugHumain) printf("Humain::gereCommandeEnCours => %s, status = COMMANDE IMPOSSIBLE \n", getNomComplet());
+                        listeCommandes[i] = NULL;
+                        delete ptrCde;
+                        break;
+                    case COMMANDE_SOLDEE:
+                        if (debugHumain) printf("Humain::gereCommandeEnCours => %s, status = COMMANDE SOLDEE (%d) \n", getNomComplet(), ptrCde->getNumero());
                         listeCommandes[i] = NULL;
                         delete ptrCde;
                         break;
@@ -894,13 +898,14 @@ void Humain::gereCommandesEnCours(){
 //
 //-------------------------------------------
 void Humain::boucleTraitement(void){
-    //printf("Humain::boucleTraitement => debut pour %s\n", getNomComplet());
+    debugHumain=true;
+    //if (debugHumain) printf("Humain::boucleTraitement => debut pour %s\n", getNomComplet());
     this->vieillir();
     this->testMariage();
     this->testNaissance();
     this->achats();
     this->gereCommandesEnCours();
-    //printf("Humain::boucleTraitement => fin\n");
+    //if (debugHumain) printf("Humain::boucleTraitement => fin\n");
 }
 
 //-------------------------------------------

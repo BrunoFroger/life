@@ -8,7 +8,12 @@
 #define __HUMAIN__
 
     #include <string>
+
     #include "variables.hpp"
+    #include "statistiques.hpp"
+    #include "compteBancaire.hpp"
+    #include "entreprise.hpp"
+    #include "produit.hpp"
 
     // genre humain
     #define HOMME 1
@@ -30,6 +35,7 @@
     class Entreprise;
     class CompteBancaire;
     class Produit;
+    class Humain;
 
     typedef struct{
         Produit *produit;

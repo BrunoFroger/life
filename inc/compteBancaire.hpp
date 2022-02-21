@@ -4,14 +4,12 @@
 //
 //-----------------------------------
 
-#include "humain.hpp"
-#include "entreprise.hpp"
-
 #ifndef __BANQUE__
 #define __BANQUE__
 
-    class CompteBancaire{
+    #include "variables.hpp"
 
+    class CompteBancaire{
         public:
             CompteBancaire(char *nomClient);
             void credite(int montant);

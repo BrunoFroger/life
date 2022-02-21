@@ -8,6 +8,9 @@
 #define __TOOLS__
     #include "variables.hpp"
     #include "entreprise.hpp"
+    #include "commande.hpp"
+    #include "humain.hpp"
+    #include "produit.hpp"
 
     typedef struct{
         char nom[20];
@@ -15,6 +18,10 @@
         int genre;
         int age;
     }enfantDieu;
+
+    class Humain;
+    class Entreprise;
+    class Commande;
 
     extern int getRandom(int range);
     extern enfantDieu getRandomEnfant(void);

@@ -8,13 +8,7 @@
 #include <ncurses.h>
 #include <unistd.h>
 
-#include "../inc/humain.hpp"
-#include "../inc/variables.hpp"
-#include "../inc/statistiques.hpp"
-#include "../inc/tools.hpp"
-#include "../inc/entreprise.hpp"
-#include "../inc/evolution.hpp"
-#include "../inc/initMonde.hpp"
+#include "../inc/life.hpp"
 
 Humain *ptr = NULL;
 Humain *ptr1 = NULL;
@@ -416,7 +410,7 @@ void afficheMenu(void){
     printf("  e : liste des comptes bancaires\n");
     printf("  f : liste des entreprises\n");
     printf("  g : liste des produits\n");
-    //printf("  h : liste des commandes en cours\n");
+    printf("  h : liste des commandes en cours\n");
     printf("  i : liste des salaries des entreprises\n");
     printf("  m : menu On/Off %d\n", menuOnOff);
     printf("  r : reset datas et chargement population par defaut\n");
@@ -435,6 +429,20 @@ void afficheMenu(void){
 }
 
 //-------------------------------------------
+//
+//          resetFlagsDebug
+//
+//-------------------------------------------
+void resetFlagsDebug(void){ 
+    debugHumain=false;
+    debugCommande=false;
+    debugEntreprise=false;
+    debugProduit=false;
+    debugStats=false;
+    debugCptBancaire=false;
+}
+
+//-------------------------------------------
 //-------------------------------------------
 //
 //          main
@@ -445,9 +453,9 @@ int main(int argc, char **argv)
 {
     printf("**********************************************\n");
     printf("**********************************************\n");
-    printf("****\n");
-    printf("****     Debut du programme %s\n", argv[0]);
-    printf("****\n");
+    printf("****                                      ****\n");
+    printf("****     Debut du programme %-10s    ****\n", argv[0]);
+    printf("****                                      ****\n");
     printf("**********************************************\n");
     printf("**********************************************\n");
     // creation d'un humain
@@ -460,26 +468,8 @@ int main(int argc, char **argv)
     idx = dieu->getId();
     strcpy(tmpString,"");
     setPrompt(tmpString);
-    /*
-    printf("creation de l'entreprise de production alimentaire\n");
-    Entreprise *supermarche = new Entreprise("supermarche", PROD_NOURITURE, dieu, 100);
-    supermarche->addProduit("nourriture", 2, 10, 5, 1);
-    supermarche->addProduit("vetements", 10, 10, 3, 5);
-    supermarche->addProduit("boisson", 1, 10, 3, 2);
-    
-    Humain *adam = dieu->naissance(HOMME, "martin", "adam");
-    Humain *pierre = adam->naissance(HOMME, "martin", "pierre");
-    Humain *eve = dieu->naissance(FEMME, "dupond", "eve");
-    Humain *paul = eve->naissance(HOMME, "dupond", "paul");
-    adam->mariage(eve);
-    Humain *marie = adam->naissance(FEMME, "martin", "marie");
-    Humain *joseph = adam->naissance(HOMME, "martin", "joseph");
-    Humain *jesus = marie->naissance(HOMME, "martin", "jesus");
-    //dieu->descendance();
-    */
-    
 
-    // analyse des parametres pour eventuellment charger un fichier de donnees
+    // analyse des parametres pour eventuellment charger un fichier de donnees ou initialiser le monde par defaut
     if (argc > 1){
         if (strcmp(argv[1], "init") == 0){
             initMonde(dieu);
@@ -497,6 +487,7 @@ int main(int argc, char **argv)
 
     // boucle d'evolution
     while (!fin){
+        resetFlagsDebug();
         if (listeAuto) afficheListeHumains();
         if (statAuto) statistiques();
         if (menuOnOff) afficheMenu();
@@ -654,9 +645,9 @@ int main(int argc, char **argv)
             case 'g' : // affiche liste des produits disponibles
                 afficheListeProduits();
                 break;
-            /*case 'h' : // affiche liste des produits disponibles
+            case 'h' : // affiche liste des commandes disponibles
                 afficheListeCommandes();
-                break;*/
+                break;
             case 'i' : // affiche liste des salarie des entreprises
                 Entreprise *ptrEnt;
                 for (int i = 0 ; i < MAX_ENTREPRISES ; i++){

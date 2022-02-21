@@ -20,9 +20,14 @@
     #define COMMANDE_SOLDEE         5
 
     #include "variables.hpp"
-    //#include "entreprise.hpp"
-    //#include "humain.hpp"
     #include "produit.hpp"
+    #include "humain.hpp"
+    #include "entreprise.hpp"
+
+    class Humain;
+    class Entreprise;
+    class Produit;
+
 
     class Commande {
         public:

@@ -10,7 +10,6 @@
 #include <stdio.h>
 
 #include "../inc/compteBancaire.hpp"
-#include "../inc/variables.hpp"
 
 int prochainNumeroCompte=1;
 
@@ -20,7 +19,7 @@ int prochainNumeroCompte=1;
 //
 //-------------------------------------------
 CompteBancaire::CompteBancaire(char *client){
-    //printf("Creation de compte bancaire pour <%s>\n", client);
+    if (debugCptBancaire) printf("Creation de compte bancaire pour <%s>\n", client);
     this->numCompte = nbComptesBancaires;
     strcpy(this->nomClient,client);
     this->solde = 0;
@@ -34,6 +33,9 @@ CompteBancaire::CompteBancaire(char *client){
 //
 //-------------------------------------------
 void CompteBancaire::credite(int montant){
+    if (montant < 0){
+        printf("CompteBancaire::credite => interdit de crediter des sommes negatives\n");
+    }
     this->solde += montant;
 }
 

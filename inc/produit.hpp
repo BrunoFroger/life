@@ -51,6 +51,7 @@
 
     #include "variables.hpp"
     
+
     class Produit {
         public:
             Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication, int dureeVie, int delaiFab, int indiceNecessite);

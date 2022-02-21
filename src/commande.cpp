@@ -8,8 +8,7 @@
 #include <string>
 #include <iostream>
 
-#include "../inc/variables.hpp"
-#include "../inc/tools.hpp"
+#include "../inc/commande.hpp"
 
 //-------------------------------------------
 //
@@ -26,7 +25,8 @@ Commande::~Commande(void){
 //
 //-------------------------------------------
 Commande::Commande(Produit *produit, int qte, Humain *client){
-    //printf("Commande::Commande => creation d'une commande mode standard \n");
+    //debugCommande=true;
+    if (debugCommande) printf("Commande::Commande => creation de la commande %d mode standard (%s commande %d %s) : ", nbCommandes, client->getNomComplet(), qte, produit->getNom());
     this->produit = produit;
     this->client = client;
     this->quantite = qte;
@@ -41,16 +41,23 @@ Commande::Commande(Produit *produit, int qte, Humain *client){
                 this->numero = nbCommandes;
                 this->fabricant = ptrEntreprise;
                 this->status = COMMANDE_INITIALISEE;
-                //printf("commande OK\n");
+                if (debugCommande) printf("commande OK\n");
+                for (int j = 0 ; j < MAX_COMMANDES ; j++){
+                    if (listeCommandes[j] == NULL){
+                        listeCommandes[j] = this;
+                        break;
+                    }
+                }
+                nbCommandes++;
+                return;
             }
         } 
-        listeCommandes[nbCommandes] = this;
-        nbCommandes++;
-        return;
     }
     // on a pas trouvé d'entreprise qui a ce produit en stock
     // il faut creer une entreprise qui fabrique ce produit
-    printf("Commande::Commande => ERREUR : aucune entreprise ne fabrique ce produit %s\n", produit->getNom());
+    if (debugCommande) printf("commande KO\n");
+    if (debugCommande) printf("Commande::Commande => ERREUR : aucune entreprise ne fabrique ce produit %s\n", produit->getNom());
+    debugCommande=false;
 }
 
 //-------------------------------------------
@@ -59,7 +66,7 @@ Commande::Commande(Produit *produit, int qte, Humain *client){
 //
 //-------------------------------------------
 Commande::Commande(char *datas){
-    printf("Commande::Commande => creation d'une commande avec ligne datas (%s)\n", datas);
+    if (debugCommande) printf("Commande::Commande => creation d'une commande avec ligne datas (%s)\n", datas);
     int ligne_numero, ligne_status, ligne_quantite, ligne_clientId, ligne_entrepriseId, ligne_produitId;
     sscanf(datas, "commande %d %d %d %d %d %d", &ligne_numero, &ligne_status, &ligne_quantite, &ligne_clientId, &ligne_entrepriseId, &ligne_produitId);
     this->numero = ligne_numero;
@@ -72,7 +79,7 @@ Commande::Commande(char *datas){
     //displayCommande();
     // on a pas trouvé d'entreprise qui a ce produit en stock
     // il faut creer une entreprise qui fabrique ce produit
-    printf("Commande::Commande => ERREUR : aucune entreprise ne fabrique ce produit %s\n", produit->getNom());
+    if (debugCommande) printf("Commande::Commande => ERREUR : aucune entreprise ne fabrique ce produit %s\n", produit->getNom());
 }
 
 //-------------------------------------------
@@ -81,15 +88,16 @@ Commande::Commande(char *datas){
 //
 //-------------------------------------------
 void Commande::displayCommande(void){
-    printf("+-----------------------------------+\n");
-    printf("|     commande n°  %5d            |\n", this->numero);
-    printf("+----------+------------------------+\n");
-    printf("| Status   |  %20s  |\n", this->getStatusString());
-    printf("| quantite |  %20d  |\n", this->quantite);
-    printf("| clientId |  %20s  |\n", this->client->getNomComplet());
-    printf("| entrepId |  %20s  |\n", this->fabricant->getNom());
-    printf("| produit  |  %20s  |\n", this->produit->getNom());
-    printf("+----------+------------------------+\n");
+    debugCommande = true;
+    if (debugCommande) printf("+-----------------------------------+\n");
+    if (debugCommande) printf("|     commande n°  %5d            |\n", this->numero);
+    if (debugCommande) printf("+----------+------------------------+\n");
+    if (debugCommande) printf("| Status   |  %20s  |\n", this->getStatusString());
+    if (debugCommande) printf("| quantite |  %20d  |\n", this->quantite);
+    if (debugCommande) printf("| clientId |  %20s  |\n", this->client->getNomComplet());
+    if (debugCommande) printf("| entrepId |  %20s  |\n", this->fabricant->getNom());
+    if (debugCommande) printf("| produit  |  %20s  |\n", this->produit->getNom());
+    if (debugCommande) printf("+----------+------------------------+\n");
     
 }
 
@@ -108,18 +116,20 @@ int Commande::getStatus(void){
 //
 //-------------------------------------------
 void Commande::boucleTraitement(void){
-    //printf("Commande::boucleTraitement => boucleTraitement : debut\n");
+    if (debugCommande) printf("Commande::boucleTraitement => boucleTraitement : debut\n");
     switch(this->status){
         case COMMANDE_INITIALISEE:
-            //printf("Commande::boucleTraitement => boucleTraitement : commande de %s initialisee\n", this->produit->getNom());
+            //if (debugCommande) printf("Commande::boucleTraitement => boucleTraitement : commande de %s initialisee\n", this->produit->getNom());
             // recherche d'une entreprise capable de founir ce produit
             // boucle sur les entreprises
             if (this->getProduit()->getStock() > this->quantite){
                 this->status = COMMANDE_EN_COURS;
+            } else {
+                this->status = COMMANDE_EN_ATTENTE;
             }
             break;
         default:
-            //printf("Commande::boucleTraitement => ERREUR : status incorrect %d\n", this->status);
+            //if (debugCommande) printf("Commande::boucleTraitement => ERREUR : status incorrect %d\n", this->status);
             break;
     }
 }
@@ -131,6 +141,9 @@ void Commande::boucleTraitement(void){
 //-------------------------------------------
 char *Commande::getStatusString(void){
     switch(status){
+        case COMMANDE_IMPOSSIBLE:
+            strcpy(tmpString, "IMPOSSIBLE");
+            break;
         case COMMANDE_INITIALISEE:
             strcpy(tmpString, "INIT");
             break;
@@ -140,8 +153,14 @@ char *Commande::getStatusString(void){
         case COMMANDE_EN_ATTENTE:
             strcpy(tmpString, "EN ATTENTE");
             break;
+        case COMMANDE_DISPONIBLE:
+            strcpy(tmpString, "DISPONIBLE");
+            break;
         case COMMANDE_LIVREE:
             strcpy(tmpString, "LIVREE");
+            break;
+        case COMMANDE_SOLDEE:
+            strcpy(tmpString, "SOLDEE");
             break;
         default:
             strcpy(tmpString, "INCONNU");
@@ -201,16 +220,16 @@ int Commande::getNumero(void){
 //
 //-------------------------------------------
 void Commande::sauve(FILE *fichier){
-    printf("Commande::sauve => debut\n");
+    if (debugCommande) printf("Commande::sauve => debut\n");
     int id_client, id_fabricant, id_produit;
     id_client = this->client->getId();
     id_fabricant = this->fabricant->getId();
     id_produit = this->produit->getId();
     sprintf(tmpString,"commande %d %d %d %d %d %d", this->numero, this->status, this->quantite, id_client, id_fabricant, id_produit);
-    printf("Commande::sauve => ligne sauvegardee : %s\n", tmpString);
+    if (debugCommande) printf("Commande::sauve => ligne sauvegardee : %s\n", tmpString);
     fprintf(fichier, "%s\n", tmpString);
     fflush(fichier);
-    printf("Commande::sauve => fin\n");
+    if (debugCommande) printf("Commande::sauve => fin\n");
 }
 
 //-------------------------------------------
@@ -219,7 +238,7 @@ void Commande::sauve(FILE *fichier){
 //
 //-------------------------------------------
 void Commande::sauveJson(FILE *fic){
-    //printf("Commande::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    if (debugCommande) printf("Commande::sauveJson => Sauvegarde de la commande %d\n", this->numero);
     int id_client, id_fabricant, id_produit;
     id_client = this->client->getId();
     id_fabricant = this->fabricant->getId();
@@ -241,6 +260,6 @@ void Commande::sauveJson(FILE *fic){
 //
 //-------------------------------------------
 void Commande::changeStatus(int nouveauStatus){
-    printf("Commande::changeStatus => nouveau status = %s\n", getStatusString());
+    if (debugCommande) printf("Commande::changeStatus => nouveau status = %s\n", getStatusString());
     this->status = nouveauStatus;
 }

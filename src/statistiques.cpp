@@ -4,8 +4,9 @@
 //
 //-----------------------------------
 
-#include "../inc/variables.hpp"
-#include "../inc/tools.hpp"
+#include <stdio.h>
+
+#include "../inc/statistiques.hpp"
 
 #define TAILLE_TABLEAU  85
 #define NB_COLONNES     3
@@ -193,7 +194,7 @@ void displayDatas(void){
     // affichage des entreprises
     if (display_stat_entreprises){
         sprintf(string2[numLigne2++], "+-----------------------------------------------------------------------------+");
-        sprintf(string2[numLigne2++], "|      Entreprises       (%3d)                                                 |", nbEntreprises);
+        sprintf(string2[numLigne2++], "|      Entreprises       (%3d)                                                |", nbEntreprises);
         sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
         sprintf(string2[numLigne2++], "|                   nom  |  nb salarie | effectif max|               patron   |");
         sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
@@ -236,6 +237,7 @@ void displayDatas(void){
     }
 
     // affichage des commandes
+    debugStats=true;
     if (display_stat_commandes){
         sprintf(string2[numLigne2++], "+----------------------------------------------------------------------------------------------------------+");
         sprintf(string2[numLigne2++], "|      commandes       (nb = %5d)                                                                        |", nbCommandes);
@@ -243,21 +245,22 @@ void displayDatas(void){
         sprintf(string2[numLigne2++], "|  num cde  |           entreprise  |               client  |       nom du produit  |    qte  |     status |");
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
         Commande *ptrCommande;
-        //printf("nbCommandes = %d\n", nbCommandes);
+        //if (debugStats) printf("nbCommandes = %d\n", nbCommandes);
         for (int i = 0 ; i < MAX_COMMANDES ; i++){
-            //printf("test commande %d\n", i);
+            //if (debugStats) printf("test commande %d\n", i);
             ptrCommande = listeCommandes[i];
             //printf("ptrCommande initialise\n");
             if (ptrCommande != NULL){
-                //printf("ptrCommande %d != null\n", i);
+                //if (debugStats) printf("ptrCommande %d != null\n", i);
                 sprintf(string2[numLigne2++], "|  %5d    |  %20s |  %20s |  %20s |  %6d | %10s |", ptrCommande->getNumero(), ptrCommande->getFabricant()->getNom(), 
                     ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), 
                     ptrCommande->getQuantite(), ptrCommande->getStatusString());
-                //printf("ligne %3d = %s\n", i, string2[numLigne2-1]);
+                //if (debugStats) printf("ligne %3d = %s\n", i, string2[numLigne2-1]);
             }
         }
         sprintf(string2[numLigne2++], "+-----------+-----------------------+-----------------------+-----------------------+---------+------------+");
     }
+    debugStats=false;
     displayBloc();
 }
 
@@ -270,21 +273,24 @@ void displayDatas(void){
 void resetStats(void){
     nbHommes=0;
     nbHommesMorts=0;
+    nbFemmes=0;
     nbFemmesMortes=0;
+    nbCelibataires=0;
+    nbCouples=0;
     nbDivorces=0;
     nbveufs=0;
     nbMorts=0;
     nb00_20ans=0;
-    hommes00_20ans=0;
-    femmes00_20ans=0;
     nb20_40ans=0;
-    hommes20_40ans=0;
-    femmes20_40ans=0;
     nb40_60ans=0;
-    hommes40_60ans=0;
-    femmes40_60ans=0;
     nb60_plus=0;
+    hommes00_20ans=0;
+    hommes20_40ans=0;
+    hommes40_60ans=0;
     hommes60_plus=0;
+    femmes00_20ans=0;
+    femmes20_40ans=0;
+    femmes40_60ans=0;
     femmes60_plus=0;
 }
 

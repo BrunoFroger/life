@@ -19,8 +19,12 @@
 
     #include <stdio.h>
     #include <string>
+
     #include "variables.hpp"
     #include "produit.hpp"
+    #include "tools.hpp"
+    #include "commande.hpp"
+    #include "humain.hpp"
 
 
     #define MAX_SALARIE     50
@@ -44,6 +48,7 @@
 
     class Humain;
     class CompteBancaire;
+    class Commande;
 
     typedef struct{
         Humain *salarie;
@@ -53,24 +58,7 @@
         int productivite;   // nb unite de travail de ce salarie 
     } structSalarie;
 
-    /*
-    typedef struct{
-        char nom[20];
-        int prix;
-        int stock;
-        int stockMini;
-        int coutFabrication;    // cout en unite de travail
-    } structProduit;
-
-    typedef struct{
-        Humain *client;
-        char nomProduit[20];
-        int quantite;
-    } structCommande;
-    */
-
     class Entreprise{
-
         public:
             Entreprise(char *nom, int typeProd, Humain *patron, int effectifMax);
             Entreprise(char *datas);

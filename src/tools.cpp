@@ -8,11 +8,13 @@
 #include <cstdlib>
 #include <string.h>
 #include <ctime>
+
 #include "../inc/tools.hpp"
+/*
 #include "../inc/humain.hpp"
 #include "../inc/variables.hpp"
 #include "../inc/compteBancaire.hpp"
-
+*/
 char listePrenomsHomme[][20] = {
     "Adam", "Joseph", "Pierre", "Paul", "Louis", "Vincent", "Louis",
     "Andre", "Michel", "Jean", "Jacques", "Bernard", "Marcel", "bernard",
@@ -45,13 +47,14 @@ char *getstringBoolean(bool val){
     }
     return tmpString;
 }
+
 //-------------------------------------------
 //
 //          getRandom
 //
 //-------------------------------------------
 int getRandom(int range){
-    //printf("genere nombre aleatoire entre 0 et %d\n", range);
+    //if (debugTools) printf("genere nombre aleatoire entre 0 et %d\n", range);
     srand(clock());
     int tmp = rand() % ((range) * 10);
     tmp /= 10;
@@ -67,7 +70,7 @@ int getRandom(int range){
 //-------------------------------------------
 char *getPrenomMasculin(void){
     int nbPrenomMasculin = sizeof(listePrenomsHomme) / 20;
-    //printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
+    //if (debugTools) printf("nombre de prenoms masculin disponibles : %d\n", nbPrenomMasculin);
     return listePrenomsHomme[rand() % nbPrenomMasculin];
 }
 
@@ -78,7 +81,7 @@ char *getPrenomMasculin(void){
 //-------------------------------------------
 char *getPrenomFeminin(void){
     int nbPrenomFeminin = sizeof(listePrenomsFemme) / 20;
-    //printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
+    //if (debugTools) printf("nombre de prenoms feminin disponibles : %d\n", nbPrenomFeminin);
     return listePrenomsFemme[rand() % nbPrenomFeminin];
 }
 
@@ -89,7 +92,7 @@ char *getPrenomFeminin(void){
 //-------------------------------------------
 char *getNomFamille(void){
     int nbNomFamille = sizeof(listeNomFamille) / 20;
-    //printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
+    //if (debugTools) printf("nombre de noms de famille disponibles : %d\n", nbNomFamille);
     return listeNomFamille[rand() % nbNomFamille];
 }
 
@@ -112,15 +115,6 @@ int getRandomGenre(void){
 //-------------------------------------------
 enfantDieu child;
 enfantDieu getRandomEnfant(void){
-
-    /*
-    child.genre = rand() % 20;
-    printf("child.genre : %d\n", child.genre);
-    child.genre /= 10;
-    printf("child.genre : %d\n", child.genre);
-    child.genre += 1;
-    printf("child.genre : %d\n", child.genre);
-    */
     child.genre = getRandomGenre();
     strcpy(child.nom, getNomFamille());
     child.age = 0;
@@ -133,7 +127,7 @@ enfantDieu getRandomEnfant(void){
             strcpy(child.prenom, getPrenomFeminin());
             break;
     }
-    //printf("enfant retourne : %s %s (%d)\n", child.nom, child.prenom, child.genre);
+    if (debugTools) printf("enfant retourne : %s %s (%d)\n", child.nom, child.prenom, child.genre);
 
     return child;
 }
@@ -146,7 +140,7 @@ enfantDieu getRandomEnfant(int age){
 
     child = getRandomEnfant();
     child.age = age;
-    //printf("Enfant de dieu initialise a l'age de %d\n", child.age);
+    if (debugTools) printf("Enfant de dieu initialise a l'age de %d\n", child.age);
     return child;
 }
 
@@ -156,15 +150,16 @@ enfantDieu getRandomEnfant(int age){
 //
 //-------------------------------------------
 void afficheListeHumains(void){
+    debugTools=true;
     Humain *ptr;
-    printf("nombres d'humains crees : %d\n", nbHumains);
-    printf("+------+-----------------------+-------+-------+------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
-    printf("|  id  |                   nom | status| genre | age  |Pt vie| solde banque |                      employeur |                       conjoint |                 pere |                 mere | nb enfants |\n");
-    printf("+------+-----------------------+-------+-------+------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
+    if (debugTools) printf("nombres d'humains crees : %d\n", nbHumains);
+    if (debugTools) printf("+------+-----------------------+-------+-------+------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
+    if (debugTools) printf("|  id  |                   nom | status| genre | age  |Pt vie| solde banque |                      employeur |                       conjoint |                 pere |                 mere | nb enfants |\n");
+    if (debugTools) printf("+------+-----------------------+-------+-------+------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
     for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
         if (vivantsSeulement && (ptr->getStatus() == 'X')) {
-            //printf("on imprime pas les morts \n");
+            //if (debugTools) printf("on imprime pas les morts \n");
             continue;
         }
         char genre = ptr->getGenreTexte()[0];
@@ -185,27 +180,27 @@ void afficheListeHumains(void){
         if (ptr->getMere() != NULL){
             strcpy(mere, ptr->getMere()->getNomComplet());
         }
-        printf("| %3d  |", ptr->getId());
-        printf(" %20s  |", ptr->getNomComplet());
-        printf("   %c   |", status);
-        printf("   %c   |", genre);
-        printf(" %3d  |", ptr->getAge());
-        printf(" %3d  |", ptr->getPointsDeVie());
-        printf("    %8d  |", ptr->getSoldeBancaire());
-        printf(" %30s |", employeur);
-        printf(" %30s |", conjoint);
-        printf(" %20s |", pere);
-        printf(" %20s |", mere);
-        printf("    %2d      |",  ptr->getNbEnfants());
+        if (debugTools) printf("| %3d  |", ptr->getId());
+        if (debugTools) printf(" %20s  |", ptr->getNomComplet());
+        if (debugTools) printf("   %c   |", status);
+        if (debugTools) printf("   %c   |", genre);
+        if (debugTools) printf(" %3d  |", ptr->getAge());
+        if (debugTools) printf(" %3d  |", ptr->getPointsDeVie());
+        if (debugTools) printf("    %8d  |", ptr->getSoldeBancaire());
+        if (debugTools) printf(" %30s |", employeur);
+        if (debugTools) printf(" %30s |", conjoint);
+        if (debugTools) printf(" %20s |", pere);
+        if (debugTools) printf(" %20s |", mere);
+        if (debugTools) printf("    %2d      |",  ptr->getNbEnfants());
         if (ptr->getNbEnfants() != 0){
             for (int ii = 0 ; ii < ptr->getNbEnfants() ; ii++){
-                printf(" %s,", ptr->getEnfant(ii)->getPrenom());
+                if (debugTools) printf(" %s,", ptr->getEnfant(ii)->getPrenom());
             }
         }
-        printf("\n");
+        if (debugTools) printf("\n");
     }
-    printf("+------+-----------------------+-------+-------+------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
-    printf("\n");
+    if (debugTools) printf("+------+-----------------------+-------+-------+------+------+--------------+--------------------------------+--------------------------------+----------------------+----------------------+------------+\n");
+    if (debugTools) printf("\n");
 }
 
 //-------------------------------------------
@@ -214,18 +209,19 @@ void afficheListeHumains(void){
 //
 //-------------------------------------------
 void afficheListeComptesBancaires(void){
-    printf("+-------------------------------------------+\n");
-    printf("|      Comptes bancaires                    |\n");
-    printf("+------------------------+---------+--------+\n");
-    printf("|             nom Client | num cpt |  solde |\n");
-    printf("+------------------------+---------+--------+\n");
+    debugTools=true;
+    if (debugTools) printf("+-------------------------------------------+\n");
+    if (debugTools) printf("|      Comptes bancaires                    |\n");
+    if (debugTools) printf("+------------------------+---------+--------+\n");
+    if (debugTools) printf("|             nom Client | num cpt |  solde |\n");
+    if (debugTools) printf("+------------------------+---------+--------+\n");
     for (int i = 0 ; i < nbComptesBancaires ; i++){
         if (listeComptesBancaires[i]->getNumCompte() != -1){
             CompteBancaire *item = listeComptesBancaires[i];
-            printf("|   %20s |  %06d | %6d |\n", item->getNomClient(), item->getNumCompte(), item->getSolde());
+            if (debugTools) printf("|   %20s |  %06d | %6d |\n", item->getNomClient(), item->getNumCompte(), item->getSolde());
         }
     }
-    printf("+------------------------+---------+--------+\n");
+    if (debugTools) printf("+------------------------+---------+--------+\n");
 }
 
 //-------------------------------------------
@@ -234,19 +230,20 @@ void afficheListeComptesBancaires(void){
 //
 //-------------------------------------------
 void afficheListeEntreprises(void){
-    printf("+--------------------------------------+\n");
-    printf("|      Entreprises     (%3d)           |\n", nbEntreprises);
-    printf("+------------------------+-------------+\n");
-    printf("|                   nom  |  nb salarie |\n");
-    printf("+------------------------+-------------+\n");
+    debugTools=true;
+    if (debugTools) printf("+--------------------------------------+\n");
+    if (debugTools) printf("|      Entreprises     (%3d)           |\n", nbEntreprises);
+    if (debugTools) printf("+------------------------+-------------+\n");
+    if (debugTools) printf("|                   nom  |  nb salarie |\n");
+    if (debugTools) printf("+------------------------+-------------+\n");
     Entreprise *item;
     for (int i = 0 ; i < MAX_ENTREPRISES ; i++){
         item = listeEntreprises[i];
         if (item != NULL){
-            printf("|   %20s |      %6d |\n", item->getNom(), item->getNbSalaries());
+            if (debugTools) printf("|   %20s |      %6d |\n", item->getNom(), item->getNbSalaries());
         }
     }
-    printf("+------------------------+-------------+\n");
+    if (debugTools) printf("+------------------------+-------------+\n");
 }
 
 //-------------------------------------------
@@ -255,24 +252,27 @@ void afficheListeEntreprises(void){
 //
 //-------------------------------------------
 void afficheListeProduits(void){
-    printf("+-----------------------------------------------------------------------------+\n");
-    printf("|      produits                                                               |\n");
-    printf("+-----------------------+-----------------------+---------+---------+---------+\n");
-    printf("|           entreprise  |       nom du produit  |    prix |  stock  | stk min |\n");
-    printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+    debugTools=true;
+    if (debugTools) printf("+-----------------------------------------------------------------------------+\n");
+    if (debugTools) printf("|      produits                                                               |\n");
+    if (debugTools) printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+    if (debugTools) printf("|           entreprise  |       nom du produit  |    prix |  stock  | stk min |\n");
+    if (debugTools) printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+    Produit *ptrProduit;
+    Entreprise *ptrEnt;
     for (int i = 0 ; i < nbEntreprises ; i++){
-        Produit *ptrProduit;
-        Entreprise *ptrEnt;
+        ptrEnt = listeEntreprises[i];
         int j=0;
         ptrProduit = listeProduits[j];
         while (ptrProduit != NULL){
-            ptrEnt = getEntrepriseById(ptrProduit->getProducteurId());
-            printf("|  %20s |  %20s |  %6d |  %6d |  %6d |\n", ptrEnt->getNom(), 
-                ptrProduit->getNom(), ptrProduit->getPrix(), ptrProduit->getStock(), ptrProduit->getStockMini());
+            if (ptrEnt->isInCatalogue(ptrProduit)){
+                if (debugTools) printf("|  %20s |  %20s |  %6d |  %6d |  %6d |\n", ptrEnt->getNom(), 
+                    ptrProduit->getNom(), ptrProduit->getPrix(), ptrProduit->getStock(), ptrProduit->getStockMini());
+            }
             ptrProduit = listeProduits[++j];
         }
     }
-    printf("+-----------------------+-----------------------+---------+---------+---------+\n");
+    if (debugTools) printf("+-----------------------+-----------------------+---------+---------+---------+\n");
 }
 
 //-------------------------------------------
@@ -281,20 +281,21 @@ void afficheListeProduits(void){
 //
 //-------------------------------------------
 void afficheListeCommandes(void){
-    printf("+---------------------------------------------------------------------------------+\n");
-    printf("|      commandes                                                                  |\n");
-    printf("+-----------------------+-----------------------+-----------------------+---------+\n");
-    printf("|           entreprise  |               client  |       nom du produit  |    qte  |\n");
-    printf("+-----------------------+-----------------------+-----------------------+---------+\n");
+    debugTools=true;
+    if (debugTools) printf("+---------------------------------------------------------------------------------+\n");
+    if (debugTools) printf("|      commandes                                                                  |\n");
+    if (debugTools) printf("+-----------------------+-----------------------+-----------------------+---------+\n");
+    if (debugTools) printf("|           entreprise  |               client  |       nom du produit  |    qte  |\n");
+    if (debugTools) printf("+-----------------------+-----------------------+-----------------------+---------+\n");
     for (int i = 0 ; i < nbCommandes ; i++){
         Commande *ptrCommande = listeCommandes[i];
         while (ptrCommande != NULL){
-            printf("|  %20s |  %20s |  %20s |  %6d |\n", ptrCommande->getFabricant()->getNom(), 
+            if (debugTools) printf("|  %20s |  %20s |  %20s |  %6d |\n", ptrCommande->getFabricant()->getNom(), 
                 ptrCommande->getClient()->getNomComplet(), ptrCommande->getProduit()->getNom(), ptrCommande->getQuantite());
             ptrCommande = listeCommandes[++i];
         }
     }
-    printf("+-----------------------+-----------------------+-----------------------+---------+\n");
+    if (debugTools) printf("+-----------------------+-----------------------+-----------------------+---------+\n");
 }
 
 //-------------------------------------------
@@ -303,12 +304,12 @@ void afficheListeCommandes(void){
 //
 //-------------------------------------------
 Entreprise *getEntrepriseById(int id){
-    //printf("tools::getEntrepriseById => debut (%d)\n", id);
+    //if (debugTools) printf("tools::getEntrepriseById => debut (%d)\n", id);
     Entreprise *ptrEntreprise;
     for (int i = 0 ; i < nbEntreprises ; i++){
         ptrEntreprise = listeEntreprises[i];
         if (ptrEntreprise->getId() == id){
-            //printf("tools::getEntrepriseById => entreprise trouvee");
+            //if (debugTools) printf("tools::getEntrepriseById => entreprise trouvee");
             return ptrEntreprise;
         }
     }
@@ -321,7 +322,7 @@ Entreprise *getEntrepriseById(int id){
 //
 //-------------------------------------------
 Humain *getHumainById(int id){
-    //printf("tools::getHumainById => debut (%d)\n", id);
+    if (debugTools) printf("tools::getHumainById => debut (%d)\n", id);
     Humain *ptr;
     for (int i = 0 ; i < nbHumains ; i++){
         ptr = listeHumains[i];
@@ -338,14 +339,21 @@ Humain *getHumainById(int id){
 //
 //-------------------------------------------
 Produit *getProduitById(int id){
-    //printf("tools::getProduitById => debut (%d)\n", id);
+    //debugTools=true;
+    if (debugTools) printf("tools::getProduitById => debut (%d) : ", id);
     Produit *ptr;
-    for (int i = 0 ; i < nbProduits ; i++){
+    for (int i = 0 ; i < MAX_PRODUITS ; i++){
         ptr = listeProduits[i];
-        if (ptr->getId() == id){
-            return ptr;
+        if (ptr != NULL){
+            if (ptr->getId() == id){
+                //if (debugTools) printf("OK (%s)\n", ptr->getNom());
+                debugTools=false;
+                return ptr;
+            }
         }
     }
+    //if (debugTools) printf("KO\n");
+    debugTools=false;
     return NULL;
 }
 
@@ -355,19 +363,18 @@ Produit *getProduitById(int id){
 //
 //-------------------------------------------
 Produit *getProduitByNom(char *nom){
-    //printf("tools::getProduitByName => debut (%s) parmi %d produits disponibles\n", nom, nbProduits);
+    if (debugTools) printf("tools::getProduitByNom => debut (%s) parmi %d produits disponible : ", nom, nbProduits);
     Produit *ptr;
     for (int i = 0 ; i < nbProduits ; i++){
         ptr = listeProduits[i];
         if (ptr != NULL){
-            //printf("test produit %s\n", ptr->getNom());
             if (strcmp(ptr->getNom(),nom) == 0){
-                //printf("=> OK\n");
+                if (debugTools) printf("=> OK (%s)\n", ptr->getNom());
                 return ptr;
             }
         }
     }
-    //printf("=> KO\n");
+    if (debugTools) printf("=> KO\n");
     return NULL;
 }
 
@@ -377,7 +384,7 @@ Produit *getProduitByNom(char *nom){
 //
 //-------------------------------------------
 Commande *getCommandeById(int id){
-    //printf("getProducteur => debut\n");
+    if (debugTools) printf("getProducteur => debut\n");
     Commande *ptr;
     for (int i = 0 ; i < nbCommandes ; i++){
         ptr = listeCommandes[i];

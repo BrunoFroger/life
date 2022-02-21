@@ -14,9 +14,9 @@
     #define MAX_HUMAINS         10000
 
     #include "humain.hpp"
-    #include "entreprise.hpp"
     #include "produit.hpp"
     #include "commande.hpp"
+    #include "entreprise.hpp"
     #include "compteBancaire.hpp"
 
     #define MIN_HUMAINS         15
@@ -53,4 +53,12 @@
     extern bool listeAuto;
     extern bool statAuto;
     extern bool menuOnOff;
+
+    extern bool debugHumain;
+    extern bool debugCommande;
+    extern bool debugEntreprise;
+    extern bool debugProduit;
+    extern bool debugStats;
+    extern bool debugCptBancaire;
+    extern bool debugTools;
 #endif

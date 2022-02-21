@@ -7,9 +7,7 @@
 #include <string>
 #include <iostream>
 
-#include "../inc/variables.hpp"
-#include "../inc/statistiques.hpp"
-#include "../inc/tools.hpp"
+#include "../inc/produit.hpp"
 
 //-------------------------------------------
 //
@@ -17,7 +15,8 @@
 //
 //-------------------------------------------
 Produit::Produit(char *nom, int type, int producteur_id, int stockInitial, int stockMini, int prix, int coutFabrication, int dureeVie, int delaiFab, int indiceNecessite){
-    //printf("Produit::Produit => creation du produit %d\n", nbProduits);
+    debugProduit = true;
+    if (debugProduit) printf("Produit::Produit => creation du produit %s en position %d\n", nom, nbProduits);
     this->id = nbProduits;
     strcpy(this->nom, nom);
     this->type = type;
@@ -137,10 +136,10 @@ int Produit::getCoutProduction(void){
 //
 //-------------------------------------------
 void Produit::sauve(FILE *fichier){
-    printf("Produit::sauve => debut\n");
+    if (debugProduit) printf("Produit::sauve => debut\n");
     fprintf(fichier, "produit %d %d %d %s %d %d %d %d %d %d %d\n", this->id, this->type, this->producteurId, this->nom, 
         this->prix, this->stock, this->stockMini, this->coutFabrication, this->dureeVie, this->delaiFabrication, this->indiceNecessite);
-    printf("Produit::sauve => fin\n");
+    if (debugProduit) printf("Produit::sauve => fin\n");
 }
 
 //-------------------------------------------
@@ -149,7 +148,7 @@ void Produit::sauve(FILE *fichier){
 //
 //-------------------------------------------
 void Produit::sauveJson(FILE *fic){
-    //printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
+    //if (debugProduit) printf("Humain::sauveJson => Sauvegarde de %s\n", this->getNomComplet());
     fprintf(fic, "      { \"id\": %d, ", this->id);
     fprintf(fic, "\"type\": \"%d\" ,", this->type);
     fprintf(fic, "\"producteurId\": \"%d\" ,", this->producteurId);
@@ -216,7 +215,7 @@ int Produit::getindiceNecessite(void){
 //
 //-------------------------------------------
 void Produit::boucleTraitement(void){
-    //printf("Produit::boucleTraitement => boucleTraitement %s : debut\n", this->nom);
+    //if (debugProduit) printf("Produit::boucleTraitement => boucleTraitement %s : debut\n", this->nom);
 }
 
 //-------------------------------------------
@@ -225,6 +224,6 @@ void Produit::boucleTraitement(void){
 //
 //-------------------------------------------
 void Produit::miseAJourStock(int quantite){
-    printf("Produit::miseAJourStock => modifie le stock de %d\n", quantite);
+    if (debugProduit) printf("Produit::miseAJourStock => modifie le stock de %d\n", quantite);
     this->stock += quantite;
 }

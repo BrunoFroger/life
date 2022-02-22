@@ -62,7 +62,7 @@ void initMonde(Humain *dieu){
     // creation des personnes directement issues de dieu
     for (i = 0 ; i < INIT_NB_HUMAINS ; i++){
         enfant = getRandomEnfant(getRandom(20) + 20); // creation d'adultes entre 20 et 40 ans
-        new Humain(dieu, enfant.genre, enfant.nom, enfant.prenom, enfant.age);
+        new Humain(dieu, enfant.genre, enfant.nom, enfant.prenom, enfant.nbJours);
     }
 
     printf("initMonde => mariage d'une partie de la population\n");

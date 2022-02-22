@@ -47,7 +47,7 @@
 
         public :
             Humain();
-            Humain(Humain *pere, int genre, char *nom, char *prenom, int age);
+            Humain(Humain *pere, int genre, char *nom, char *prenom, int nbJours);
             Humain(char *datas);
             ~Humain();
             void restore(char *datas);
@@ -69,6 +69,7 @@
             Humain *getPere();
             Humain *getMere();
             Humain *getEnfant(int index);
+            int getNbJours();
             int getAge();
             char *getGenreTexte();
             bool addEnfant(Humain *enfant);
@@ -87,6 +88,7 @@
         private :
             int id;         // id unique
             int genre;      // H ou F
+            int nbJours;        // nb jours
             int age;        // nb jours
             int nbEnfants;
             char genreTexte[10];

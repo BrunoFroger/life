@@ -117,7 +117,7 @@ enfantDieu child;
 enfantDieu getRandomEnfant(void){
     child.genre = getRandomGenre();
     strcpy(child.nom, getNomFamille());
-    child.age = 0;
+    child.nbJours = 0;
     
     switch(child.genre){
         case HOMME:
@@ -136,11 +136,11 @@ enfantDieu getRandomEnfant(void){
 //          getRandomEnfant
 //
 //-------------------------------------------
-enfantDieu getRandomEnfant(int age){
+enfantDieu getRandomEnfant(int nbJours){
 
     child = getRandomEnfant();
-    child.age = age;
-    if (debugTools) printf("Enfant de dieu initialise a l'age de %d\n", child.age);
+    child.nbJours = nbJours;
+    if (debugTools) printf("Enfant de dieu initialise a l'age de %d\n", child.nbJours);
     return child;
 }
 

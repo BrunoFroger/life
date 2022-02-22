@@ -255,6 +255,9 @@ void Entreprise::supprimeSalarie(Humain *personne){
         structSalarie *ptrSalarie = &listeSalarie[i];
         if (ptrSalarie->salarie != NULL){
             if (debugEntreprise) printf(" le salarie n'est pas null\n");
+            if (this->patron == personne){
+                this->patron = NULL;
+            }
             if (ptrSalarie->salarie == personne){
                 if (debugEntreprise) printf("c'est le bon salarie\n");
                 ptrSalarie->status = 0;
@@ -343,6 +346,7 @@ int Entreprise::getProductionPossible(void){
 //
 //-------------------------------------------
 void Entreprise::production(void){
+    debugEntreprise=true;
     if (debugEntreprise) printf("Entreprise::production => Boucle de production de l'entreprise %s (%d salarie)\n", this->nom, nbSalaries);
     //listeSalaries();
     // calcul capacité  a produire
@@ -353,14 +357,18 @@ void Entreprise::production(void){
     for (int i = 0 ; i < MAX_PRODUITS ; i++){
         ptrProduit = this->listeProduit[i];
         if (ptrProduit != NULL){
+            int coutProd = ptrProduit->getCoutProduction();
             if (ptrProduit->getStock() < ptrProduit->getStockMini()){
-                // il faut fabriquer ce produit
-                productionPossible -= ptrProduit->getCoutProduction();
-                ptrProduit->miseAJourStock(1);
-                if (debugEntreprise) printf("Entreprise::production => %s doit produit %s\n", this->nom, ptrProduit->getNom());
+                // il faut fabriquer ce produit si capacite de production suffisante
+                if (productionPossible > coutProd){
+                    productionPossible -= coutProd;
+                    ptrProduit->miseAJourStock(1);
+                    if (debugEntreprise) printf("Entreprise::production => %s à produit 1 %s\n", this->nom, ptrProduit->getNom());
+                }
             }
         }
     }
+    debugEntreprise=false;
 }
 
 //-------------------------------------------

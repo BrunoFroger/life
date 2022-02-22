@@ -10,7 +10,7 @@ Boucle générale d'evolution
 
 Evolution d'un humain
     chaque jour 
-        age (nb jours) += 1
+        nbJours (nb jours) += 1
         verifier etat des finances pour savoir si on peut acheter quelque chose
     1 fois par semaine
         commande de nourriture

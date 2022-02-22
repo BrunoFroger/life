@@ -16,7 +16,7 @@
         char nom[20];
         char prenom[20];
         int genre;
-        int age;
+        int nbJours;
     }enfantDieu;
 
     class Humain;
@@ -25,7 +25,7 @@
 
     extern int getRandom(int range);
     extern enfantDieu getRandomEnfant(void);
-    extern enfantDieu getRandomEnfant(int age);
+    extern enfantDieu getRandomEnfant(int nbJours);
     extern void afficheListeHumains(void);
     extern char *getPrenomMasculin(void);
     extern char *getPrenomFeminin(void);

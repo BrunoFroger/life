@@ -33,11 +33,11 @@ void Humain::setGenreTexte(){
 //          Humain::Humain
 //
 //-------------------------------------------
-Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int age){
+Humain::Humain(Humain *pere, int genre, char *nom, char *prenom, int nbJours){
     this->id=nbHumains;
     this->genre = genre;
     setGenreTexte();
-    this->age = age;
+    this->nbJours = nbJours;
     this->nbEnfants=0;
     strcpy(this->nom, nom);
     strcpy(this->prenom, prenom);
@@ -303,11 +303,21 @@ int Humain::getNbEnfants(void){
 
 //-------------------------------------------
 //
+//          Humain::getNbJours
+//
+//-------------------------------------------
+int Humain::getNbJours(void){
+    return this->nbJours;
+}
+
+
+//-------------------------------------------
+//
 //          Humain::getAge
 //
 //-------------------------------------------
 int Humain::getAge(void){
-    return this->age;
+    return this->nbJours / 365;
 }
 
 //-------------------------------------------
@@ -525,7 +535,9 @@ void Humain::deces(void){
         if (ptrCde != NULL){
             if ( ptrCde->getClient() == this){
                 if (debugHumain) printf("Humain::deces => commande %d supprimé \n", ptrCde->getNumero());
-                ptrCde = NULL;        
+                listeCommandes[i] = NULL;
+                delete ptrCde;
+                nbCommandes--;
                 break;
             }
         }

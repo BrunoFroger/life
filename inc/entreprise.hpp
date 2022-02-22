@@ -115,6 +115,7 @@
             int getProductionPossible(void);
             bool debite(int montant);
             void checkPatron(void);
+            void afficheListeProduits(void);
     };
 
 #endif

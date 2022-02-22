@@ -10,7 +10,7 @@
 
 #define TAILLE_TABLEAU  85
 #define NB_COLONNES     3
-#define NB_LIGNES       40
+#define NB_LIGNES       10000
 #define NB_MAX_ENFANTS  1000
 
 int nbEnfants = 0;
@@ -102,7 +102,8 @@ void displayBloc(void){
 //          displayDatas
 //
 //-------------------------------------------
-void displayDatas(void){    
+void displayDatas(void){
+    printf("statistiques: displayDatas => debut\n");
     if (display_stat_humain){
         sprintf(string1[numLigne1++], "+---------------------------------------------------+");
         sprintf(string1[numLigne1++], "|    statistiques %-25s         |", displayNomFichier);
@@ -121,16 +122,37 @@ void displayDatas(void){
         sprintf(string1[numLigne1++], "| nb produits       |  %5d        |               |", nbProduits);
         sprintf(string1[numLigne1++], "| nb commandes      |  %5d        |               |", nbCommandes);
         sprintf(string1[numLigne1++], "| nb cpt bancaires  |  %5d        |               |", nbComptesBancaires);
-        sprintf(string1[numLigne1++], "+-------------------+---------------+---------------+------------+");
-        sprintf(string1[numLigne1++], "|        repartition par age                                     |");
-        sprintf(string1[numLigne1++], "+------------+------------+------------+------------+------------+");
-        sprintf(string1[numLigne1++], "|            |   00 - 20  |   20 - 40  |   40 - 60  |   60 et +  |");
-        sprintf(string1[numLigne1++], "+------------+------------+------------+------------+------------+");
-        sprintf(string1[numLigne1++], "|   total    |    %3d     |    %3d     |    %3d     |    %3d     |", nb00_20ans, nb20_40ans, nb40_60ans, nb60_plus);
-        sprintf(string1[numLigne1++], "|   hommes   |    %3d     |    %3d     |    %3d     |    %3d     |", hommes00_20ans, hommes20_40ans, hommes40_60ans, hommes60_plus);
-        sprintf(string1[numLigne1++], "|   femmes   |    %3d     |    %3d     |    %3d     |    %3d     |", femmes00_20ans, femmes20_40ans, femmes40_60ans, femmes60_plus);
-        sprintf(string1[numLigne1++], "+------------+------------+------------+------------+------------+");
+        sprintf(string1[numLigne1++], "+-------------------+---------------+---------------+-----------+");
+        sprintf(string1[numLigne1++], "|        repartition par age                                    |");
+        sprintf(string1[numLigne1++], "+--------+------+-----------+-----------+-----------+-----------+");
+        sprintf(string1[numLigne1++], "|        | total|  00 - 20  |  20 - 40  |  40 - 60  |  60 et +  |");
+        sprintf(string1[numLigne1++], "+--------+------+-----+-----+-----+-----+-----+-----+-----+-----+");
+        sprintf(string1[numLigne1++], "|        |   nb |  nb |   %% |  nb |   %% |  nb |   %% |  nb |   %% |");
+        sprintf(string1[numLigne1++], "+--------+------+-----+-----+-----+-----+-----+-----+-----+-----+");
+        int pcent0_20, pcent20_40, pcent40_60, pcent60_plus;
+        int nbPersonnes = nbHumains - 1;
+        pcent0_20 = nb00_20ans  * 100 / nbPersonnes;
+        pcent20_40 = nb20_40ans  * 100 / nbPersonnes;
+        pcent40_60 = nb40_60ans  * 100 / nbPersonnes;
+        pcent60_plus = nb60_plus  * 100 / nbPersonnes;
+        sprintf(string1[numLigne1++], "| total  |  %3d | %3d | %3d | %3d | %3d | %3d | %3d | %3d | %3d |", 
+                nbPersonnes, nb00_20ans, pcent0_20, nb20_40ans, pcent20_40, nb40_60ans, pcent40_60, nb60_plus, pcent60_plus);
+        pcent0_20 = hommes00_20ans  * 100 / nbPersonnes;
+        pcent20_40 = hommes20_40ans  * 100 / nbPersonnes;
+        pcent40_60 = hommes40_60ans  * 100 / nbPersonnes;
+        pcent60_plus = hommes60_plus  * 100 / nbPersonnes;
+        sprintf(string1[numLigne1++], "| hommes |  %3d | %3d | %3d | %3d | %3d | %3d | %3d | %3d | %3d |", 
+                nbHommes ,hommes00_20ans, pcent0_20, hommes20_40ans, pcent20_40, hommes40_60ans, pcent40_60, hommes60_plus, pcent60_plus);
+        pcent0_20 = femmes00_20ans  * 100 / nbPersonnes;
+        pcent20_40 = femmes20_40ans  * 100 / nbPersonnes;
+        pcent40_60 = femmes40_60ans  * 100 / nbPersonnes;
+        pcent60_plus = femmes60_plus  * 100 / nbPersonnes;
+        sprintf(string1[numLigne1++], "| femmes |  %3d | %3d | %3d | %3d | %3d | %3d | %3d | %3d | %3d |", 
+                nbFemmes ,femmes00_20ans, pcent0_20, femmes20_40ans, pcent20_40, femmes40_60ans, pcent40_60, femmes60_plus, pcent60_plus);
+        sprintf(string1[numLigne1++], "+--------+------+-----+-----+-----+-----+-----+-----+-----+-----+");
     }
+
+    printf("statistiques: displayDatas => display Stat Humain OK\n");
 
     if (display_stat_variables){
         sprintf(string2[numLigne2++], "+----------------------------------+");
@@ -151,6 +173,8 @@ void displayDatas(void){
         sprintf(string2[numLigne2++], "+------------------+---------+-----+");
     }
     
+    printf("statistiques: displayDatas => display Stat variables OK\n");
+
     // affichage des comptes bancaires
     if (display_stat_cptBanque){
         sprintf(string3[numLigne3++], "+-------------------------------------------+");
@@ -158,14 +182,21 @@ void displayDatas(void){
         sprintf(string3[numLigne3++], "+------------------------+---------+--------+");
         sprintf(string3[numLigne3++], "|             nom Client | num cpt |  solde |");
         sprintf(string3[numLigne3++], "+------------------------+---------+--------+");
+        CompteBancaire *item;
+        //printf("nbComptesBancaires = %d\n", nbComptesBancaires);
         for (int i = 0 ; i < nbComptesBancaires ; i++){
-            if (listeComptesBancaires[i]->getNumCompte() != -1){
-                CompteBancaire *item = listeComptesBancaires[i];
-                sprintf(string3[numLigne3++], "|   %20s |  %06d | %6d |", item->getNomClient(), item->getNumCompte(), item->getSolde());
+            item = listeComptesBancaires[i];
+            if (item != NULL){
+                //printf("traitement du compte bancaire non NULL %d\n", i);
+                if (item->getNumCompte() != -1){
+                    sprintf(string3[numLigne3++], "|   %20s |  %06d | %6d |", item->getNomClient(), item->getNumCompte(), item->getSolde());
+                }
             }
         }
         sprintf(string3[numLigne3++], "+------------------------+---------+--------+");
     }
+    printf("statistiques: displayDatas => display Stat comptes bancaires OK\n");
+
     displayBloc();
 
     // affichage des salaries
@@ -190,6 +221,7 @@ void displayDatas(void){
             }
         }
     }
+    printf("statistiques: displayDatas => display Stat salaries OK\n");
 
     // affichage des entreprises
     if (display_stat_entreprises){
@@ -214,6 +246,7 @@ void displayDatas(void){
         }
         sprintf(string2[numLigne2++], "+------------------------+-------------+-------------+------------------------+");
     }
+    printf("statistiques: displayDatas => display Stat entreprises OK\n");
     displayBloc();
 
     // affichage des produits
@@ -300,70 +333,76 @@ void resetStats(void){
 //
 //-------------------------------------------
 void statistiques(void){
+    printf("statistiques => debut\n");
     Humain *ptr;
     resetStats();
+    printf("statistiques => reset stats OK\n");
     if (strlen(nomFichier) > 0){
         sprintf(displayNomFichier, "fichier %s", nomFichier);
     } else {
         strcpy(displayNomFichier, "");
     }
-    for (int i = 1 ; i < nbHumains ; i++){
+    printf("statistiques => debut boucle collecte datas sur humains\n");
+    for (int i = 1 ; i < MAX_HUMAINS ; i++){
         ptr = listeHumains[i];
-        if (strcmp(ptr->getGenreTexte(),"Homme") == 0) {
-            nbHommes++;
-            if (ptr->getStatus() == 'X') {
-                nbHommesMorts++;
+        if (ptr != NULL){
+            if (strcmp(ptr->getGenreTexte(),"Homme") == 0) {
+                nbHommes++;
+                if (ptr->getStatus() == 'X') {
+                    nbHommesMorts++;
+                }
             }
-        }
-        if (strcmp(ptr->getGenreTexte(),"Femme") == 0) {
-            nbFemmes++;
-            if (ptr->getStatus() == 'X') {
-                nbFemmesMortes++;
+            if (strcmp(ptr->getGenreTexte(),"Femme") == 0) {
+                nbFemmes++;
+                if (ptr->getStatus() == 'X') {
+                    nbFemmesMortes++;
+                }
             }
-        }
-        if (ptr->getStatus() == 'M') nbCouples++;
-        if (ptr->getStatus() == 'C') nbCelibataires++;
-        if (ptr->getStatus() == 'D') nbDivorces++;
-        if (ptr->getStatus() == 'V') nbveufs++;
-        if (ptr->getStatus() == 'X') nbMorts++;
-        int age = ptr->getAge();
-        if (ptr->getStatus() != 'X'){
-            if (age <= 20) {
-                nb00_20ans++;
-                if (ptr->getGenreTexte()[0] == 'H'){
-                    hommes00_20ans++;
-                } else {
-                    femmes00_20ans++;
-                }
-            } else if( age <= 40 ){ 
-                nb20_40ans++;
-                if (ptr->getGenreTexte()[0] == 'H'){
-                    hommes20_40ans++;
-                } else {
-                    femmes20_40ans++;
-                }
-            } else if ( age <= 60) {
-                if (ptr->getGenreTexte()[0] == 'H'){
-                    hommes40_60ans++;
-                } else {
-                    femmes40_60ans++;
-                }
-                nb40_60ans++;
-            } else{
-                nb60_plus++;
-                if (ptr->getGenreTexte()[0] == 'H'){
-                    hommes60_plus++;
-                } else {
-                    femmes60_plus++;
+            if (ptr->getStatus() == 'M') nbCouples++;
+            if (ptr->getStatus() == 'C') nbCelibataires++;
+            if (ptr->getStatus() == 'D') nbDivorces++;
+            if (ptr->getStatus() == 'V') nbveufs++;
+            if (ptr->getStatus() == 'X') nbMorts++;
+            int age = ptr->getAge();
+            if (ptr->getStatus() != 'X'){
+                if (age <= 20) {
+                    nb00_20ans++;
+                    if (ptr->getGenreTexte()[0] == 'H'){
+                        hommes00_20ans++;
+                    } else {
+                        femmes00_20ans++;
+                    }
+                } else if( age <= 40 ){ 
+                    nb20_40ans++;
+                    if (ptr->getGenreTexte()[0] == 'H'){
+                        hommes20_40ans++;
+                    } else {
+                        femmes20_40ans++;
+                    }
+                } else if ( age <= 60) {
+                    if (ptr->getGenreTexte()[0] == 'H'){
+                        hommes40_60ans++;
+                    } else {
+                        femmes40_60ans++;
+                    }
+                    nb40_60ans++;
+                } else{
+                    nb60_plus++;
+                    if (ptr->getGenreTexte()[0] == 'H'){
+                        hommes60_plus++;
+                    } else {
+                        femmes60_plus++;
+                    }
                 }
             }
         }
     }
+
+    printf("statistiques => fin boucle collecte datas sur humains\n");
     nbVivants = nbHumains - 1 - nbMorts;
     nbHommesVivants = nbHommes - nbHommesMorts;
     nbFemmesVivantes = nbFemmes - nbFemmesMortes;
     nbCouples /= 2; // divise par 2 car on compte les deux membres du couple marie
 
     displayDatas();
-
 }

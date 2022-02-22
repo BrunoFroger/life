@@ -12,6 +12,7 @@
     #define MAX_PRODUITS        1000
     #define MAX_COMMANDES       1000
     #define MAX_HUMAINS         10000
+    #define MAX_COMPTES_BANCAIRES MAX_ENTREPRISES+MAX_HUMAINS
 
     #include "humain.hpp"
     #include "produit.hpp"
@@ -30,7 +31,6 @@
     #define PROBA_MARIAGE       3
     #define PROBA_NAISSANCE     2
 
-    #define MAX_COMPTES_BANCAIRES MAX_ENTREPRISES+MAX_HUMAINS
     
     extern int nbJours;
     extern Humain *listeHumains[];

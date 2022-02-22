@@ -61,4 +61,8 @@
     extern bool debugStats;
     extern bool debugCptBancaire;
     extern bool debugTools;
+
+    extern char date[];
+    extern void initDate(int annee, int mois, int jour);
+    extern char *getDate(int nbJours);
 #endif

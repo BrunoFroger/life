@@ -4,6 +4,7 @@
 //
 //-----------------------------------
 
+#include <time.h>
 #include "../inc/variables.hpp"
 
 Humain *listeHumains[MAX_HUMAINS];
@@ -37,3 +38,25 @@ bool debugProduit=false;
 bool debugStats=false;
 bool debugCptBancaire=false;
 bool debugTools=false;
+
+char date[25];
+struct tm t;
+
+void initDate(int annee, int mois, int jour){
+    //Represent the date as struct tm.                                                           
+    //The subtractions are necessary for historical reasons.
+    t.tm_mday = jour;
+    t.tm_mon = mois - 1;
+    t.tm_year = annee - 1900;
+}
+
+char *getDate(int nbJours){
+    //Add 'skip' days to the date.
+    t.tm_mday = 1;
+    t.tm_mon = 0;
+    t.tm_year = 2000 - 1900;
+    t.tm_mday += nbJours;
+    mktime(&t);
+    strftime(date, 30, "%Y-%m-%d", &t);
+    return date;
+}

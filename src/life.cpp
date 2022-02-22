@@ -28,6 +28,7 @@ bool dataSauvegardees = true;
 FILE *file, *fileJson;
 char saisie[50];
 char prompt[50];
+char promptDate[50];
 int idx;
 Humain *dieu;
 
@@ -40,8 +41,18 @@ void setPrompt(char *texte){
     if (strlen(texte) > 0){
         sprintf(prompt, "life (%s) > ", nomFichier);
     } else {
-        strcpy(prompt, "life > ");
+        sprintf(prompt, "life > ");
     }
+}
+
+//-------------------------------------------
+//
+//          setPrompt
+//
+//-------------------------------------------
+char *updatePrompt(void){
+    sprintf(promptDate, "%s : %s", getDate(nbJours), prompt);
+    return promptDate;
 }
 
 //-------------------------------------------
@@ -702,6 +713,8 @@ int main(int argc, char **argv)
     printf("**********************************************\n");
     // creation d'un humain
     
+    // init date de debut du monde
+    initDate(2000, 1,1);
     resetMonde();
     //printf("creation de dieu\n");
     strcpy(tmpString,"dieu");
@@ -730,10 +743,11 @@ int main(int argc, char **argv)
     // boucle d'evolution
     while (!fin){
         resetFlagsDebug();
+        updatePrompt();
         if (listeAuto) afficheListeHumains();
         if (statAuto) statistiques();
         if (menuOnOff) afficheMenu();
-        printf("%s", prompt);
+        printf("%s", promptDate);
         fflush(stdin);
         char saisie[20];
         char car;
